@@ -1,0 +1,41 @@
+to add:
+    page:
+        add a folder to app/
+        make page.tsx
+        done
+
+    db:
+        add file to lib/db
+        copy the stuff from other db file and edit
+        use
+
+    types:
+        add it to lib/types.d.ts
+
+
+
+
+code for connecting profile to users in supabase:
+-- First, remove the trigger if it exists
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+
+-- Then, remove the function if it exists
+DROP FUNCTION IF EXISTS public.handle_new_user();
+
+-- Now recreate the function
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER SET search_path = ''
+AS $$
+BEGIN
+  INSERT INTO public.profiles (id, name, email, bio)
+  VALUES (NEW.id, NEW.raw_user_meta_data ->> 'name', NEW.email, NEW.raw_user_meta_data ->> 'bio');
+  RETURN NEW;
+END;
+$$;
+
+-- Finally, recreate the trigger
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE PROCEDURE public.handle_new_user();

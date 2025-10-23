@@ -1,0 +1,70 @@
+Admin: 
+    Header:
+        - chnage the active tab color
+    Home:
+        - make the recent avctivities component
+        - add budget alerts and pending approvals
+        - make quick actions 
+    
+    Organisations:
+
+    OrganisationDetails:
+        - setup settings
+        - setup member dropdown actions
+        
+    Projects:
+        - makee the filter and search functionality
+
+    CreateProject:
+        - save custom tmeplates in DB nad show them when selecting temapltes
+
+    projectDetails:
+        - make the proper task system:
+            + assign task modal
+            + pending tasks section
+            - active tasks section
+            - review tasks section
+            - completed tasks section
+
+        - setup member dropdown actions
+        - make settings tab
+            
+    Approvals:
+        - make the modal for approved 
+        - make the modal for rejected
+        - add stuff for material requests and payment requests
+    
+Employee:
+    Dashboard:
+        - make the quick actions
+        - make the notifications section
+        - make the assigned projects section
+        
+    Organisations:
+
+    Porjects:
+    
+    Tasks:
+
+
+SHOW TO HADI BHAIYA
+
+NEXT:
+    general:
+        - notifications
+        - database optimisation
+        - mobile responsiveness
+        - color scheme
+
+    admin:
+        
+        Vendors: 
+            - make everything
+        
+        Settings:
+            - make everything
+
+
+dont showe budget to supervisor or anyone else othervthan admin
+aadding budget per sq ft
+material costing calculator
