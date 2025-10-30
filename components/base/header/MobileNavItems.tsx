@@ -34,9 +34,9 @@ const MobileNavItems = ({ profile }: { profile: IProfile }) => {
 							>
 								<item.icon
 									className={clsx(
-										"h-4 w-4",
+										"h-8 w-8 rounded-full p-2",
 										isActive
-											? "text-primary"
+											? "text-secondary-foreground bg-secondary"
 											: "text-muted-foreground"
 									)}
 								/>

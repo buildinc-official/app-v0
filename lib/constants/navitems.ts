@@ -87,6 +87,16 @@ export const navItems = [
 		user: true,
 		admin: true,
 	},
+	{
+		href: "/statistics",
+		label: "Statistics",
+		group: "",
+		icon: GalleryHorizontal,
+		sidebar: true,
+		mobile: true,
+		user: false,
+		admin: true,
+	},
 
 	// Sidebar only
 	// Mobile only
@@ -109,16 +119,6 @@ export const navItems = [
 		sidebar: false,
 		mobile: false,
 		user: true,
-		admin: true,
-	},
-	{
-		href: "/statistics",
-		label: "Statistics",
-		group: "",
-		icon: GalleryHorizontal,
-		sidebar: true,
-		mobile: true,
-		user: false,
 		admin: true,
 	},
 ];

@@ -7,6 +7,7 @@ import {
 	CardHeader,
 	CardTitle,
 } from "@/components/base/ui/card";
+import Link from "next/link";
 
 const QuickAction = () => {
 	return (
@@ -16,23 +17,28 @@ const QuickAction = () => {
 			</CardHeader>
 			<CardContent>
 				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-					<Button
+					{/* <Button
 						size="lg"
 						variant="outline"
 						className="h-20 flex-col bg-transparent"
 					>
 						<CheckSquare className="h-6 w-6 mb-2" />
-						View Tasks
-					</Button>
+						View 
+					</Button> */}
 					<Button
 						size="lg"
 						variant="outline"
 						className="h-20 flex-col bg-transparent"
 					>
-						<Package className="h-6 w-6 mb-2" />
-						Create new project
+						<Link
+							href="/projects/create-project"
+							className="flex flex-col items-center"
+						>
+							<Package className="h-6 w-6 mb-2" />
+							Create new project
+						</Link>
 					</Button>
-					<Button
+					{/* <Button
 						size="lg"
 						variant="outline"
 						className="h-20 flex-col bg-transparent"
@@ -47,7 +53,7 @@ const QuickAction = () => {
 					>
 						<AlertCircle className="h-6 w-6 mb-2" />
 						Report Issue
-					</Button>
+					</Button> */}
 				</div>
 			</CardContent>
 		</Card>

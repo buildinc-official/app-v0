@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { Button } from "@/components/base/ui/button";
 import {
 	Table,
 	TableHeader,
@@ -10,27 +9,13 @@ import {
 	TableBody,
 	TableCell,
 } from "@/components/base/ui/table";
-import {
-	Avatar,
-	AvatarImage,
-	AvatarFallback,
-} from "@/components/base/ui/avatar"; // ✅ correct import
-import {
-	Package,
-	CreditCard,
-	DollarSign,
-	Calendar,
-	Eye,
-	CheckCircle,
-	XCircle,
-} from "lucide-react";
+import { Avatar, AvatarFallback } from "@/components/base/ui/avatar"; // ✅ correct import
 
 import { IRequest } from "@/lib/types";
 import { RupeeIcon } from "@/lib/functions/utils";
 
 const ApprovalTable = ({
 	data,
-	showActions = true,
 	setSelectedApproval,
 	setIsDetailDialogOpen,
 }: {
@@ -51,7 +36,7 @@ const ApprovalTable = ({
 						Type
 					</TableHead>
 					<TableHead className="min-w-[200px] text-center">
-						User
+						From
 					</TableHead>
 					<TableHead className="min-w-[250px] text-center">
 						Item
@@ -78,6 +63,7 @@ const ApprovalTable = ({
 						key={request.id}
 						onClick={() => openDetailDialog(request)}
 					>
+						{/* type */}
 						<TableCell className="items-center justify-center">
 							<div className="flex items-center gap-2 justify-center">
 								{request.type === "MaterialRequest" ? (
@@ -91,6 +77,8 @@ const ApprovalTable = ({
 								) : null}
 							</div>
 						</TableCell>
+
+						{/* User */}
 						<TableCell className="items-center justify-center">
 							<div className="flex items-center gap-2 justify-center">
 								<Avatar className="h-8 w-8">
@@ -101,6 +89,8 @@ const ApprovalTable = ({
 								{request.requestedByProfile?.name}
 							</div>
 						</TableCell>
+
+						{/* Item */}
 						{request.type === "MaterialRequest" ? (
 							<TableCell className="items-center justify-center">
 								<div className="justify-center items-center flex flex-col">
@@ -123,6 +113,8 @@ const ApprovalTable = ({
 								</p>
 							</TableCell>
 						)}
+
+						{/* Project */}
 						<TableCell className="items-center justify-center">
 							<div className="justify-center items-center flex flex-col">
 								<div className="font-medium">
@@ -130,6 +122,8 @@ const ApprovalTable = ({
 								</div>
 							</div>
 						</TableCell>
+
+						{/* Amount */}
 						{request.type === "PaymentRequest" ? (
 							<TableCell className="items-center justify-center">
 								<div className="flex items-center gap-1 justify-center">
@@ -160,6 +154,8 @@ const ApprovalTable = ({
 								</p>
 							</TableCell>
 						)}
+
+						{/* Date */}
 						<TableCell className="items-center justify-center">
 							<div className="flex items-center gap-1 justify-center">
 								<span className="text-sm">

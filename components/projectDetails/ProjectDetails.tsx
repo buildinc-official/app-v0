@@ -3,12 +3,10 @@
 import { useState } from "react";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { Tabs, TabsList, TabsTrigger } from "@/components/base/ui/tabs";
+import { Tabs } from "@/components/base/ui/tabs";
 import LoadingSpinner from "@/components/base/layout/LoadingSpinner";
 import { Button } from "@/components/base/ui/button";
 import { Badge } from "@/components/base/ui/badge";
-import { Card, CardContent } from "@/components/base/ui/card";
-import { Label } from "@/components/base/ui/label";
 import { PhaseBoard } from "./PhaseBoard";
 import { Overview } from "./Overview";
 import { Members } from "./Members";
@@ -20,12 +18,24 @@ import { useprojectDetailStore } from "@/lib/store/projectDetailStore";
 import { TabsTriggerList } from "@/components/base/general/TabsTriggerList";
 import { SummaryCard } from "@/components/base/general/SummaryCard";
 import { useProfileStore } from "@/lib/store/profileStore";
-import { getOrganisation } from "@/lib/middleware/organisations";
 import { getProjectMembersByProjectIdFromStore } from "@/lib/middleware/projectMembers";
 import { useOrganisationStore } from "@/lib/store/organisationStore";
 import { getOrganisationMembersFromStore } from "@/lib/middleware/organisationMembers";
+import ChangeRoleModal from "./Modals/ChangeUserModal";
 
 export default function ProjectDetails() {
+	if (
+		typeof window !== "undefined" &&
+		!sessionStorage.getItem("projectDetailsRefreshed")
+	) {
+		sessionStorage.setItem("projectDetailsRefreshed", "1");
+		window.location.reload();
+	}
+	const [changeRoleModal, setChangeRoleModal] = useState(false);
+	const [changeRoleUser, setChangeRoleUser] = useState<string>("");
+	const [changeRole, setChangeRole] = useState<string>("");
+	const [changeRoleId, setChangeRoleId] = useState<string>("");
+
 	const { updateprojectDetails } = useprojectDetailStore();
 	const projectData = useprojectDetailStore((state) => state.project);
 	const organisations = useOrganisationStore((state) => state.organisations);
@@ -101,6 +111,10 @@ export default function ProjectDetails() {
 						teamMembers={teamMembers}
 						projectId={projectData.id}
 						projectName={projectData.name}
+						setChangeRole={setChangeRole}
+						setChangeRoleModal={setChangeRoleModal}
+						setChangeRoleUser={setChangeRoleUser}
+						setChangeRoleId={setChangeRoleId}
 					/>
 					{/* <Materials tasks={tasks} /> */}
 				</Tabs>
@@ -120,6 +134,14 @@ export default function ProjectDetails() {
 				projectData={projectData}
 				updateprojectDetails={updateprojectDetails}
 				currentUserId={currentUserId || ""}
+			/>
+			<ChangeRoleModal
+				isOpen={changeRoleModal}
+				onOpenChange={setChangeRoleModal}
+				user={changeRoleUser}
+				originalRole={changeRole}
+				projectId={projectData.id}
+				id={changeRoleId}
 			/>
 		</div>
 	);

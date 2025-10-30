@@ -8,7 +8,7 @@ import Approved from "./Approved";
 import Pending from "./Pending";
 import Rejected from "./Rejected";
 import { SummaryCard } from "@/components/base/general/SummaryCard";
-import { Clock, CheckCircle, DollarSign, AlertTriangle } from "lucide-react";
+import { Clock, CheckCircle } from "lucide-react";
 import { useRequestStore } from "@/lib/store/requestStore";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { Tabs } from "../base/ui/tabs";
@@ -19,14 +19,13 @@ export default function Approvals({ admin }: { admin: boolean }) {
 	const [selectedApproval, setSelectedApproval] = useState<IRequest | null>(
 		null
 	);
-	console.log({ requests });
 	const [isDetailDialogOpen, setIsDetailDialogOpen] = useState(false);
 	const [comment, setComment] = useState("");
+
 	const filteredRequests = Object.values(requests);
 	const pendingApprovals = Array.from(
 		filteredRequests.filter((a) => a.status === "Pending")
 	);
-	console.log({ filteredRequests, pendingApprovals });
 
 	const approvedApprovals = Array.from(
 		filteredRequests.filter((a) => a.status === "Approved")

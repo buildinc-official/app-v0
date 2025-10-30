@@ -49,13 +49,13 @@ export function LoginForm({
 
 	return (
 		<div
-			className={cn("flex flex-col gap-6", className)}
+			className={cn("flex flex-col gap-6 ", className)}
 			{...props}
 		>
-			<Card>
+			<Card className="bg-secondary text-white">
 				<CardHeader>
 					<CardTitle className="text-2xl">Login</CardTitle>
-					<CardDescription>
+					<CardDescription className="text-white/90">
 						Enter your email below to login to your account
 					</CardDescription>
 				</CardHeader>
@@ -98,7 +98,7 @@ export function LoginForm({
 							)}
 							<Button
 								type="submit"
-								className="w-full"
+								className="w-full bg-white/70"
 								disabled={isLoading}
 							>
 								{isLoading ? "Logging in..." : "Login"}

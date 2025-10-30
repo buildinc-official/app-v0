@@ -179,7 +179,7 @@ export function getPhaseFromStore(id: string): IPhase | undefined {
 	try {
 		// First check if we have it in the store
 		const store = usePhaseStore.getState();
-		console.log("store phases", store.phases);
+		// console.log("store phases", store.phases);
 
 		const cachedPhase = store.getPhase(id);
 

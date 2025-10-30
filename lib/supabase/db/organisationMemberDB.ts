@@ -44,6 +44,8 @@ export const organisationMemberDB = {
 		id: string,
 		updates: Partial<IOrganisationMemberDB>
 	) {
+		console.log("Updating member:", id, updates);
+
 		const { data, error } = await supabase
 			.from("organisation_members")
 			.update(updates)
@@ -64,7 +66,10 @@ export const organisationMemberDB = {
 				.eq("id", id)
 				.throwOnError();
 		} catch (error) {
-			// console.log("error", error);
+			console.log("error", error);
+		} finally {
+			console.log("Finished removing member");
+			return;
 		}
 	},
 

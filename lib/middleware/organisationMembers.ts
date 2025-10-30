@@ -59,13 +59,20 @@ export async function addOrganisationMember_DBONLY(
 	}
 }
 
-export async function removeOrganisationMember(id: string, orgId: string) {
+export async function removeOrganisationMember(
+	memberId: string,
+	orgId: string,
+	id: string
+) {
 	try {
-		await organisationMemberDB.removeOrganisationMember(id);
+		await organisationMemberDB.removeOrganisationMember(memberId);
 
 		// Remove from store
 		const store = useOrganisationMemberStore.getState();
 		store.removeOrganisationMember(orgId, id);
+
+		console.log("removed member with id:", id);
+		console.log(store.getOrganisationMembers(orgId));
 
 		return {
 			success: true,

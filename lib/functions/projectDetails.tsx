@@ -1,25 +1,19 @@
-import { Dispatch, SetStateAction } from "react";
-import { availableMaterials } from "../constants/materials";
-import {
-	IMaterial,
-	IPhase,
-	IProfile,
-	IProject,
-	IRequest,
-	ITask,
-	status,
-} from "../types";
+import { useTaskStore } from "@/lib/store/taskStore";
+import { usePhaseStore } from "@/lib/store/phaseStore";
+import { IProfile, IProject, IRequest, ITask, role, status } from "../types";
 import {
 	getPhaseTasksFromStore,
-	getTask,
 	getTaskFromStore,
 	updateTask,
 } from "../middleware/tasks";
-import { getPhase, getPhaseFromStore, updatePhase } from "../middleware/phases";
+import { getPhaseFromStore } from "../middleware/phases";
 import { updateProject } from "../middleware/projects";
 import { addRequest, updateRequest } from "../middleware/requests";
 import { useProfileStore } from "../store/profileStore";
-import { addProjectMember_DBONLY } from "../middleware/projectMembers";
+import {
+	addProjectMember_DBONLY,
+	updateProjectMember,
+} from "../middleware/projectMembers";
 
 export const projectDetails = () => {
 	const getPhaseStatus = (phaseId: string): status[] => {
@@ -157,93 +151,8 @@ export function acceptProjectInvitation(request: IRequest) {
 	});
 }
 
-const approveTask = (
-	taskId: string,
-	setTasks: Dispatch<SetStateAction<ITask[]>>,
-	setIsTaskDetailOpen: Dispatch<SetStateAction<boolean>>
-) => {
-	setTasks((prev) =>
-		prev.map((task) =>
-			task.id === taskId
-				? {
-						...task,
-						status: "Completed",
-						approvedDate: new Date(),
-						approvedBy: "John Doe",
-				  }
-				: task
-		)
-	);
-	setIsTaskDetailOpen(false);
-};
-
-const rejectTask = (
-	taskId: string,
-	setTasks: Dispatch<SetStateAction<ITask[]>>,
-	setIsTaskDetailOpen: Dispatch<SetStateAction<boolean>>
-) => {
-	setTasks((prev) =>
-		prev.map((task) =>
-			task.id === taskId ? { ...task, status: "Active" } : task
-		)
-	);
-	setIsTaskDetailOpen(false);
-};
-
-const addMaterial = (
-	material: IMaterial,
-	taskMaterials: IMaterial[],
-	setTaskMaterials: Dispatch<SetStateAction<IMaterial[]>>
-) => {
-	if (!material.id || !material.defaultUnit) return;
-	setTaskMaterials([
-		...taskMaterials,
-		{
-			taskId: "",
-			id: crypto.randomUUID(),
-			materialId: material.materialId,
-			defaultUnit: material.defaultUnit,
-			name: material.name ?? "",
-			plannedQuantity: 0,
-			unit: "",
-			unitCost: 0,
-			usedQuantity: 0,
-			requested: false,
-			approved: false,
-			deliveredQuantity: 0,
-			wasteQuantity: 0,
-		},
-	]);
-};
-
-const removeMaterial = (
-	index: number,
-	taskMaterials: IMaterial[],
-	setTaskMaterials: Dispatch<SetStateAction<IMaterial[]>>
-) => {
-	setTaskMaterials(taskMaterials.filter((_, i) => i !== index));
-};
-
-const updateMaterial = (
-	index: number,
-	field: string,
-	value: string,
-	taskMaterials: IMaterial[],
-	setTaskMaterials: Dispatch<SetStateAction<IMaterial[]>>
-) => {
-	const updated = [...taskMaterials];
-	if (field === "materialId") {
-		const material = availableMaterials.find((m) => m.id === value);
-		if (material) {
-			updated[index] = {
-				...updated[index],
-				materialId: value,
-				unit: material.unit ?? "",
-				unitCost: material.unitCost ?? 1,
-			};
-		}
-	} else {
-		updated[index] = { ...updated[index], [field]: value };
-	}
-	setTaskMaterials(updated);
-};
+export function changeUserRole(id: string, projectId: string, newRole: string) {
+	updateProjectMember(id, projectId, {
+		role: newRole as role,
+	});
+}

@@ -36,6 +36,10 @@ import { Edit, Trash2 } from "lucide-react";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { IOrganisation } from "@/lib/types";
+import {
+	deleteOrganisation,
+	updateOrganisation,
+} from "@/lib/middleware/organisations";
 
 const OrgSettings = ({ organisation }: { organisation: IOrganisation }) => {
 	const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -47,22 +51,27 @@ const OrgSettings = ({ organisation }: { organisation: IOrganisation }) => {
 
 	const handleEditOrganization = () => {
 		setIsEditDialogOpen(false);
+		updateOrganisation(organisation.id, {
+			name: editForm.name,
+			description: editForm.description,
+		});
 	};
 
 	const handleDeleteOrganization = () => {
+		deleteOrganisation(organisation.id);
 		router.push("/admin/organisations");
 	};
 	return (
 		<Card>
-			<CardHeader>
+			{/* <CardHeader>
 				<CardTitle>Organization Settings</CardTitle>
 				<CardDescription>
 					Manage organisation preferences and configurations
 				</CardDescription>
-			</CardHeader>
-			<CardContent className="space-y-6">
+			</CardHeader> */}
+			<CardContent className="space-y-6 my-5">
 				<div className="space-y-2">
-					<h4 className="font-medium">General Settings</h4>
+					<h4 className="font-bold text-lg mb-4">General Settings</h4>
 					<div className="grid gap-4">
 						<div className="flex items-center justify-between">
 							<div>
@@ -77,6 +86,7 @@ const OrgSettings = ({ organisation }: { organisation: IOrganisation }) => {
 							<Button
 								variant="outline"
 								size="sm"
+								disabled
 							>
 								Configure
 							</Button>
@@ -94,6 +104,7 @@ const OrgSettings = ({ organisation }: { organisation: IOrganisation }) => {
 							<Button
 								variant="outline"
 								size="sm"
+								disabled
 							>
 								Configure
 							</Button>
@@ -104,7 +115,9 @@ const OrgSettings = ({ organisation }: { organisation: IOrganisation }) => {
 				<Separator />
 
 				<div className="space-y-2">
-					<h4 className="font-medium">Security Settings</h4>
+					<h4 className="font-bold text-lg mb-4">
+						Security Settings
+					</h4>
 					<div className="grid gap-4">
 						<div className="flex items-center justify-between">
 							<div>
@@ -118,6 +131,7 @@ const OrgSettings = ({ organisation }: { organisation: IOrganisation }) => {
 							<Button
 								variant="outline"
 								size="sm"
+								disabled
 							>
 								Configure
 							</Button>
@@ -132,11 +146,12 @@ const OrgSettings = ({ organisation }: { organisation: IOrganisation }) => {
 							<Button
 								variant="outline"
 								size="sm"
+								disabled
 							>
 								View Logs
 							</Button>
 						</div>
-						<div className="flex items-center space-x-2">
+						<div className="flex items-center space-x-2 justify-center mt-5">
 							<Dialog
 								open={isEditDialogOpen}
 								onOpenChange={setIsEditDialogOpen}
@@ -144,7 +159,8 @@ const OrgSettings = ({ organisation }: { organisation: IOrganisation }) => {
 								<DialogTrigger asChild>
 									<Button
 										variant="outline"
-										size="sm"
+										className="w-1/2"
+										// size="sm"
 									>
 										<Edit className="h-4 w-4 mr-2" />
 										Edit
@@ -216,7 +232,8 @@ const OrgSettings = ({ organisation }: { organisation: IOrganisation }) => {
 								<AlertDialogTrigger asChild>
 									<Button
 										variant="destructive"
-										size="sm"
+										// size="sm"
+										className="w-1/2"
 									>
 										<Trash2 className="h-4 w-4 mr-2" />
 										Delete
@@ -241,6 +258,7 @@ const OrgSettings = ({ organisation }: { organisation: IOrganisation }) => {
 										</AlertDialogCancel>
 										<AlertDialogAction
 											onClick={handleDeleteOrganization}
+											className="bg-destructive text-secondary-foreground hover:bg-destructive/70"
 										>
 											Delete Organization
 										</AlertDialogAction>

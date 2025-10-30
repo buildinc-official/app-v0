@@ -99,8 +99,9 @@ export const OrgTable = ({ filteredOrganisations, admin }: Props) => {
 											</TableCell>
 										)}
 										<TableCell className="text-center">
-											{getOrganisationProjectsFromStore.length ??
-												0}
+											{getOrganisationProjectsFromStore(
+												org.id
+											).length ?? 0}
 										</TableCell>
 										{/* <TableCell className="text-center">
 										<DropdownMenu>

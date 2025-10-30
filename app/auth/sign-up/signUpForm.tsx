@@ -72,10 +72,12 @@ export function SignUpForm({
 			className={cn("flex flex-col gap-6", className)}
 			{...props}
 		>
-			<Card>
+			<Card className="bg-secondary text-white">
 				<CardHeader>
 					<CardTitle className="text-2xl">Sign up</CardTitle>
-					<CardDescription>Create a new account</CardDescription>
+					<CardDescription className="text-white/90">
+						Create a new account
+					</CardDescription>
 					<div className="flex w-full">
 						<Button
 							type="button"
@@ -83,8 +85,8 @@ export function SignUpForm({
 							className={cn(
 								"flex-1 rounded-none rounded-l-md",
 								!admin
-									? "bg-primary text-primary-foreground"
-									: "bg-white text-gray-700 border"
+									? "bg-white text-gray-700 border"
+									: "bg-white/10 text-gray-500"
 							)}
 						>
 							User
@@ -95,8 +97,8 @@ export function SignUpForm({
 							className={cn(
 								"flex-1 rounded-none rounded-r-md",
 								admin
-									? "bg-primary text-primary-foreground"
-									: "bg-white text-gray-700 border"
+									? "bg-white text-gray-700 border"
+									: "bg-white/10 text-gray-500"
 							)}
 						>
 							Admin
@@ -174,7 +176,7 @@ export function SignUpForm({
 							)}
 							<Button
 								type="submit"
-								className="w-full"
+								className="w-full bg-white/70"
 								disabled={isLoading}
 							>
 								{isLoading

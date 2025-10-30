@@ -1,6 +1,10 @@
 "use client";
 
 import { useEffect } from "react";
+import {
+	initRealtimeListeners,
+	cleanupRealtimeListeners,
+} from "@/lib/supabase/realtimeClient";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { IProfile, ITask, status } from "@/lib/types";
 import {
@@ -20,43 +24,33 @@ import { usePhaseStore } from "@/lib/store/phaseStore";
 import { useTaskStore } from "@/lib/store/taskStore";
 import { projectDetails } from "@/lib/functions/projectDetails";
 import { getAllProfiles } from "@/lib/middleware/profiles";
-
+import { createClient } from "@/lib/supabase/client";
+import { recomputePhaseAndProjectProgress } from "@/lib/functions/base";
+const supabase = createClient();
 export const StoreHydrator = ({ profile }: { profile: IProfile | null }) => {
 	const { setProfile } = useProfileStore();
 	const { getPhaseStatus } = projectDetails();
 	const { updatePhase } = usePhaseStore();
 	const { projects } = useProjectStore();
+
 	useEffect(() => {
-		if (profile) {
-			setProfile(profile);
-			loadData(profile);
-		}
+		if (!profile) return;
+
+		setProfile(profile);
+		loadData(profile);
+
+		// 🔥 Start realtime subscriptions
+		initRealtimeListeners(profile);
+		// console.log(
+		// 	"[Realtime] Active channels:",
+		// 	supabase.getChannels().map((ch) => ch.topic)
+		// );
+
+		return () => {
+			// 🧹 Cleanup on logout/unmount
+			cleanupRealtimeListeners();
+		};
 	}, [profile]);
-
-	// useEffect(() => {
-	// 	if (!profile) return;
-
-	// 	const pollInterval = setInterval(() => {
-	// 		syncData();
-	// 	}, 3000); // Sync every 5 seconds
-
-	// 	return () => clearInterval(pollInterval);
-	// }, [profile]);
-
-	const syncData = async () => {
-		try {
-			if (profile?.admin) {
-				await loadAdminData(profile);
-			} else {
-				if (profile) {
-					await loadUserData(profile);
-				}
-			}
-			getProjectProgress();
-		} catch (error) {
-			console.error("Error syncing data:", error);
-		}
-	};
 
 	useEffect(() => {
 		getProjectProgress();
@@ -109,7 +103,7 @@ export const StoreHydrator = ({ profile }: { profile: IProfile | null }) => {
 
 			// ONLY handle relationships (linking IDs) since data is already stored
 			linkProjectsToOrganisations();
-			calculateComputedProperties();
+			recomputePhaseAndProjectProgress();
 		} catch (error) {
 			console.error("Error loading admin data:", error);
 		}
@@ -166,78 +160,6 @@ export const StoreHydrator = ({ profile }: { profile: IProfile | null }) => {
 		Object.entries(orgProjectMap).forEach(([orgId, projectIds]) => {
 			orgStore.updateOrganisation(orgId, { projectIds });
 		});
-	};
-
-	const calculateComputedProperties = () => {
-		const phaseStore = usePhaseStore.getState();
-		const taskStore = useTaskStore.getState();
-		const projectStore = useProjectStore.getState();
-
-		// Calculate phase properties based on tasks (using already stored data)
-		Object.entries(phaseStore.phases).forEach(([phaseId, phase]) => {
-			const tasks = phase.taskIds
-				.map((taskId) => taskStore.tasks[taskId])
-				.filter(Boolean);
-
-			if (tasks.length > 0) {
-				const spent = tasks.reduce(
-					(acc, task) => acc + (task.spent || 0),
-					0
-				);
-				const estimatedDuration = tasks.reduce(
-					(acc, task) => acc + (task.estimatedDuration || 0),
-					0
-				);
-				const completedTasks = tasks.filter(
-					(task) => task.status === "Completed"
-				).length;
-				const status = calculatePhaseStatus(tasks);
-
-				phaseStore.updatePhase(phaseId, {
-					spent,
-					estimatedDuration,
-					completedTasks,
-					totalTasks: tasks.length,
-					status,
-				});
-			}
-		});
-
-		// Calculate project properties based on phases (using already stored data)
-		Object.entries(projectStore.projects).forEach(
-			([projectId, project]) => {
-				const phases = project.phaseIds
-					.map((phaseId) => phaseStore.phases[phaseId])
-					.filter(Boolean);
-
-				if (phases.length > 0) {
-					const totalTasks = phases.reduce(
-						(acc, phase) => acc + (phase.totalTasks || 0),
-						0
-					);
-					const completedTasks = phases.reduce(
-						(acc, phase) => acc + (phase.completedTasks || 0),
-						0
-					);
-					const progress =
-						totalTasks > 0
-							? (completedTasks / totalTasks) * 100
-							: 0;
-
-					projectStore.updateProject(projectId, {
-						totalTasks,
-						completedTasks,
-						progress,
-					});
-				}
-			}
-		);
-	};
-
-	const calculatePhaseStatus = (tasks: ITask[]): status[] => {
-		const statuses = new Set<status>();
-		tasks.forEach((task) => statuses.add(task.status));
-		return Array.from(statuses);
 	};
 
 	const getProjectProgress = () => {

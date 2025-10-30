@@ -16,5 +16,12 @@ export default async function AsyncAppLayout({
 
 	const profile: IProfile | null = user && (await getProfile(user.id));
 
-	return <AppLayout profile={profile}>{children}</AppLayout>;
+	return (
+		<AppLayout
+			profile={profile}
+			user={user}
+		>
+			{children}
+		</AppLayout>
+	);
 }

@@ -21,15 +21,12 @@ import {
 	TableCell,
 } from "@/components/base/ui/table";
 import { TabsContent } from "@/components/base/ui/tabs";
-import {
-	IOrganisation,
-	IOrganisationProfile,
-	IProject,
-	IProjectProfile,
-} from "@/lib/types";
+import { IProjectProfile, IOrganisationProfile } from "@/lib/types";
 import { MoreHorizontal } from "lucide-react";
 import React, { useState } from "react";
 import AddMemberModal from "./Modals/AddMemberModal";
+import { formatDate } from "@/lib/functions/utils";
+import { removeProjectMember } from "@/lib/middleware/projectMembers";
 
 const PAGE_SIZE = 10;
 
@@ -39,12 +36,20 @@ export const Members = ({
 	teamMembers,
 	projectId,
 	projectName,
+	setChangeRole,
+	setChangeRoleModal,
+	setChangeRoleUser,
+	setChangeRoleId,
 }: {
 	members: IProjectProfile[];
 	organisationMembers: IOrganisationProfile[];
 	teamMembers: IProjectProfile[];
 	projectId: string;
 	projectName: string;
+	setChangeRole: (role: string) => void;
+	setChangeRoleModal: (open: boolean) => void;
+	setChangeRoleUser: (user: string) => void;
+	setChangeRoleId: (role: string) => void;
 }) => {
 	const [page, setPage] = useState(1);
 
@@ -54,6 +59,21 @@ export const Members = ({
 
 	const totalPages = Math.ceil(members.length / PAGE_SIZE);
 
+	const handleChangeRole = (member: IProjectProfile) => {
+		const userId = member.id;
+		const id = member.memberInfo?.id;
+		const currentRole = ""; // get currentRole from context
+		if (!userId) return;
+		setChangeRoleUser(userId);
+		setChangeRoleId(id || "");
+		setChangeRole(currentRole);
+		setChangeRoleModal(true);
+	};
+
+	const handleRemoveProjectMember = (member: IProjectProfile) => {
+		removeProjectMember(member.id, projectId);
+		window.location.reload();
+	};
 	return (
 		<TabsContent
 			value="team"
@@ -96,18 +116,25 @@ export const Members = ({
 							{paginatedMembers.length > 0 ? (
 								paginatedMembers.map(
 									(member: IProjectProfile) => (
-										<TableRow
-											key={member.id}
-											className=""
-										>
+										<TableRow key={member.id}>
 											<TableCell className="text-center font-medium">
 												{member.name ?? "Unnamed"}
 											</TableCell>
 											<TableCell className="text-center">
-												<p>{member.memberInfo?.role}</p>
+												{member.memberInfo?.role}
 											</TableCell>
-
-											<TableCell className="text-center ">
+											<TableCell className="text-center">
+												{member.email}
+											</TableCell>
+											<TableCell className="text-center">
+												{member.memberInfo?.joinedAt
+													? formatDate(
+															member.memberInfo
+																.joinedAt
+													  )
+													: "N/A"}
+											</TableCell>
+											<TableCell className="text-center">
 												<DropdownMenu>
 													<DropdownMenuTrigger
 														asChild
@@ -119,35 +146,52 @@ export const Members = ({
 															<MoreHorizontal className="h-4 w-4" />
 														</Button>
 													</DropdownMenuTrigger>
+
 													<DropdownMenuContent
 														align="end"
 														className="p-0 min-w-[150px] border-0 shadow-lg"
 													>
+														{/* ✅ Open Modal */}
 														<DropdownMenuItem className="p-0">
 															<button
-																className="w-full px-3 py-3 hover:bg-muted cursor-pointer transition-colors rounded-b-none text-center"
-																onClick={() => {}}
+																className="w-full px-3 py-3 hover:bg-black/20 cursor-pointer transition-colors text-center"
+																onClick={() => {
+																	handleChangeRole(
+																		member
+																	);
+																}}
 															>
 																Change Role
 															</button>
 														</DropdownMenuItem>
+
+														{/* View Profile */}
 														<DropdownMenuItem className="p-0">
 															<button
-																className="w-full px-3 py-3 hover:bg-muted cursor-pointer transition-colors rounded-none text-center"
-																onClick={() => {}}
+																className="w-full px-3 py-3 hover:bg-black/20 cursor-pointer transition-colors text-center"
+																onClick={() => {
+																	// implement if needed
+																}}
 															>
 																View Profile
 															</button>
 														</DropdownMenuItem>
+
+														{/* Remove Member */}
 														{member.memberInfo
 															?.role !==
 															"Admin" && (
 															<DropdownMenuItem className="p-0">
 																<button
-																	className="w-full px-3 py-3 bg-red-600 text-white hover:bg-red-300 hover:text-black  cursor-pointer transition-colors rounded-t-none text-center"
-																	onClick={() => {}}
+																	className="w-full px-3 py-3 text-red-600 hover:bg-red-600 hover:text-white cursor-pointer transition-colors text-center"
+																	onClick={() =>
+																		handleRemoveProjectMember(
+																			member
+																		)
+																	}
 																>
 																	Remove
+																	Member
 																</button>
 															</DropdownMenuItem>
 														)}

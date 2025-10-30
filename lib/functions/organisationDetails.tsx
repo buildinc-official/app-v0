@@ -1,10 +1,11 @@
 import {
-	addOrganisationMember,
 	addOrganisationMember_DBONLY,
+	updateOrganisationMember,
 } from "../middleware/organisationMembers";
 import { addRequest, updateRequest } from "../middleware/requests";
 import { useProfileStore } from "../store/profileStore";
-import { IProfile, IProject, IRequest } from "../types";
+import { organisationMemberDB } from "../supabase/db/organisationMemberDB";
+import { IProfile, IProject, IRequest, role } from "../types";
 
 export function organisationDetails(projects: IProject[] | null) {
 	const totalBudget: number =
@@ -70,5 +71,11 @@ export function acceptOrgInvitation(request: IRequest) {
 		status: "Approved",
 		approvedBy: profile.id,
 		approvedAt: new Date(),
+	});
+}
+
+export function changeUserRole(id: string, orgId: string, newRole: string) {
+	updateOrganisationMember(id, orgId, {
+		role: newRole as role,
 	});
 }

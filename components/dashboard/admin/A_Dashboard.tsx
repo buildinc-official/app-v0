@@ -11,7 +11,7 @@ export default function A_Dashboard() {
 				<QuickAction />
 				<div className="grid gap-6 lg:grid-cols-2">
 					<ActiveProjects />
-					<RecentActivity />
+					{/* <RecentActivity /> */}
 				</div>
 			</div>
 		</div>

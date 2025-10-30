@@ -8,6 +8,7 @@ import {
 	getProfileFromStore,
 } from "@/lib/middleware/profiles";
 import { getPhaseTasksFromStore } from "@/lib/middleware/tasks";
+import { usePhaseStore } from "@/lib/store/phaseStore";
 import { useTaskStore } from "@/lib/store/taskStore";
 import { ITask, status, IPhase } from "@/lib/types";
 import {
@@ -20,7 +21,7 @@ import {
 	ChevronDown,
 	ChevronUp,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 
 export const PhaseBoard = ({
 	projectId,
@@ -33,7 +34,12 @@ export const PhaseBoard = ({
 	setIsTaskDetailOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	setSelectedTask: React.Dispatch<React.SetStateAction<ITask | null>>;
 }) => {
-	const phases = getProjectPhasesFromStore(projectId);
+	const allPhases = usePhaseStore((state) => state.phases);
+
+	const phases = useMemo(
+		() => Object.values(allPhases).filter((p) => p.projectId === projectId),
+		[allPhases, projectId]
+	);
 
 	const [expandedPhases, setExpandedPhases] = useState<
 		Record<string, boolean>
@@ -239,8 +245,13 @@ const PhaseCard = ({
 	setIsTaskDetailOpen: React.Dispatch<React.SetStateAction<boolean>>;
 	setSelectedTask: React.Dispatch<React.SetStateAction<ITask | null>>;
 }) => {
-	const phaseTasks = getPhaseTasksFromStore(phase.id);
+	const taskDict = useTaskStore((state) => state.tasks);
 
+	// ✅ Filter *outside* the hook using useMemo
+	const phaseTasks = useMemo(
+		() => Object.values(taskDict).filter((t) => t.phaseId === phase.id),
+		[taskDict, phase.id]
+	);
 	const uniqueKey = `${phase.id}-${status}`;
 	const isExpanded = expandedPhases[uniqueKey] || false;
 	const thisPhaseTasks = phaseTasks.filter((task) => task.status === status);

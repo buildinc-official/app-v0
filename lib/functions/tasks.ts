@@ -15,7 +15,7 @@ export const getProjectNameFromPhaseId = (phaseId: string): string => {
 };
 
 export const getProjectIdFromPhaseId = (phaseId: string): string => {
-	console.log("phaseId", phaseId);
+	// console.log("phaseId", phaseId);
 
 	const phase = getPhaseFromStore(phaseId);
 	if (!phase) return "";

@@ -1,34 +1,5 @@
 Admin: 
-    Header:
-        - chnage the active tab color
-    Home:
-        - make the recent avctivities component
-        - add budget alerts and pending approvals
-        - make quick actions 
-    
-    Organisations:
 
-    OrganisationDetails:
-        - setup settings
-        - setup member dropdown actions
-        
-    Projects:
-        - makee the filter and search functionality
-
-    CreateProject:
-        - save custom tmeplates in DB nad show them when selecting temapltes
-
-    projectDetails:
-        - make the proper task system:
-            + assign task modal
-            + pending tasks section
-            - active tasks section
-            - review tasks section
-            - completed tasks section
-
-        - setup member dropdown actions
-        - make settings tab
-            
     Approvals:
         - make the modal for approved 
         - make the modal for rejected
@@ -38,7 +9,6 @@ Employee:
     Dashboard:
         - make the quick actions
         - make the notifications section
-        - make the assigned projects section
         
     Organisations:
 
@@ -57,7 +27,26 @@ NEXT:
         - color scheme
 
     admin:
+        home:
+            - make the recent avctivities component
         
+        organisations:
+            - make the filter and search functionality
+        
+        organisationDetails:
+            - ensure there is 1 admin when changing roles
+
+        Projects:
+            - makee the filter and search functionality
+
+        CreateProject:
+            - save custom tmeplates in DB nad show them when selecting temapltes
+
+        projectDetails:
+            - ensure there is atleast 1 supervisor when chnaging roles
+            - make settings tab
+
+
         Vendors: 
             - make everything
         

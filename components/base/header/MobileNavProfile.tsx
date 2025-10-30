@@ -28,7 +28,7 @@ const MobileNavProfile = ({ profile }: { profile: IProfile }) => {
 			onOpenChange={setOpen}
 		>
 			<SheetTrigger asChild>
-				<User className="h-4 w-4 text-muted-foreground" />
+				<Settings className="h-8 w-8 rounded-full p-2 text-muted-foreground" />
 			</SheetTrigger>
 
 			<SheetContent
@@ -41,7 +41,7 @@ const MobileNavProfile = ({ profile }: { profile: IProfile }) => {
 
 				<div className="flex flex-col gap-2 mx-3 mb-3">
 					<div className="flex items-center gap-3 mb-4">
-						<div className="bg-muted border-2 border-dashed rounded-full w-10 h-10 flex items-center justify-center">
+						<div className="bg-muted border-2 border-dashed rounded-full w-10 h-10 flex items-center justify-center ">
 							<User className="w-5 h-5 text-muted-foreground" />
 						</div>
 						<div className="flex flex-col">

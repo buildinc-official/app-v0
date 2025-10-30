@@ -25,9 +25,10 @@ export const useRequestStore = create<RequestState>()(
 			setRequests: (requests) => {
 				const requestsObj: Record<string, IRequest> = {};
 				requests.forEach((request) => {
-					request = getDetailsForRequest(request) as IRequest;
 					requestsObj[request.id] = request;
 				});
+				// console.log("Setting requests in store:", requestsObj);
+
 				set({ requests: requestsObj });
 			},
 
@@ -47,10 +48,11 @@ export const useRequestStore = create<RequestState>()(
 			},
 
 			addRequest: (request) => {
+				const completed = getDetailsForRequest(request) as IRequest;
 				set((state) => ({
 					requests: {
 						...state.requests,
-						[request.id]: request,
+						[completed.id]: completed,
 					},
 				}));
 			},

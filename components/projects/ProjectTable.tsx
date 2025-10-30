@@ -60,7 +60,7 @@ const ProjectTable = ({ filteredProjects, admin }: Props) => {
 									Budget
 								</TableHead>
 							)}
-							{admin ?? (
+							{admin && (
 								<TableHead className="min-w-[100px] text-center">
 									Tasks
 								</TableHead>

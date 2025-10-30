@@ -46,6 +46,7 @@ const AssignTaskModal = ({
 		);
 		setIsAssignTaskOpen(false);
 		setSelectedTask(null);
+		// window.location.reload();
 	};
 	return (
 		<Dialog

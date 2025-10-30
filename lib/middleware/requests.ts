@@ -2,6 +2,7 @@
 import { requestDB } from "@/lib/supabase/db/requestDB";
 import { approvalStatus, IRequest, IRequestDB } from "../types";
 import { useRequestStore } from "@/lib/store/requestStore";
+import { getDetailsForRequest } from "../functions/requests";
 
 export async function addRequest(request: IRequest): Promise<IRequest> {
 	try {
@@ -118,9 +119,12 @@ export async function getRequestsByUserId(userId: string): Promise<IRequest[]> {
 
 		// Update store with the requests
 		const store = useRequestStore.getState();
-		store.setRequests(requests);
+		const completedRequests: IRequest[] = requests.map(
+			(request) => getDetailsForRequest(request) as IRequest
+		);
+		store.setRequests(completedRequests);
 
-		return requests as IRequest[];
+		return completedRequests;
 	} catch (error) {
 		console.error("Error getting requests by user ID:", error);
 		throw error;

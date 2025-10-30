@@ -1,11 +1,6 @@
 "use client";
-import { Shield, Crown, ArrowLeft } from "lucide-react";
-import {
-	Tabs,
-	TabsContent,
-	TabsList,
-	TabsTrigger,
-} from "@/components/base/ui/tabs";
+import { ArrowLeft } from "lucide-react";
+import { Tabs, TabsContent } from "@/components/base/ui/tabs";
 import { useOrganisationDetailStore } from "@/lib/store/organisationDetailStore";
 import { Button } from "@/components/base/ui/button";
 import { IOrganisation } from "@/lib/types";
@@ -23,38 +18,18 @@ import OrgMembers from "./OrgMembers";
 import OrgSettings from "./OrgSettings";
 import ProjectTable from "../projects/ProjectTable";
 import { TabsTriggerList } from "@/components/base/general/TabsTriggerList";
-import {
-	getOrganisationMembers,
-	getOrganisationMembersFromStore,
-} from "@/lib/middleware/organisationMembers";
-import {
-	getOrganisationProjects,
-	getOrganisationProjectsFromStore,
-} from "@/lib/middleware/projects";
-
-const getRoleIcon = (role: string) => {
-	switch (role) {
-		case "admin":
-			return <Crown className="h-4 w-4" />;
-		case "project-manager":
-			return <Shield className="h-4 w-4" />;
-		default:
-			return null;
-	}
-};
-
-const getStatusIndicator = (status: string) => {
-	switch (status) {
-		case "online":
-			return <div className="w-2 h-2 bg-green-500 rounded-full" />;
-		case "away":
-			return <div className="w-2 h-2 bg-yellow-500 rounded-full" />;
-		default:
-			return <div className="w-2 h-2 bg-gray-400 rounded-full" />;
-	}
-};
+import { getOrganisationMembersFromStore } from "@/lib/middleware/organisationMembers";
+import { getOrganisationProjectsFromStore } from "@/lib/middleware/projects";
+import ChangeRoleModal from "./ChangeRoleModal";
+import { useState } from "react";
 
 export default function OrganisationDetails() {
+	// Modal state
+	const [changeRoleModal, setChangeRoleModal] = useState(false);
+	const [changeRoleUser, setChangeRoleUser] = useState<string>("");
+	const [changeRole, setChangeRole] = useState<string>("");
+	const [changeRoleId, setChangeRoleId] = useState<string>("");
+
 	const organisation = useOrganisationDetailStore(
 		(state) => state.organisation
 	);
@@ -66,8 +41,9 @@ export default function OrganisationDetails() {
 	if (!organisation) {
 		return <div className="p-4">No organisation selected.</div>;
 	}
+
 	return (
-		<div className="p-2">
+		<div className="p-2 pb-28">
 			<Header organisation={organisation!} />
 			<Summary organisation={organisation!} />
 
@@ -77,22 +53,10 @@ export default function OrganisationDetails() {
 			>
 				<TabsTriggerList
 					triggers={[
-						{
-							value: "overview",
-							label: "Overview",
-						},
-						{
-							value: "projects",
-							label: "Projects",
-						},
-						{
-							value: "members",
-							label: "Members",
-						},
-						{
-							value: "settings",
-							label: "Settings",
-						},
+						{ value: "overview", label: "Overview" },
+						{ value: "projects", label: "Projects" },
+						{ value: "members", label: "Members" },
+						{ value: "settings", label: "Settings" },
 					]}
 				/>
 
@@ -113,7 +77,10 @@ export default function OrganisationDetails() {
 								Organization Projects
 							</h3>
 						</div>
-						<ProjectTable filteredProjects={projects} />
+						<ProjectTable
+							filteredProjects={projects}
+							admin={true}
+						/>
 					</div>
 				</TabsContent>
 
@@ -121,7 +88,13 @@ export default function OrganisationDetails() {
 					value="members"
 					className="space-y-4 mx-1"
 				>
-					<OrgMembers organisation={organisation} />
+					<OrgMembers
+						organisation={organisation}
+						setChangeRole={setChangeRole}
+						setChangeRoleUser={setChangeRoleUser}
+						setChangeRoleModal={setChangeRoleModal}
+						setChangeRoleId={setChangeRoleId}
+					/>
 				</TabsContent>
 
 				<TabsContent
@@ -131,6 +104,15 @@ export default function OrganisationDetails() {
 					<OrgSettings organisation={organisation} />
 				</TabsContent>
 			</Tabs>
+
+			<ChangeRoleModal
+				isOpen={changeRoleModal}
+				onOpenChange={setChangeRoleModal}
+				user={changeRoleUser}
+				originalRole={changeRole}
+				orgId={organisation.id}
+				id={changeRoleId}
+			/>
 		</div>
 	);
 }
@@ -152,7 +134,6 @@ const Header = ({ organisation }: { organisation: IOrganisation }) => {
 				<h2 className="text-3xl font-bold tracking-tight">
 					{organisation?.name}
 				</h2>
-				{/* <p className="text-muted-foreground">{organisation?.desc}</p> */}
 			</div>
 		</div>
 	);
