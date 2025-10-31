@@ -1,3 +1,4 @@
+import { DropResult } from "@hello-pangea/dnd";
 import { addMaterial } from "../middleware/materials";
 import { addPhase } from "../middleware/phases";
 import { addProjectMember } from "../middleware/projectMembers";
@@ -20,7 +21,7 @@ import {
 export const phaseCreationFunctions = () => {
 	// Handle drag and drop for phases
 	const handlePhaseDragEnd = (
-		result: any,
+		result: DropResult<string>,
 		projectData: IProjectCreationData,
 		setProjectData: React.Dispatch<
 			React.SetStateAction<IProjectCreationData>

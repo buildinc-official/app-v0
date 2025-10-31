@@ -54,7 +54,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 	const [startDialogOpen, setStartDialogOpen] = React.useState(false);
 	const [endDialogOpen, setEndDialogOpen] = React.useState(false);
 
-	const handleChange = (field: string, value: any) => {
+	const handleChange = (field: string, value: string | number | Date) => {
 		setProjectData((prev) => ({ ...prev, [field]: value }));
 
 		// Remove error for this field when the user types/selects a valid value

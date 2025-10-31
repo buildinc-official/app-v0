@@ -180,8 +180,8 @@ const TemplateSelectModal = ({
 									</span>
 									<span className="text-slate-500">
 										{template.phases.reduce(
-											(sum: any, p: any) =>
-												sum + p.tasks.length,
+											(sum: number, p: IPhaseTemplate) =>
+												sum + (p.tasks?.length ?? 0),
 											0
 										)}{" "}
 										tasks

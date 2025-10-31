@@ -10,7 +10,7 @@ const TaskMaterials = ({ materials }: { materials: IMaterial[] }) => {
 			className="space-y-4"
 		>
 			<div className="space-y-4">
-				{materials.map((material: any, index: number) => (
+				{materials.map((material: IMaterial, index: number) => (
 					<div
 						key={index}
 						className="border rounded-lg p-4 space-y-3 bg-card/30"

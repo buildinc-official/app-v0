@@ -12,7 +12,13 @@ import { getProjectMembersByProjectIdFromStore } from "@/lib/middleware/projectM
 import { useOrganisationStore } from "@/lib/store/organisationStore";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { useprojectDetailStore } from "@/lib/store/projectDetailStore";
-import { IOrganisation, IProject, IProjectProfile, ITask } from "@/lib/types";
+import {
+	IOrganisation,
+	IProject,
+	IProjectProfile,
+	ITask,
+	status,
+} from "@/lib/types";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
@@ -171,7 +177,14 @@ const Header = ({
 				<h1 className="text-3xl font-bold">{projectData.name}</h1>
 				<Badge
 					variant={
-						(projectData.status?.toLowerCase() as any) ?? "active"
+						projectData.status
+							? (projectData.status.toLowerCase() as
+									| "active"
+									| "reviewing"
+									| "inactive"
+									| "pending"
+									| "completed")
+							: "active"
 					}
 					className={` mb-2 `}
 				>

@@ -10,7 +10,7 @@ import {
 	DialogFooter,
 } from "@/components/base/ui/dialog";
 import { Label } from "@/components/base/ui/label";
-import { ITask } from "@/lib/types";
+import { IMaterial, ITask } from "@/lib/types";
 import { projectDetails } from "@/lib/functions/projectDetails";
 import { getStatusColor } from "@/lib/functions/utils";
 import { Package } from "lucide-react";
@@ -27,7 +27,6 @@ interface TaskDetailModalProps {
 	setIsTaskDetailOpen: Dispatch<SetStateAction<boolean>>;
 	selectedTask: ITask | null;
 	setIsAssignTaskOpen: Dispatch<SetStateAction<boolean>>;
-	// setTasks: any;
 }
 
 const TaskDetailModal = ({
@@ -148,7 +147,10 @@ TaskDetailModalProps) => {
 										)}
 									</div>
 									{materials.map(
-										(material: any, index: number) => (
+										(
+											material: IMaterial,
+											index: number
+										) => (
 											<div
 												key={index}
 												className="grid grid-cols-10 items-center text-sm bg-slate-50 p-3 rounded"

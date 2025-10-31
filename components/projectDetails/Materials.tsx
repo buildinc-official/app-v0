@@ -9,7 +9,7 @@ import {
 import { TabsContent } from "@/components/base/ui/tabs";
 import { getStatusColor } from "@/lib/functions/utils";
 import { getTaskMaterialsFromStore } from "@/lib/middleware/materials";
-import { ITask } from "@/lib/types";
+import { IMaterial, ITask } from "@/lib/types";
 import { Package } from "lucide-react";
 
 export const Materials = ({ tasks }: { tasks: ITask[] }) => {
@@ -61,7 +61,10 @@ export const Materials = ({ tasks }: { tasks: ITask[] }) => {
 									</div>
 									<div className="space-y-2">
 										{materials.map(
-											(material: any, index: number) => (
+											(
+												material: IMaterial,
+												index: number
+											) => (
 												<div
 													key={index}
 													className="flex items-center justify-between text-sm bg-slate-50 p-2 rounded"

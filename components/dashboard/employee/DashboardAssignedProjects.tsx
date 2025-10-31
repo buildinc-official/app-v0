@@ -8,7 +8,7 @@ import {
 	CardContent,
 } from "@/components/base/ui/card";
 import { Progress } from "@radix-ui/react-progress";
-import { Clock, Bell, Users } from "lucide-react";
+import { Clock } from "lucide-react";
 import React from "react";
 
 type Props = {};
@@ -22,7 +22,7 @@ const DashboardAssignedProjects = (props: Props) => {
 					Assigned Projects
 				</CardTitle>
 				<CardDescription>
-					Projects you're currently working on
+					Projects you&apos;re currently working on
 				</CardDescription>
 			</CardHeader>
 			<CardContent className="space-y-4">

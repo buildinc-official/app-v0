@@ -142,8 +142,8 @@ const PhasesTasks = ({
 							{getTotalPhaseBudget(projectData) >
 								projectData.budget && (
 								<div className="mt-2 text-sm text-amber-600">
-									⚠️ Total budget doesn't match project budget
-									($
+									⚠️ Total budget doesn&apos;t match project
+									budget ($
 									{projectData.budget.toLocaleString()})
 								</div>
 							)}

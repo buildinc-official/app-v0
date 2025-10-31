@@ -96,11 +96,12 @@ export async function createProfile(profile: IProfile): Promise<IProfile> {
 export function getProfileFromStore(id: string): IProfile | null {
 	try {
 		if (!id || id === "") return null;
-		// First check if we have it in the store (current user profile)
-		const store = useProfileStore((state) => state.allProfiles);
-		const profile = store.find((p) => p.id === id);
-		if (profile) return profile;
-		return null;
+
+		// ✅ use .getState() instead of calling the hook
+		const profiles = useProfileStore.getState().allProfiles;
+		const profile = profiles.find((p) => p.id === id);
+
+		return profile || null;
 	} catch (error) {
 		console.error("Error getting profile:", error);
 		throw error;

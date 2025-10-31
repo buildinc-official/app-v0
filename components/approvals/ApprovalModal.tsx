@@ -210,7 +210,7 @@ const ApprovalModal = ({
 							<FieldRow label="Add Comment">
 								<Textarea
 									id="approval-comment"
-									placeholder="Add any comments or notes about this approval..."
+									placeholder="Add  comments or notes about this approval..."
 									value={comment}
 									onChange={(e) => setComment(e.target.value)}
 									rows={3}

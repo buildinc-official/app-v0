@@ -15,7 +15,11 @@ import {
 	IndianRupee,
 } from "lucide-react";
 import { taskCreationFunctions } from "@/lib/functions/projectCreation";
-import { Draggable, Droppable } from "@hello-pangea/dnd";
+import {
+	Draggable,
+	DraggableProvidedDragHandleProps,
+	Droppable,
+} from "@hello-pangea/dnd";
 import TaskMaterials from "./TaskMaterials";
 import {
 	IPhaseTemplate,
@@ -95,7 +99,7 @@ const TaskCard = ({
 	task: ITaskTemplate;
 	phaseId: string;
 	setProjectData: React.Dispatch<React.SetStateAction<IProjectCreationData>>;
-	dragHandleProps: any;
+	dragHandleProps: DraggableProvidedDragHandleProps | null;
 }) => {
 	const { updateTask, duplicateTask, removeTask, addTask } =
 		taskCreationFunctions();

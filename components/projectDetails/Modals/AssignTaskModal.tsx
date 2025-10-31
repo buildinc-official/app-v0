@@ -57,7 +57,7 @@ const AssignTaskModal = ({
 				<DialogHeader>
 					<DialogTitle>Assign Task</DialogTitle>
 					<DialogDescription>
-						Assign "{selectedTask?.name}" to a team member
+						Assign &quot;{selectedTask?.name}&quot; to a team member
 					</DialogDescription>
 				</DialogHeader>
 				<div className="space-y-4">

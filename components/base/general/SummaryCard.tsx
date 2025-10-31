@@ -6,7 +6,7 @@ export const SummaryCard = ({
 	icon,
 }: {
 	title: string;
-	content: any;
+	content: number | string | React.ReactNode;
 	icon?: React.ReactNode;
 }) => {
 	return (

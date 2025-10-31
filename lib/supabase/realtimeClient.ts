@@ -23,8 +23,12 @@ const activeChannels: RealtimeChannel[] = [];
 // Utility to create and store channels
 function createChannel(
 	table: string,
+
+	// ANY IS ALLOWED HERE FOR FLEXIBILITY; YOU CAN TYPE IT MORE STRICTLY IF NEEDED
 	onInsert: (record: any) => void,
+	// ANY IS ALLOWED HERE FOR FLEXIBILITY; YOU CAN TYPE IT MORE STRICTLY IF NEEDED
 	onUpdate: (record: any) => void,
+	// ANY IS ALLOWED HERE FOR FLEXIBILITY; YOU CAN TYPE IT MORE STRICTLY IF NEEDED
 	onDelete: (record: any) => void,
 	filter?: string // optional filter clause
 ) {

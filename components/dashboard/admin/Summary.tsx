@@ -29,7 +29,7 @@ const Summary = (props: Props) => {
 			{/* Organisations */}
 			<SummaryCard
 				title="Organisations"
-				content={`${organisations.length}`}
+				content={organisations.length}
 				icon={<Building2 className="h-4 w-4 text-blue-600" />}
 			/>
 			{/* Budget Alerts
@@ -41,7 +41,7 @@ const Summary = (props: Props) => {
 			{/* Pending Approvals */}
 			<SummaryCard
 				title="Pending Approvals"
-				content={`${pendingApprovals.length}`}
+				content={pendingApprovals.length}
 				icon={<CheckSquare className="h-4 w-4 text-green-600" />}
 			/>
 		</div>

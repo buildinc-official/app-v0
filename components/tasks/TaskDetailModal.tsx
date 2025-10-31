@@ -34,7 +34,6 @@ const TaskDetailModal = ({
 	setIsMaterialModalOpen: (open: boolean) => void;
 }) => {
 	const [completionNotes, setCompletionNotes] = useState("");
-	const [materialUsage, setMaterialUsage] = useState<any>({});
 	const materials = getTaskMaterialsFromStore(selectedTask?.id || "");
 	const projectName = getProjectNameFromPhaseId(selectedTask?.phaseId || "");
 
