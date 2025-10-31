@@ -1,11 +1,8 @@
 import { Badge } from "@/components/base/ui/badge";
-import { Button } from "@/components/base/ui/button";
 import { Label } from "@/components/base/ui/label";
 import { TabsContent } from "@/components/base/ui/tabs";
-import { Textarea } from "@/components/base/ui/textarea";
 import { getStatusColor, RupeeIcon } from "@/lib/functions/utils";
 import { ITask } from "@/lib/types";
-import { Banknote, CheckCircle } from "lucide-react";
 import React from "react";
 
 type Props = {};

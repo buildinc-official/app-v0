@@ -1,27 +1,24 @@
+import { TabsTriggerList } from "@/components/base/general/TabsTriggerList";
 import { Button } from "@/components/base/ui/button";
 import {
-	DialogHeader,
-	DialogFooter,
 	Dialog,
 	DialogContent,
 	DialogDescription,
+	DialogFooter,
+	DialogHeader,
 	DialogTitle,
 } from "@/components/base/ui/dialog";
 import { Tabs } from "@/components/base/ui/tabs";
-import { CheckCircle } from "lucide-react";
-import React, { useState } from "react";
-import { getTaskMaterialsFromStore } from "@/lib/middleware/materials";
-import { TabsTriggerList } from "@/components/base/general/TabsTriggerList";
 import {
 	getProjectNameFromPhaseId,
 	handleTaskCompletion,
-	requestMaterial,
-	requestPayment,
 } from "@/lib/functions/tasks";
+import { getTaskMaterialsFromStore } from "@/lib/middleware/materials";
 import { ITask } from "@/lib/types";
+import { CheckCircle } from "lucide-react";
+import { useState } from "react";
 import TaskDetails from "./TaskDetails";
 import TaskMaterials from "./TaskMaterials";
-import { set } from "date-fns";
 
 const TaskDetailModal = ({
 	isTaskDetailOpen,

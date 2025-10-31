@@ -1,32 +1,32 @@
 import { Button } from "@/components/base/ui/button";
 import {
 	Card,
+	CardContent,
+	CardDescription,
 	CardHeader,
 	CardTitle,
-	CardDescription,
-	CardContent,
 } from "@/components/base/ui/card";
 import {
 	DropdownMenu,
-	DropdownMenuTrigger,
 	DropdownMenuContent,
 	DropdownMenuItem,
+	DropdownMenuTrigger,
 } from "@/components/base/ui/dropdown-menu";
 import {
 	Table,
-	TableHeader,
-	TableRow,
-	TableHead,
 	TableBody,
 	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
 } from "@/components/base/ui/table";
 import { TabsContent } from "@/components/base/ui/tabs";
-import { IProjectProfile, IOrganisationProfile } from "@/lib/types";
-import { MoreHorizontal } from "lucide-react";
-import React, { useState } from "react";
-import AddMemberModal from "./Modals/AddMemberModal";
 import { formatDate } from "@/lib/functions/utils";
 import { removeProjectMember } from "@/lib/middleware/projectMembers";
+import { IOrganisationProfile, IProjectProfile } from "@/lib/types";
+import { MoreHorizontal } from "lucide-react";
+import { useState } from "react";
+import AddMemberModal from "./Modals/AddMemberModal";
 
 const PAGE_SIZE = 10;
 

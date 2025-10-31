@@ -1,19 +1,16 @@
 import { Badge } from "@/components/base/ui/badge";
 import {
 	Card,
+	CardContent,
+	CardDescription,
 	CardHeader,
 	CardTitle,
-	CardDescription,
-	CardContent,
 } from "@/components/base/ui/card";
 import { TabsContent } from "@/components/base/ui/tabs";
-import { ITask } from "@/lib/types";
 import { getStatusColor } from "@/lib/functions/utils";
+import { getTaskMaterialsFromStore } from "@/lib/middleware/materials";
+import { ITask } from "@/lib/types";
 import { Package } from "lucide-react";
-import {
-	getTaskMaterials,
-	getTaskMaterialsFromStore,
-} from "@/lib/middleware/materials";
 
 export const Materials = ({ tasks }: { tasks: ITask[] }) => {
 	const tasksWithMaterials = tasks.filter(

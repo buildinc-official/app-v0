@@ -6,14 +6,14 @@ import {
 	cleanupRealtimeListeners,
 } from "@/lib/supabase/realtimeClient";
 import { useProfileStore } from "@/lib/store/profileStore";
-import { IProfile, ITask, status } from "@/lib/types";
+import { IProfile } from "@/lib/types";
 import {
 	getMemberOrganisations,
 	getUserOrganisations,
 } from "@/lib/middleware/organisations";
 import { getOrganisationMembers } from "@/lib/middleware/organisationMembers";
 import { getMemberProjects, getUserProjects } from "@/lib/middleware/projects";
-import { getProjectPhases, updatePhase } from "@/lib/middleware/phases";
+import { getProjectPhases } from "@/lib/middleware/phases";
 import { getPhaseTasks } from "@/lib/middleware/tasks";
 import { getTaskMaterials } from "@/lib/middleware/materials";
 import { getProjectMembersByProjectId } from "@/lib/middleware/projectMembers";
@@ -21,12 +21,9 @@ import { getRequestsByUserId } from "@/lib/middleware/requests";
 import { useOrganisationStore } from "@/lib/store/organisationStore";
 import { useProjectStore } from "@/lib/store/projectStore";
 import { usePhaseStore } from "@/lib/store/phaseStore";
-import { useTaskStore } from "@/lib/store/taskStore";
 import { projectDetails } from "@/lib/functions/projectDetails";
 import { getAllProfiles } from "@/lib/middleware/profiles";
-import { createClient } from "@/lib/supabase/client";
 import { recomputePhaseAndProjectProgress } from "@/lib/functions/base";
-const supabase = createClient();
 export const StoreHydrator = ({ profile }: { profile: IProfile | null }) => {
 	const { setProfile } = useProfileStore();
 	const { getPhaseStatus } = projectDetails();

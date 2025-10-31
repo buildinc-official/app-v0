@@ -1,10 +1,7 @@
-import { Button } from "@/components/base/ui/button";
 import { Label } from "@/components/base/ui/label";
 import { TabsContent } from "@/components/base/ui/tabs";
-import { Package } from "lucide-react";
-import React from "react";
-import { IMaterial, ITask } from "@/lib/types";
 import { RupeeIcon } from "@/lib/functions/utils";
+import { IMaterial } from "@/lib/types";
 
 const TaskMaterials = ({ materials }: { materials: IMaterial[] }) => {
 	return (

@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
-import { Comfortaa, Geist, Nunito, Quicksand } from "next/font/google";
+import { Comfortaa, Nunito, Quicksand } from "next/font/google";
 import "./globals.css";
-import { AppLayout } from "@/components/base/layout/AppLayout";
 import { Toaster } from "sonner";
 import AsyncAppLayout from "@/components/base/layout/AsyncAppLayout";
 
@@ -22,24 +21,24 @@ export const metadata: Metadata = {
 // 	subsets: ["latin"],
 // });
 
-const comfortaa = Comfortaa({
-	variable: "--font-comfortaa",
-	display: "swap",
-	subsets: ["latin"],
-	weight: ["700", "700"],
-});
-const nunito = Nunito({
-	variable: "--font-nunito",
-	display: "swap",
-	subsets: ["latin"],
-});
+// const comfortaa = Comfortaa({
+// 	variable: "--font-comfortaa",
+// 	display: "swap",
+// 	subsets: ["latin"],
+// 	weight: ["700", "700"],
+// });
+// const nunito = Nunito({
+// 	variable: "--font-nunito",
+// 	display: "swap",
+// 	subsets: ["latin"],
+// });
 
-const quicksand = Quicksand({
-	variable: "--font-quicksand",
-	display: "swap",
-	subsets: ["latin"],
-	weight: ["400", "500", "600", "700"],
-});
+// const quicksand = Quicksand({
+// 	variable: "--font-quicksand",
+// 	display: "swap",
+// 	subsets: ["latin"],
+// 	weight: ["400", "500", "600", "700"],
+// });
 
 export default function RootLayout({
 	children,

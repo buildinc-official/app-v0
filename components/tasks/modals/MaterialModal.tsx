@@ -1,23 +1,14 @@
 import { Button } from "@/components/base/ui/button";
 import {
-	DialogHeader,
-	DialogFooter,
 	Dialog,
 	DialogContent,
 	DialogDescription,
+	DialogFooter,
+	DialogHeader,
 	DialogTitle,
 } from "@/components/base/ui/dialog";
-import React, { useState, useEffect, use } from "react";
-import {
-	getProjectIdFromPhaseId,
-	getProjectNameFromPhaseId,
-	requestMaterial,
-} from "@/lib/functions/tasks";
-import { ITask } from "@/lib/types";
 import { Input } from "@/components/base/ui/input";
-import { Textarea } from "@/components/base/ui/textarea";
 import { Label } from "@/components/base/ui/label";
-import { RupeeIcon } from "@/lib/functions/utils";
 import {
 	Select,
 	SelectContent,
@@ -25,8 +16,17 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/base/ui/select";
-import { getTaskMaterialsFromStore } from "@/lib/middleware/materials";
+import { Textarea } from "@/components/base/ui/textarea";
 import { availableMaterials } from "@/lib/constants/materials";
+import {
+	getProjectIdFromPhaseId,
+	getProjectNameFromPhaseId,
+	requestMaterial,
+} from "@/lib/functions/tasks";
+import { RupeeIcon } from "@/lib/functions/utils";
+import { getTaskMaterialsFromStore } from "@/lib/middleware/materials";
+import { ITask } from "@/lib/types";
+import { useEffect, useState } from "react";
 
 const MaterialModal = ({
 	isMaterialModalOpen,

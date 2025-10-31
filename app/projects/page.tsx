@@ -4,7 +4,7 @@ import LoadingSpinner from "@/components/base/layout/LoadingSpinner";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { useProjectStore } from "@/lib/store/projectStore";
 import { useRequestStore } from "@/lib/store/requestStore";
-export default function page() {
+export default function Page() {
 	const profile = useProfileStore((state) => state.profile);
 
 	const { projects } = useProjectStore();

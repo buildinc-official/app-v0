@@ -1,9 +1,9 @@
 import {
 	Card,
+	CardContent,
+	CardDescription,
 	CardHeader,
 	CardTitle,
-	CardDescription,
-	CardContent,
 } from "@/components/base/ui/card";
 import {
 	Table,
@@ -13,9 +13,8 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/base/ui/table";
-import { IProject } from "@/lib/types";
-import React from "react";
 import { RupeeIcon } from "@/lib/functions/utils";
+import { IProject } from "@/lib/types";
 import { useRouter } from "next/navigation";
 
 type Props = {

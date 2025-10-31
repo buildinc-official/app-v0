@@ -1,12 +1,12 @@
 "use client";
-import React, { useState } from "react";
-import { CheckSquare, AlertCircle, User } from "lucide-react";
+import { SummaryCard } from "@/components/base/general/SummaryCard";
+import { ITask } from "@/lib/types";
+import { AlertCircle, CheckSquare, User } from "lucide-react";
+import { useState } from "react";
+import MaterialModal from "./modals/MaterialModal";
+import PaymentModal from "./modals/PaymentModal";
 import TaskDetailModal from "./TaskDetailModal";
 import TaskTable from "./TaskTable";
-import { ITask } from "@/lib/types";
-import { SummaryCard } from "@/components/base/general/SummaryCard";
-import PaymentModal from "./modals/PaymentModal";
-import MaterialModal from "./modals/MaterialModal";
 
 export default function Tasks({ tasks }: { tasks: ITask[] }) {
 	const [selectedTask, setSelectedTask] = useState<ITask | undefined>(

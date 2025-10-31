@@ -3,7 +3,6 @@ import Link from "next/link";
 import SideBarItems from "./SideBarItems";
 import { IProfile } from "@/lib/types";
 import { LogOutIcon, User } from "lucide-react";
-import { Button } from "../ui/button";
 import { logout } from "./UserDropdown";
 
 const SideBar = ({ profile }: { profile: IProfile | null }) => {

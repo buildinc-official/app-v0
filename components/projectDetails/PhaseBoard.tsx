@@ -2,24 +2,19 @@ import { Avatar, AvatarFallback } from "@/components/base/ui/avatar";
 import { Badge } from "@/components/base/ui/badge";
 import { TabsContent } from "@/components/base/ui/tabs";
 import { getTaskMaterialsFromStore } from "@/lib/middleware/materials";
-import { getProjectPhasesFromStore } from "@/lib/middleware/phases";
-import {
-	getAllProfilesFromStore,
-	getProfileFromStore,
-} from "@/lib/middleware/profiles";
-import { getPhaseTasksFromStore } from "@/lib/middleware/tasks";
+import { getAllProfilesFromStore } from "@/lib/middleware/profiles";
 import { usePhaseStore } from "@/lib/store/phaseStore";
 import { useTaskStore } from "@/lib/store/taskStore";
-import { ITask, status, IPhase } from "@/lib/types";
+import { IPhase, ITask, status } from "@/lib/types";
 import {
-	Clock,
-	CheckCircle,
 	Calendar,
-	Package,
-	Loader,
-	WatchIcon,
+	CheckCircle,
 	ChevronDown,
 	ChevronUp,
+	Clock,
+	Loader,
+	Package,
+	WatchIcon,
 } from "lucide-react";
 import React, { useMemo, useState } from "react";
 

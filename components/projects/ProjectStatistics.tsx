@@ -1,12 +1,5 @@
 import { SummaryCard } from "@/components/base/general/SummaryCard";
-import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from "@/components/base/ui/card";
-import { Building2, CheckCircle, DollarSign, Package } from "lucide-react";
-import React from "react";
+import { Building2, CheckCircle, DollarSign } from "lucide-react";
 
 type Props = {
 	totalProjects: number;

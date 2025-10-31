@@ -1,22 +1,18 @@
-import { IRequest } from "@/lib/types";
-import React from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "../base/ui/card";
-import {
-	Table,
-	TableHeader,
-	TableRow,
-	TableHead,
-	TableBody,
-	TableCell,
-} from "../base/ui/table";
+import { refuseInvitation } from "@/lib/functions/organisationDetails";
+import { acceptProjectInvitation } from "@/lib/functions/projectDetails";
 import { getAllProfilesFromStore } from "@/lib/middleware/profiles";
+import { IRequest } from "@/lib/types";
 import { Check } from "lucide-react";
 import { Button } from "../base/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "../base/ui/card";
 import {
-	acceptOrgInvitation,
-	refuseInvitation,
-} from "@/lib/functions/organisationDetails";
-import { acceptProjectInvitation } from "@/lib/functions/projectDetails";
+	Table,
+	TableBody,
+	TableCell,
+	TableHead,
+	TableHeader,
+	TableRow,
+} from "../base/ui/table";
 
 const ProjectMemberRequests = ({ requests }: { requests: IRequest[] }) => {
 	const ProjectMemberRequests = requests.filter(

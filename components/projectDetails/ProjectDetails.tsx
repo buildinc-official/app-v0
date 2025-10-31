@@ -1,27 +1,27 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
-import { Tabs } from "@/components/base/ui/tabs";
-import LoadingSpinner from "@/components/base/layout/LoadingSpinner";
-import { Button } from "@/components/base/ui/button";
-import { Badge } from "@/components/base/ui/badge";
-import { PhaseBoard } from "./PhaseBoard";
-import { Overview } from "./Overview";
-import { Members } from "./Members";
-import TaskDetailModal from "./Modals/TaskDetailModal";
-import AssignTaskModal from "./Modals/AssignTaskModal";
-import { IOrganisation, IProject, IProjectProfile, ITask } from "@/lib/types";
-import { RupeeIcon } from "@/lib/functions/utils";
-import { useprojectDetailStore } from "@/lib/store/projectDetailStore";
-import { TabsTriggerList } from "@/components/base/general/TabsTriggerList";
 import { SummaryCard } from "@/components/base/general/SummaryCard";
-import { useProfileStore } from "@/lib/store/profileStore";
+import { TabsTriggerList } from "@/components/base/general/TabsTriggerList";
+import LoadingSpinner from "@/components/base/layout/LoadingSpinner";
+import { Badge } from "@/components/base/ui/badge";
+import { Button } from "@/components/base/ui/button";
+import { Tabs } from "@/components/base/ui/tabs";
+import { RupeeIcon } from "@/lib/functions/utils";
+import { getOrganisationMembersFromStore } from "@/lib/middleware/organisationMembers";
 import { getProjectMembersByProjectIdFromStore } from "@/lib/middleware/projectMembers";
 import { useOrganisationStore } from "@/lib/store/organisationStore";
-import { getOrganisationMembersFromStore } from "@/lib/middleware/organisationMembers";
+import { useProfileStore } from "@/lib/store/profileStore";
+import { useprojectDetailStore } from "@/lib/store/projectDetailStore";
+import { IOrganisation, IProject, IProjectProfile, ITask } from "@/lib/types";
+import { ArrowLeft } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
+import { Members } from "./Members";
+import AssignTaskModal from "./Modals/AssignTaskModal";
 import ChangeRoleModal from "./Modals/ChangeUserModal";
+import TaskDetailModal from "./Modals/TaskDetailModal";
+import { Overview } from "./Overview";
+import { PhaseBoard } from "./PhaseBoard";
 
 export default function ProjectDetails() {
 	if (

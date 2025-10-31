@@ -3,14 +3,14 @@ import { Button } from "@/components/base/ui/button";
 import {
 	Dialog,
 	DialogContent,
-	DialogHeader,
-	DialogTitle,
 	DialogDescription,
 	DialogFooter,
+	DialogHeader,
+	DialogTitle,
 } from "@/components/base/ui/dialog";
-import { IProjectProfile, IProject, ITask, IPhase } from "@/lib/types";
 import { projectDetails } from "@/lib/functions/projectDetails";
-import React, { Dispatch, SetStateAction } from "react";
+import { IProject, IProjectProfile, ITask } from "@/lib/types";
+import { Dispatch, SetStateAction } from "react";
 
 type Props = {
 	isAssignTaskOpen: boolean;

@@ -20,7 +20,6 @@ import {
 import { getStatusColor, RupeeIcon } from "@/lib/functions/utils";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { IProfile, IRequest } from "@/lib/types";
-import { profile } from "console";
 import { XCircle, CheckCircle } from "lucide-react";
 import React from "react";
 

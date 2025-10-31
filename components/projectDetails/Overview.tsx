@@ -1,18 +1,14 @@
 import {
 	Card,
+	CardContent,
 	CardHeader,
 	CardTitle,
-	CardContent,
 } from "@/components/base/ui/card";
 import { Label } from "@/components/base/ui/label";
 import { Progress } from "@/components/base/ui/progress";
 import { TabsContent } from "@/components/base/ui/tabs";
-import {
-	getProjectMembersByProjectId,
-	getProjectMembersByProjectIdFromStore,
-} from "@/lib/middleware/projectMembers";
+import { getProjectMembersByProjectIdFromStore } from "@/lib/middleware/projectMembers";
 import { IProject } from "@/lib/types";
-import React from "react";
 
 export const Overview = ({ projectData }: { projectData: IProject }) => {
 	// Find the supervisor and get their name
