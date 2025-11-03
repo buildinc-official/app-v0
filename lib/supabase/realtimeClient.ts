@@ -13,6 +13,7 @@ import { useOrganisationMemberStore } from "@/lib/store/organisationMemberStore"
 import { useProjectMemberStore } from "@/lib/store/projectMemberStore";
 import { profileDB } from "@/lib/supabase/db/profileDB";
 import { recomputePhaseAndProjectProgress } from "../functions/base";
+import { useProjectTemplateStore } from "../store/projectTemplateStore";
 
 // Create a single client instance for realtime
 const supabase = createClient();
@@ -138,6 +139,23 @@ export function initRealtimeListeners(profile: {
 			useRequestStore.getState().updateRequest?.(request.id, request),
 		(request) => useRequestStore.getState().deleteRequest?.(request.id),
 		`requestedBy=eq.${profile.id}`
+	);
+
+	// Project Templates
+	createChannel(
+		"project_templates",
+		(projectTemplate) =>
+			useProjectTemplateStore
+				.getState()
+				.addProjectTemplate?.(projectTemplate),
+		(projectTemplate) =>
+			useProjectTemplateStore
+				.getState()
+				.updateProjectTemplate?.(projectTemplate.id, projectTemplate),
+		(projectTemplate) =>
+			useProjectTemplateStore
+				.getState()
+				.deleteProjectTemplate?.(projectTemplate.id)
 	);
 
 	// 🧩 Organisation Members

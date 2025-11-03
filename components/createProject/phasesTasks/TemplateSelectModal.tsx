@@ -15,7 +15,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/base/ui/dialog";
-import { defaultTemplates } from "@/lib/constants/project-templates";
+// import { defaultTemplates } from "@/lib/constants/project-templates";
 import {
 	IPhaseTemplate,
 	IProjectCreationData,
@@ -25,6 +25,7 @@ import { getEstimatedDuration } from "@/lib/functions/utils";
 import { randomUUID } from "crypto";
 import { Layers, User, Plus } from "lucide-react";
 import React, { useState } from "react";
+import { useProjectTemplateStore } from "@/lib/store/projectTemplateStore";
 
 const TemplateSelectModal = ({
 	projectData,
@@ -35,6 +36,9 @@ const TemplateSelectModal = ({
 	setProjectData: React.Dispatch<React.SetStateAction<IProjectCreationData>>;
 	customTemplates: IProjectTemplate[];
 }) => {
+	const defaultTemplates: IProjectTemplate[] = Object.values(
+		useProjectTemplateStore.getState().projectTemplates
+	);
 	const [selectedTemplate, setSelectedTemplate] =
 		useState<IProjectTemplate | null>(null);
 	const [isTemplateDialogOpen, setIsTemplateDialogOpen] = useState(false);

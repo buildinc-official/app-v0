@@ -132,6 +132,14 @@ export interface IMaterialDB {
 	wasteQuantity: number;
 }
 
+export interface IProjectTemplateDB {
+	id: string;
+	created_at: Date;
+	name: string;
+	owner: string;
+	data: json;
+}
+
 // 1.3 Tertiary, tables that link different tables
 
 export interface IOrganisationMemberDB {

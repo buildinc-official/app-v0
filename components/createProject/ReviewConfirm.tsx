@@ -14,7 +14,11 @@ import { Input } from "@/components/base/ui/input";
 import { Label } from "@/components/base/ui/label";
 import { Textarea } from "@/components/base/ui/textarea";
 
-import { IOrganisation, IProjectCreationData } from "@/lib/types";
+import {
+	IOrganisation,
+	IProjectCreationData,
+	IProjectTemplate,
+} from "@/lib/types";
 import { getEstimatedDuration, RupeeIcon } from "@/lib/functions/utils";
 import { Eye, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -22,6 +26,7 @@ import React, { useState } from "react";
 import { saveProjectToDB } from "@/lib/functions/projectCreation";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingSpinner from "../base/layout/LoadingSpinner";
+import { addProjectTemplate } from "@/lib/middleware/projectTemplates";
 
 const ReviewConfirm = ({
 	projectData,
@@ -41,6 +46,22 @@ const ReviewConfirm = ({
 		"Preparing project..."
 	);
 
+	const [newProjectTemplateName, setNewProjectTemplateName] =
+		React.useState("");
+	const [newProjectTemplateDescription, setNewProjectTemplateDescription] =
+		React.useState("");
+	// // console.log("projectData in ReviewConfirm:", projectData);
+	const newProjectTemplate: IProjectTemplate = {
+		id: crypto.randomUUID(),
+		name: newProjectTemplateName,
+		description: newProjectTemplateDescription,
+		owner: projectData.owner,
+		phases: projectData.phases,
+		budget: projectData.budget,
+		location: projectData.location,
+		category: projectData.category,
+	};
+
 	const saveProject = async () => {
 		setIsSaving(true);
 		setProgress(5);
@@ -55,6 +76,9 @@ const ReviewConfirm = ({
 					setProgress(pct);
 				}
 			);
+			if (projectData.saveAsTemplate) {
+				await addProjectTemplate(newProjectTemplate);
+			}
 
 			// reset local data
 			setProjectData((prev) => ({
@@ -288,13 +312,11 @@ const ReviewConfirm = ({
 											<Input
 												placeholder="Enter template name"
 												className="bg-white"
-												value={projectData.templateName}
+												value={newProjectTemplateName}
 												onChange={(e) =>
-													setProjectData((prev) => ({
-														...prev,
-														templateName:
-															e.target.value,
-													}))
+													setNewProjectTemplateName(
+														e.target.value
+													)
 												}
 											/>
 										</div>
@@ -307,14 +329,12 @@ const ReviewConfirm = ({
 												placeholder="Describe this template..."
 												rows={2}
 												value={
-													projectData.templateDescription
+													newProjectTemplateDescription
 												}
 												onChange={(e) =>
-													setProjectData((prev) => ({
-														...prev,
-														templateDescription:
-															e.target.value,
-													}))
+													setNewProjectTemplateDescription(
+														e.target.value
+													)
 												}
 											/>
 										</div>
