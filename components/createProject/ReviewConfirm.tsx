@@ -1,3 +1,5 @@
+"use client";
+
 import { Badge } from "@/components/base/ui/badge";
 import { Button } from "@/components/base/ui/button";
 import {
@@ -11,17 +13,15 @@ import { Checkbox } from "@/components/base/ui/checkbox";
 import { Input } from "@/components/base/ui/input";
 import { Label } from "@/components/base/ui/label";
 import { Textarea } from "@/components/base/ui/textarea";
-import {
-	IOrganisation,
-	IProjectCreationData,
-	IProjectMemberDB,
-	IProjectProfile,
-} from "@/lib/types";
+
+import { IOrganisation, IProjectCreationData } from "@/lib/types";
 import { getEstimatedDuration, RupeeIcon } from "@/lib/functions/utils";
 import { Eye, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React from "react";
+import React, { useState } from "react";
 import { saveProjectToDB } from "@/lib/functions/projectCreation";
+import { motion, AnimatePresence } from "framer-motion";
+import LoadingSpinner from "../base/layout/LoadingSpinner";
 
 const ReviewConfirm = ({
 	projectData,
@@ -35,14 +35,30 @@ const ReviewConfirm = ({
 	selectedOrganisation: IOrganisation | undefined;
 }) => {
 	const router = useRouter();
-	// // console.log("projectData in ReviewConfirm:", projectData);
+	const [isSaving, setIsSaving] = useState(false);
+	const [progress, setProgress] = useState(0);
+	const [progressMessage, setProgressMessage] = useState(
+		"Preparing project..."
+	);
 
-	const saveProject = () => {
+	const saveProject = async () => {
+		setIsSaving(true);
+		setProgress(5);
+		setProgressMessage("Starting project creation...");
+
 		try {
-			saveProjectToDB(projectData, organisation as IOrganisation);
+			await saveProjectToDB(
+				projectData,
+				organisation as IOrganisation,
+				(msg, pct) => {
+					setProgressMessage(msg);
+					setProgress(pct);
+				}
+			);
+
+			// reset local data
 			setProjectData((prev) => ({
 				...prev,
-				// Reset to initial state after saving
 				name: "",
 				description: "",
 				budget: 0,
@@ -56,14 +72,17 @@ const ReviewConfirm = ({
 				templateName: "",
 				templateDescription: "",
 			}));
+
+			setProgressMessage("Redirecting...");
+			setProgress(100);
+			setTimeout(() => router.push("/projects"), 800);
 		} catch (error) {
 			console.error("Error saving project:", error);
-		} finally {
-			router.push("/projects");
+			alert("Failed to create project. Please try again.");
+			setIsSaving(false);
 		}
 	};
 
-	// Calculate estimated cost from all phases
 	const estimatedCost = projectData.phases.reduce(
 		(sum, phase) => sum + (phase.budget || 0),
 		0
@@ -75,7 +94,43 @@ const ReviewConfirm = ({
 	);
 
 	return (
-		<div className="space-y-6">
+		<div className="space-y-6 relative">
+			{/* 🪄 Animated modal-style progress overlay */}
+			<AnimatePresence>
+				{isSaving && (
+					<motion.div
+						className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+					>
+						<motion.div
+							initial={{ scale: 0.9, opacity: 0 }}
+							animate={{ scale: 1, opacity: 1 }}
+							exit={{ scale: 0.9, opacity: 0 }}
+							className="bg-white rounded-2xl shadow-2xl w-[90%] max-w-md p-8 flex flex-col items-center justify-center text-center border border-gray-100"
+						>
+							<LoadingSpinner />
+							<p className="mt-4 text-base font-medium text-gray-800">
+								{progressMessage}
+							</p>
+							<div className="w-full h-2 mt-6 bg-gray-200 rounded-full overflow-hidden">
+								<motion.div
+									className="h-full bg-blue-600 rounded-full"
+									initial={{ width: "0%" }}
+									animate={{ width: `${progress}%` }}
+									transition={{ duration: 0.3 }}
+								/>
+							</div>
+							<p className="mt-2 text-xs text-gray-500">
+								{Math.floor(progress)}%
+							</p>
+						</motion.div>
+					</motion.div>
+				)}
+			</AnimatePresence>
+
+			{/* 🧾 Main review content */}
 			<Card className="shadow-sm">
 				<CardHeader>
 					<CardTitle className="flex items-center gap-2">
@@ -86,32 +141,33 @@ const ReviewConfirm = ({
 						Review your project details before creating
 					</CardDescription>
 				</CardHeader>
+
 				<CardContent className="space-y-6">
-					{/* Row 1: Project + Organisation */}
+					{/* Project + Organisation */}
 					<div className="grid md:grid-cols-2 gap-6">
 						<div>
 							<Label className="text-sm font-bold text-muted-foreground">
 								Project Name
 							</Label>
-							<p className="text-lg ">{projectData.name}</p>
+							<p className="text-lg">{projectData.name}</p>
 						</div>
 						<div>
 							<Label className="text-sm font-bold text-muted-foreground">
 								Organization
 							</Label>
-							<p className="text-lg ">
+							<p className="text-lg">
 								{selectedOrganisation?.name}
 							</p>
 						</div>
 					</div>
 
-					{/* Row 2: Budget + Estimated Cost */}
+					{/* Budget + Estimated Cost */}
 					<div className="grid md:grid-cols-2 gap-6">
 						<div>
 							<Label className="text-sm font-bold text-muted-foreground">
 								Budget
 							</Label>
-							<p className="text-lg  ">
+							<p className="text-lg">
 								{projectData.budget.toLocaleString("en-IN")}{" "}
 								<RupeeIcon />
 							</p>
@@ -120,14 +176,14 @@ const ReviewConfirm = ({
 							<Label className="text-sm font-bold text-muted-foreground">
 								Estimated Cost
 							</Label>
-							<p className="text-lg  ">
-								{estimatedCost.toLocaleString("en-IN")}
+							<p className="text-lg">
+								{estimatedCost.toLocaleString("en-IN")}{" "}
 								<RupeeIcon />
 							</p>
 						</div>
 					</div>
 
-					{/* Row 3: Supervisor + Duration */}
+					{/* Supervisor + Duration */}
 					<div className="grid md:grid-cols-2 gap-6">
 						<div>
 							<Label className="text-sm font-bold text-muted-foreground">
@@ -146,7 +202,7 @@ const ReviewConfirm = ({
 									? "Not specified"
 									: duration === 1
 									? "1 day"
-									: duration + " Days"}
+									: `${duration} days`}
 							</p>
 						</div>
 					</div>
@@ -172,7 +228,7 @@ const ReviewConfirm = ({
 						</div>
 					)}
 
-					{/* Phases Summary (names only) */}
+					{/* Phases */}
 					<div>
 						<Label className="text-sm font-bold text-muted-foreground mb-3 block">
 							Project Phases ({projectData.phases.length})
@@ -200,7 +256,7 @@ const ReviewConfirm = ({
 						</div>
 					</div>
 
-					{/* Save as Template Option */}
+					{/* Template Option */}
 					<div className="p-4 border rounded-lg bg-white/50">
 						<div className="flex items-start space-x-3">
 							<Checkbox
@@ -217,7 +273,7 @@ const ReviewConfirm = ({
 							<div className="flex-1">
 								<Label
 									htmlFor="save-template"
-									className="font-medium t"
+									className="font-medium"
 								>
 									Save this project structure as a template
 									for future projects?
@@ -267,13 +323,25 @@ const ReviewConfirm = ({
 							</div>
 						</div>
 					</div>
+
+					{/* Submit Button */}
 					<Button
 						onClick={saveProject}
-						variant={"secondary"}
+						variant="secondary"
 						className="w-full"
+						disabled={isSaving}
 					>
-						<Save className="mr-2 h-4 w-4" />
-						Create Project
+						{isSaving ? (
+							<>
+								<LoadingSpinner />
+								<span className="ml-2">Saving...</span>
+							</>
+						) : (
+							<>
+								<Save className="mr-2 h-4 w-4" />
+								Create Project
+							</>
+						)}
 					</Button>
 				</CardContent>
 			</Card>

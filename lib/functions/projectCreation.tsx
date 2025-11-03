@@ -384,93 +384,139 @@ export const materialCreationFunctions = () => {
 
 export const saveProjectToDB = async (
 	projectData: IProjectCreationData,
-	organisation: IOrganisation
+	organisation: IOrganisation,
+	onProgress?: (message: string, progress: number) => void
 ): Promise<void> => {
-	// adding project to DB
-	const createdProject = await addProject(projectData);
+	try {
+		onProgress?.("Creating project...", 10);
+		const createdProject = await addProject(projectData);
 
-	// addings projectData to DB
-	projectData.phases.forEach(async (phase) => {
-		// adding phase to DB
-		const createdPhase = await addPhase({
-			...phase,
-			projectId: createdProject.id,
-			created_at: new Date(),
-			status: ["Inactive"],
-			order: projectData.phases.findIndex((p) => p.id === phase.id) + 1,
-			totalTasks: 0,
-			completedTasks: 0,
-			taskIds: [],
-			spent: 0,
-		});
+		const totalPhases = projectData.phases.length || 1;
+		let completedPhases = 0;
 
-		// adding tasks to DB
-		phase.tasks.forEach(async (task) => {
-			const createdTask = await addTask({
-				phaseId: createdPhase.id,
-				id: crypto.randomUUID(),
-				created_at: new Date(),
-				assignedTo: null,
-				status: "Inactive",
-				spent: 0,
-				startDate: null,
-				endDate: null,
-				completedDate: null,
-				approvedBy: null,
-				order: phase.tasks.findIndex((t) => t.id === task.id) + 1,
-				name: task.name,
-				description: task.description,
-				plannedBudget: task.plannedBudget || 0,
-				estimatedDuration: task.estimatedDuration || 0,
-				materialIds: [],
-				completionNotes: "",
-				rejectionReason: "",
-				paymentCompleted: false,
-				materialsCompleted: task.materials.length === 0 ? true : false,
-				projectId: createdProject.id,
-				projectName: createdProject.name,
-			});
+		// ✅ Phases in parallel
+		await Promise.all(
+			projectData.phases.map(async (phase, phaseIndex) => {
+				onProgress?.(
+					`Adding Phase ${phaseIndex + 1} of ${totalPhases}...`,
+					15 + (phaseIndex / totalPhases) * 50
+				);
 
-			task.materials.forEach(async (material) => {
-				// adding materials to DB
-				await addMaterial({
-					id: crypto.randomUUID(),
-					taskId: createdTask.id,
-					name: material.name ?? "",
-					plannedQuantity: material.plannedQuantity ?? 0,
-					unitCost: material.unitCost ?? 0,
-					materialId: material.materialId ?? "",
-					usedQuantity: 0,
-					unit: material.unit || "",
-					requested: false,
-					approved: false,
-					deliveredQuantity: 0,
-					wasteQuantity: 0,
+				const createdPhase = await addPhase({
+					...phase,
+					projectId: createdProject.id,
+					created_at: new Date(),
+					status: ["Inactive"],
+					order: phaseIndex + 1,
+					totalTasks: 0,
+					completedTasks: 0,
+					taskIds: [],
+					spent: 0,
 				});
-			});
-		});
-	});
 
-	// adding supervisor as a project member
-	await addProjectMember({
-		id: crypto.randomUUID(),
-		joinedAt: new Date(),
-		projectId: createdProject.id, // use the id returned from DB
-		userId: projectData.supervisor,
-		role: "Supervisor",
-	});
+				const totalTasks = phase.tasks.length || 1;
 
-	// adding all organisation members as project members except supervisor
-	organisation &&
-		organisation.memberIds?.forEach(async (member) => {
-			if (member === projectData.supervisor) return;
-			const newProjectMember: IProjectMemberDB = {
+				await Promise.all(
+					phase.tasks.map(async (task, taskIndex) => {
+						onProgress?.(
+							`Adding tasks for ${phase.name} (${
+								taskIndex + 1
+							}/${totalTasks})...`,
+							30 + (taskIndex / totalTasks) * 40
+						);
+
+						const createdTask = await addTask({
+							phaseId: createdPhase.id,
+							id: crypto.randomUUID(),
+							created_at: new Date(),
+							assignedTo: null,
+							status: "Inactive",
+							spent: 0,
+							startDate: null,
+							endDate: null,
+							completedDate: null,
+							approvedBy: null,
+							order: taskIndex + 1,
+							name: task.name,
+							description: task.description,
+							plannedBudget: task.plannedBudget || 0,
+							estimatedDuration: task.estimatedDuration || 0,
+							materialIds: [],
+							completionNotes: "",
+							rejectionReason: "",
+							paymentCompleted: false,
+							materialsCompleted: task.materials.length === 0,
+							projectId: createdProject.id,
+							projectName: createdProject.name,
+						});
+
+						if (task.materials.length > 0) {
+							await Promise.all(
+								task.materials.map(async (material) => {
+									await addMaterial({
+										id: crypto.randomUUID(),
+										taskId: createdTask.id,
+										name: material.name ?? "",
+										plannedQuantity:
+											material.plannedQuantity ?? 0,
+										unitCost: material.unitCost ?? 0,
+										materialId: material.materialId ?? "",
+										usedQuantity: 0,
+										unit: material.unit || "",
+										requested: false,
+										approved: false,
+										deliveredQuantity: 0,
+										wasteQuantity: 0,
+									});
+								})
+							);
+						}
+					})
+				);
+
+				completedPhases++;
+				onProgress?.(
+					`Phase ${phase.name} created (${completedPhases}/${totalPhases})`,
+					60 + (completedPhases / totalPhases) * 20
+				);
+			})
+		);
+
+		onProgress?.("Adding project members...", 85);
+
+		if (projectData.supervisor) {
+			await addProjectMember({
 				id: crypto.randomUUID(),
 				joinedAt: new Date(),
 				projectId: createdProject.id,
-				userId: member,
+				userId: projectData.supervisor,
 				role: "Supervisor",
-			};
-			await addProjectMember(newProjectMember);
-		});
+			});
+		}
+
+		if (organisation?.memberIds?.length) {
+			await Promise.all(
+				organisation.memberIds
+					.filter((m) => m !== projectData.supervisor)
+					.map(async (member) => {
+						const newProjectMember: IProjectMemberDB = {
+							id: crypto.randomUUID(),
+							joinedAt: new Date(),
+							projectId: createdProject.id,
+							userId: member,
+							role: "Employee",
+						};
+						await addProjectMember(newProjectMember);
+					})
+			);
+		}
+
+		onProgress?.("Finalizing project setup...", 95);
+		await new Promise((r) => setTimeout(r, 300)); // small UX delay
+
+		onProgress?.("Project created successfully!", 100);
+	} catch (error) {
+		console.error("Error saving project:", error);
+		throw error;
+	}
 };

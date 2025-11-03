@@ -1,3 +1,4 @@
+// components/base/layout/StoreHydrator.tsx
 "use client";
 
 import { useEffect } from "react";
@@ -166,7 +167,7 @@ export const StoreHydrator = ({ profile }: { profile: IProfile | null }) => {
 		// Calculate project properties based on phases (using already stored data)
 		Object.entries(projectStore.projects).forEach(
 			([projectId, project]) => {
-				const phases = project.phaseIds
+				const phases = (project.phaseIds ?? [])
 					.map((phaseId) => phaseStore.phases[phaseId])
 					.filter(Boolean);
 

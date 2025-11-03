@@ -28,15 +28,20 @@ import ChangeRoleModal from "./Modals/ChangeUserModal";
 import TaskDetailModal from "./Modals/TaskDetailModal";
 import { Overview } from "./Overview";
 import { PhaseBoard } from "./PhaseBoard";
-
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 export default function ProjectDetails() {
-	if (
-		typeof window !== "undefined" &&
-		!sessionStorage.getItem("projectDetailsRefreshed")
-	) {
-		sessionStorage.setItem("projectDetailsRefreshed", "1");
-		window.location.reload();
-	}
+	const router = useRouter();
+
+	useEffect(() => {
+		if (
+			typeof window !== "undefined" &&
+			!sessionStorage.getItem("projectDetailsRefreshed")
+		) {
+			sessionStorage.setItem("projectDetailsRefreshed", "1");
+			router.refresh?.(); // triggers data revalidation but no reload
+		}
+	}, []);
 	const [changeRoleModal, setChangeRoleModal] = useState(false);
 	const [changeRoleUser, setChangeRoleUser] = useState<string>("");
 	const [changeRole, setChangeRole] = useState<string>("");

@@ -8,7 +8,7 @@ export async function addMaterial(material: IMaterial) {
 	try {
 		// Convert IMaterial to IMaterialDB by extracting only the DB fields
 		const materialData: IMaterialDB = {
-			id: material.id || crypto.randomUUID(),
+			id: crypto.randomUUID(),
 			taskId: material.taskId,
 			materialId: material.materialId,
 			name: material.name,

@@ -13,7 +13,7 @@ export async function addProject(project: IProjectCreationData) {
 	try {
 		// Convert IProject to IProjectDB by extracting only the DB fields
 		const projectData: IProjectDB = {
-			id: project.id || crypto.randomUUID(),
+			id: crypto.randomUUID(),
 			created_at: new Date(),
 			name: project.name,
 			owner: project.owner,

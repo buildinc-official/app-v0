@@ -56,19 +56,25 @@ export const PhaseBoard = ({
 		Completed: [],
 	};
 	phases?.forEach((phase) => {
-		if (phase.status.includes("Pending")) {
+		const phaseStatusArray = Array.isArray(phase.status)
+			? phase.status
+			: typeof phase.status === "string"
+			? [phase.status]
+			: ["Inactive"];
+
+		if (phaseStatusArray.includes("Pending")) {
 			phasesByStatus.Pending.push(phase);
 		}
-		if (phase.status.includes("Active")) {
+		if (phaseStatusArray.includes("Active")) {
 			phasesByStatus.Active.push(phase);
 		}
-		if (phase.status.includes("Reviewing")) {
+		if (phaseStatusArray.includes("Reviewing")) {
 			phasesByStatus.Reviewing.push(phase);
 		}
-		if (phase.status.includes("Completed")) {
+		if (phaseStatusArray.includes("Completed")) {
 			phasesByStatus.Completed.push(phase);
 		}
-		if (phase.status.includes("Inactive")) {
+		if (phaseStatusArray.includes("Inactive")) {
 			phasesByStatus.Inactive.push(phase);
 		}
 	});
@@ -157,7 +163,6 @@ const KanbanColumn = ({
 	titleColor,
 	cardColor,
 	phases,
-
 	expandedPhases,
 	togglePhase,
 	isTaskDetailOpen,
@@ -177,8 +182,10 @@ const KanbanColumn = ({
 	setSelectedTask: React.Dispatch<React.SetStateAction<ITask | null>>;
 }) => {
 	const tasks = useTaskStore((state) => state.tasks);
+
+	// ✅ Prevent crash if any phase.taskIds is undefined
 	const totalTasks = phases.reduce((acc, phase) => {
-		phase.taskIds.forEach((taskId) => {
+		(phase.taskIds ?? []).forEach((taskId) => {
 			const task = Object.values(tasks).find((t) => t.id === taskId);
 			if (task && task.status === status) {
 				acc += 1;

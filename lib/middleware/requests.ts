@@ -8,7 +8,7 @@ export async function addRequest(request: IRequest): Promise<IRequest> {
 	try {
 		// Convert IRequest to IRequestDB by extracting only the DB fields
 		const requestData: IRequestDB = {
-			id: request.id || crypto.randomUUID(),
+			id: crypto.randomUUID(),
 			created_at: request.created_at,
 			projectId: request.projectId,
 			phaseId: request.phaseId,

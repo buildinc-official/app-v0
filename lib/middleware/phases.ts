@@ -7,7 +7,7 @@ export async function addPhase(phase: IPhase) {
 	try {
 		// Convert IPhase to IPhaseDB by extracting only the DB fields
 		const phaseData: IPhaseDB = {
-			id: phase.id || crypto.randomUUID(),
+			id: crypto.randomUUID(),
 			projectId: phase.projectId,
 			created_at: phase.created_at,
 			name: phase.name,

@@ -8,7 +8,7 @@ export async function addOrganisation(organisation: IOrganisation) {
 	try {
 		// Convert IOrganisation to IOrganisationDB by extracting only the DB fields
 		const organisationData: IOrganisationDB = {
-			id: organisation.id || crypto.randomUUID(),
+			id: crypto.randomUUID(),
 			name: organisation.name,
 			created_at: organisation.created_at,
 			owner: organisation.owner,

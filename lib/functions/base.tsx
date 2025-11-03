@@ -16,7 +16,7 @@ export function recomputePhaseAndProjectProgress() {
 
 	// 🔹 Recalculate each phase
 	Object.entries(phaseStore.phases).forEach(([phaseId, phase]) => {
-		const tasks = phase.taskIds
+		const tasks = (phase.taskIds ?? [])
 			.map((id) => taskStore.tasks[id])
 			.filter(Boolean);
 
@@ -43,7 +43,7 @@ export function recomputePhaseAndProjectProgress() {
 
 	// 🔹 Recalculate each project
 	Object.entries(projectStore.projects).forEach(([projectId, project]) => {
-		const phases = project.phaseIds
+		const phases = (project.phaseIds ?? [])
 			.map((id) => phaseStore.phases[id])
 			.filter(Boolean);
 

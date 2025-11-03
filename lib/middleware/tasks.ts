@@ -7,7 +7,7 @@ export async function addTask(task: ITask) {
 	try {
 		// Convert ITask to ITaskDB by extracting only the DB fields
 		const taskData: ITaskDB = {
-			id: task.id || crypto.randomUUID(),
+			id: crypto.randomUUID(),
 			created_at: task.created_at,
 			phaseId: task.phaseId,
 			assignedTo: task.assignedTo,
