@@ -23,6 +23,7 @@ export async function addRequest(request: IRequest): Promise<IRequest> {
 			approvedAt: request.approvedAt,
 			notes: request.notes,
 		};
+		console.log("Adding request to DB:", requestData);
 
 		const result = await requestDB.addRequest(requestData);
 
@@ -35,7 +36,7 @@ export async function addRequest(request: IRequest): Promise<IRequest> {
 
 		return result as IRequest;
 	} catch (error) {
-		console.error("Error adding request:", error);
+		console.error("Error adding request1:", error);
 		throw error;
 	}
 }

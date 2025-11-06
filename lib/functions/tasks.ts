@@ -6,6 +6,7 @@ import { addRequest } from "../middleware/requests";
 import { getTaskFromStore, updateTask } from "../middleware/tasks";
 import { useProfileStore } from "../store/profileStore";
 import { IMaterial, ITask } from "../types";
+import { safeUUID } from "./utils";
 
 export const getProjectNameFromPhaseId = (phaseId: string): string => {
 	const phase = getPhaseFromStore(phaseId);
@@ -24,14 +25,14 @@ export const getProjectIdFromPhaseId = (phaseId: string): string => {
 };
 
 // In your requestPayment function, add parameters:
-export const requestPayment = (
+export const requestPayment = async (
 	task: ITask,
 	amount: number,
 	projectId: string,
 	notes?: string
 ) => {
 	//make request
-	addRequest({
+	const data = addRequest({
 		type: "PaymentRequest",
 		taskId: task.id,
 		notes: notes || "",
@@ -42,14 +43,16 @@ export const requestPayment = (
 		id: crypto.randomUUID(),
 		phaseId: task.phaseId,
 		materialId: null,
-		requestedBy: task.assignedTo || "unknown",
-		requestedTo: task.assigneeId || "unassigned",
+		requestedBy: safeUUID(task.assignedTo) || "unknown",
+		requestedTo: safeUUID(task.assigneeId) || "unassigned",
 		approvedBy: null,
 		approvedAt: null,
 	});
+
+	return (await data).id;
 };
 
-export const requestMaterial = (
+export const requestMaterial = async (
 	task: ITask,
 	material: IMaterial,
 	units: number,
@@ -58,7 +61,7 @@ export const requestMaterial = (
 	projectId: string,
 	notes: string | undefined = undefined
 ) => {
-	addRequest({
+	const data = addRequest({
 		type: "MaterialRequest",
 		taskId: task.id,
 		notes: notes || "",
@@ -84,6 +87,8 @@ export const requestMaterial = (
 	updateMaterial(material.id, {
 		requested: true,
 	});
+
+	return (await data).id;
 };
 
 export const handleTaskCompletion = (taskId: string) => {

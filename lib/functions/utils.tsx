@@ -155,3 +155,7 @@ export function ClearData() {
 
 	localStorage.clear();
 }
+
+export function safeUUID(value: string | null | undefined) {
+	return value && value.trim() !== "" ? value : null;
+}

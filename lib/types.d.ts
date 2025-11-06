@@ -251,6 +251,7 @@ export interface IRequest extends IRequestDB {
 	requestedByProfile?: IProfile;
 	requestedToProfile?: IProfile;
 	approvedByProfile?: IProfile;
+	photos?: string[];
 }
 
 // 2.1 Template Types

@@ -22,6 +22,7 @@ import { useProfileStore } from "@/lib/store/profileStore";
 import { IProfile, IRequest } from "@/lib/types";
 import { XCircle, CheckCircle } from "lucide-react";
 import React from "react";
+import { PhotoGalleryViewer } from "../base/general/PhotoViewer";
 
 const ApprovalModal = ({
 	isDetailDialogOpen,
@@ -45,6 +46,8 @@ const ApprovalModal = ({
 	const approvedByProfile = profiles.find(
 		(p) => p.id === selectedApproval?.approvedBy
 	);
+
+	console.log("Selected Approval in Modal:", selectedApproval?.photos);
 
 	return (
 		<Dialog
@@ -171,6 +174,18 @@ const ApprovalModal = ({
 								</p>
 							</FieldRow>
 						)}
+
+						{/* Photos */}
+						{selectedApproval.photos &&
+							selectedApproval.photos.length > 0 && (
+								<FieldRow label="Photos">
+									<PhotoGalleryViewer
+										photos={selectedApproval.photos}
+									/>
+								</FieldRow>
+							)}
+
+						{/* Project Name */}
 						<FieldRow label="Project">
 							<div>
 								<p className="font-medium text-primary-foreground">

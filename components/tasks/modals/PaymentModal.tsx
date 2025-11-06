@@ -1,3 +1,4 @@
+import PhotoUploader from "@/components/base/general/PhotoUploader";
 import { Button } from "@/components/base/ui/button";
 import {
 	Dialog,
@@ -10,12 +11,10 @@ import {
 import { Input } from "@/components/base/ui/input";
 import { Label } from "@/components/base/ui/label";
 import { Textarea } from "@/components/base/ui/textarea";
-import {
-	getProjectIdFromPhaseId,
-	getProjectNameFromPhaseId,
-	requestPayment,
-} from "@/lib/functions/tasks";
+import { requestPayment } from "@/lib/functions/tasks";
 import { RupeeIcon } from "@/lib/functions/utils";
+import { addRequestPhoto } from "@/lib/middleware/requestPhotos";
+import { useProfileStore } from "@/lib/store/profileStore";
 import { ITask } from "@/lib/types";
 import { useState } from "react";
 
@@ -28,19 +27,35 @@ const PaymentModal = ({
 	setIsPaymentModalOpen: (open: boolean) => void;
 	selectedTask: ITask | undefined;
 }) => {
-	const projectName = getProjectNameFromPhaseId(selectedTask?.phaseId || "");
-	const projectId = getProjectIdFromPhaseId(selectedTask?.phaseId || "");
+	const projectName = selectedTask?.projectName;
+	const projectId = selectedTask?.projectId || null;
 	const [amount, setAmount] = useState<number>(0);
 	const [notes, setNotes] = useState<string>("");
+	const [photos, setPhotos] = useState<File[]>([]);
 
-	const handleSubmit = () => {
-		if (!selectedTask || !amount) return;
+	const user = useProfileStore((state) => state.profile);
 
-		requestPayment(selectedTask, amount, projectId, notes);
+	const handleSubmit = async () => {
+		if (!selectedTask || !amount || !user || !projectId) return;
 
+		// Step 1: Create the request (DB row)
+		const newRequestId = await requestPayment(
+			selectedTask,
+			amount,
+			projectId,
+			notes
+		);
+
+		// Step 2: Upload all photos for that request
+		for (const file of photos) {
+			await addRequestPhoto(newRequestId, file, user.id as string);
+		}
+
+		// Step 3: Cleanup
 		setIsPaymentModalOpen(false);
 		setAmount(0);
 		setNotes("");
+		setPhotos([]);
 	};
 
 	const handleClose = () => {
@@ -139,6 +154,12 @@ const PaymentModal = ({
 										Optional: Provide details about what
 										this payment covers
 									</p>
+								</div>
+
+								<div>
+									<PhotoUploader
+										onFilesSelected={setPhotos}
+									/>
 								</div>
 							</div>
 						</div>

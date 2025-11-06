@@ -1,3 +1,4 @@
+import PhotoUploader from "@/components/base/general/PhotoUploader";
 import { Button } from "@/components/base/ui/button";
 import {
 	Dialog,
@@ -25,7 +26,10 @@ import {
 } from "@/lib/functions/tasks";
 import { RupeeIcon } from "@/lib/functions/utils";
 import { getTaskMaterialsFromStore } from "@/lib/middleware/materials";
+import { addRequestPhoto } from "@/lib/middleware/requestPhotos";
+import { useProfileStore } from "@/lib/store/profileStore";
 import { ITask } from "@/lib/types";
+import { set } from "date-fns";
 import { useEffect, useState } from "react";
 
 const MaterialModal = ({
@@ -37,9 +41,10 @@ const MaterialModal = ({
 	setIsMaterialModalOpen: (open: boolean) => void;
 	selectedTask: ITask | undefined;
 }) => {
-	const projectName = getProjectNameFromPhaseId(selectedTask?.phaseId || "");
-	const projectId = getProjectIdFromPhaseId(selectedTask?.phaseId || "");
+	const projectName = selectedTask?.projectName;
+	const projectId = selectedTask?.projectId;
 	const materials = getTaskMaterialsFromStore(selectedTask?.id || "");
+	const [photos, setPhotos] = useState<File[]>([]);
 
 	const [selectedMaterial, setSelectedMaterial] = useState<string>("");
 	const [notes, setNotes] = useState<string>("");
@@ -50,6 +55,8 @@ const MaterialModal = ({
 
 	const [unitCost, setUnitCost] = useState<number>(0);
 	const [totalCost, setTotalCost] = useState<number>(0);
+
+	const user = useProfileStore((state) => state.profile);
 
 	// Calculate total cost whenever units or unitCost changes
 	useEffect(() => {
@@ -76,17 +83,19 @@ const MaterialModal = ({
 		// console.log(unitList);
 	}, [selectedMaterial]);
 
-	const handleSubmit = () => {
+	const handleSubmit = async () => {
 		if (
 			!selectedTask ||
 			!selectedMaterial ||
 			units <= 0 ||
 			unitCost <= 0 ||
-			!unitName
+			!unitName ||
+			!projectId ||
+			!user
 		)
 			return;
 
-		requestMaterial(
+		const newRequestId = await requestMaterial(
 			selectedTask,
 			materials.find((m) => m.id === selectedMaterial)!,
 			units,
@@ -95,7 +104,18 @@ const MaterialModal = ({
 			projectId,
 			notes
 		);
+
+		// Step 2: Upload all photos for that request
+		for (const file of photos) {
+			await addRequestPhoto(newRequestId, file, user.id as string);
+		}
 		setIsMaterialModalOpen(false);
+		setSelectedMaterial("");
+		setUnits(0);
+		setUnitCost(0);
+		setTotalCost(0);
+		setNotes("");
+		setPhotos([]);
 	};
 
 	const handleClose = () => {
@@ -347,6 +367,13 @@ const MaterialModal = ({
 										</div>
 									</>
 								)}
+
+								{/* Photos */}
+								<div>
+									<PhotoUploader
+										onFilesSelected={setPhotos}
+									/>
+								</div>
 
 								{/* Notes Textarea */}
 								<div className="space-y-2">

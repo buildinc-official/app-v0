@@ -15,6 +15,7 @@ interface RequestState {
 	getUserRequests: (userId: string) => IRequest[];
 	getProjectRequests: (projectId: string) => IRequest[];
 	clearRequests: () => void;
+	addPhoto: (requestId: string, photoUrl: string) => void;
 }
 
 export const useRequestStore = create<RequestState>()(
@@ -87,6 +88,24 @@ export const useRequestStore = create<RequestState>()(
 			clearRequests: () => {
 				set({ requests: {} });
 			},
+
+			addPhoto: (requestId, photoUrl) =>
+				set((state) => {
+					const request = state.requests[requestId];
+					if (request) {
+						const updated = {
+							...request,
+							photos: [...(request.photos || []), photoUrl],
+						};
+						return {
+							requests: {
+								...state.requests,
+								[requestId]: updated,
+							},
+						};
+					}
+					return state;
+				}),
 		}),
 		{
 			name: "request-storage",

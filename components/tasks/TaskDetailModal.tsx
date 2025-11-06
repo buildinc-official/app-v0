@@ -9,10 +9,7 @@ import {
 	DialogTitle,
 } from "@/components/base/ui/dialog";
 import { Tabs } from "@/components/base/ui/tabs";
-import {
-	getProjectNameFromPhaseId,
-	handleTaskCompletion,
-} from "@/lib/functions/tasks";
+import { handleTaskCompletion } from "@/lib/functions/tasks";
 import { getTaskMaterialsFromStore } from "@/lib/middleware/materials";
 import { ITask } from "@/lib/types";
 import { CheckCircle } from "lucide-react";
@@ -35,7 +32,7 @@ const TaskDetailModal = ({
 }) => {
 	const [completionNotes, setCompletionNotes] = useState("");
 	const materials = getTaskMaterialsFromStore(selectedTask?.id || "");
-	const projectName = getProjectNameFromPhaseId(selectedTask?.phaseId || "");
+	const projectName = selectedTask?.projectName ?? "";
 
 	const values =
 		materials && materials.length > 0

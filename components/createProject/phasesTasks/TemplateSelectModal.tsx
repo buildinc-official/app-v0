@@ -15,7 +15,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/base/ui/dialog";
-// import { defaultTemplates } from "@/lib/constants/project-templates";
+import { templates } from "@/lib/constants/project-templates";
 import {
 	IPhaseTemplate,
 	IProjectCreationData,
@@ -39,6 +39,7 @@ const TemplateSelectModal = ({
 	const defaultTemplates: IProjectTemplate[] = Object.values(
 		useProjectTemplateStore.getState().projectTemplates
 	);
+	defaultTemplates.push(...templates);
 	const [selectedTemplate, setSelectedTemplate] =
 		useState<IProjectTemplate | null>(null);
 	const [isTemplateDialogOpen, setIsTemplateDialogOpen] = useState(false);
