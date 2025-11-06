@@ -11,7 +11,7 @@ import {
 } from "@/components/base/ui/dialog";
 import { Label } from "@/components/base/ui/label";
 import { IMaterial, ITask } from "@/lib/types";
-import { projectDetails } from "@/lib/functions/projectDetails";
+import { completeTask, projectDetails } from "@/lib/functions/projectDetails";
 import { getStatusColor } from "@/lib/functions/utils";
 import { Package } from "lucide-react";
 import React, { Dispatch, SetStateAction } from "react";
@@ -240,16 +240,15 @@ TaskDetailModalProps) => {
 								Request Changes
 							</Button>
 							<Button
-								className="bg-green-600 hover:bg-green-700"
-								// onClick={() =>
-								// 	// approveTask(
-								// 	// 	selectedTask.id,
-								// 	// 	// setTasks,
-								// 	// 	setIsTaskDetailOpen
-								// 	// )
-								// }
+								className="bg-secondary hover:bg-secondary/80 text-secondary-foreground"
+								onClick={() =>
+									completeTask(
+										selectedTask.id,
+										setIsTaskDetailOpen
+									)
+								}
 							>
-								Approve Task
+								Complete Task
 							</Button>
 						</div>
 					)}

@@ -1,16 +1,8 @@
 "use client";
-import {
-	getMaterial,
-	getMaterialFromStore,
-	updateMaterial,
-} from "../middleware/materials";
-import { getPhase, getPhaseFromStore } from "../middleware/phases";
+import { getMaterialFromStore, updateMaterial } from "../middleware/materials";
+import { getPhaseFromStore } from "../middleware/phases";
 import { getAllProfilesFromStore } from "../middleware/profiles";
-import {
-	getProject,
-	getProjectFromStore,
-	updateProject,
-} from "../middleware/projects";
+import { getProjectFromStore, updateProject } from "../middleware/projects";
 import { updateRequest } from "../middleware/requests";
 import { getTask, getTaskFromStore, updateTask } from "../middleware/tasks";
 import { IProfile, IRequest } from "../types";

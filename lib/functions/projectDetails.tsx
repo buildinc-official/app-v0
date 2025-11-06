@@ -86,13 +86,32 @@ export const projectDetails = () => {
 	return {
 		assignTask,
 		getPhaseStatus,
-		// approveTask,
 		// rejectTask,
 		// addMaterial,
 		// removeMaterial,
 		// updateMaterial,
 	};
 };
+
+export function completeTask(
+	taskId: string,
+	setIsTaskDetailOpen?: (open: boolean) => void
+) {
+	const task = getTaskFromStore(taskId);
+	if (!task) return;
+
+	updateTask(taskId, {
+		status: "Completed",
+		endDate: new Date(),
+	}).catch((err) => {
+		console.error("Failed to approve task:", err);
+	});
+
+	// Optionally close the task detail modal
+	if (setIsTaskDetailOpen) {
+		setIsTaskDetailOpen(false);
+	}
+}
 
 export function addProjectMember(
 	projectId: string,
