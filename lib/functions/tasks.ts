@@ -31,6 +31,14 @@ export const requestPayment = async (
 	projectId: string,
 	notes?: string
 ) => {
+	if (
+		task.assignedTo === null ||
+		task.assigneeId === null ||
+		task.assignedTo === undefined ||
+		task.assigneeId === undefined
+	) {
+		throw new Error("Task is not assigned to anyone.");
+	}
 	//make request
 	const data = addRequest({
 		type: "PaymentRequest",
@@ -43,8 +51,8 @@ export const requestPayment = async (
 		id: crypto.randomUUID(),
 		phaseId: task.phaseId,
 		materialId: null,
-		requestedBy: safeUUID(task.assignedTo) || "unknown",
-		requestedTo: safeUUID(task.assigneeId) || "unassigned",
+		requestedBy: task.assignedTo,
+		requestedTo: task.assigneeId,
 		approvedBy: null,
 		approvedAt: null,
 	});
