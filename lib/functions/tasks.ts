@@ -69,6 +69,14 @@ export const requestMaterial = async (
 	projectId: string,
 	notes: string | undefined = undefined
 ) => {
+	if (
+		task.assignedTo === null ||
+		task.assigneeId === null ||
+		task.assignedTo === undefined ||
+		task.assigneeId === undefined
+	) {
+		throw new Error("Task is not assigned to anyone.");
+	}
 	const data = addRequest({
 		type: "MaterialRequest",
 		taskId: task.id,
@@ -86,8 +94,8 @@ export const requestMaterial = async (
 		id: crypto.randomUUID(),
 		phaseId: task.phaseId,
 		materialId: null,
-		requestedBy: task.assignedTo || "unknown",
-		requestedTo: task.assigneeId || "unassigned",
+		requestedBy: task.assignedTo,
+		requestedTo: task.assigneeId,
 		approvedBy: null,
 		approvedAt: null,
 	});
