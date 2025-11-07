@@ -244,7 +244,7 @@ const Summary = ({
 				title="Progress"
 				content={
 					<p className="text-2xl font-bold">
-						{projectData.progress ?? 0}%
+						{projectData.progress.toFixed(2) ?? 0}%
 					</p>
 				}
 			/>

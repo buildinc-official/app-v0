@@ -87,7 +87,7 @@ export const Overview = ({ projectData }: { projectData: IProject }) => {
 						<div className="space-y-2">
 							<div className="flex justify-between text-sm">
 								<span>Overall Progress</span>
-								<span>{projectData.progress}%</span>
+								<span>{projectData.progress.toFixed(2)}%</span>
 							</div>
 							<Progress
 								value={projectData.progress}

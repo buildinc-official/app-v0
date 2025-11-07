@@ -24,7 +24,10 @@ import { useProjectStore } from "@/lib/store/projectStore";
 import { usePhaseStore } from "@/lib/store/phaseStore";
 import { projectDetails } from "@/lib/functions/projectDetails";
 import { getAllProfiles } from "@/lib/middleware/profiles";
-import { recomputePhaseAndProjectProgress } from "@/lib/functions/base";
+import {
+	getProjectProgress,
+	recomputePhaseAndProjectProgress,
+} from "@/lib/functions/base";
 export const StoreHydrator = ({ profile }: { profile: IProfile | null }) => {
 	const { setProfile } = useProfileStore();
 	const { getPhaseStatus } = projectDetails();
@@ -50,9 +53,9 @@ export const StoreHydrator = ({ profile }: { profile: IProfile | null }) => {
 		};
 	}, [profile]);
 
-	useEffect(() => {
-		getProjectProgress();
-	}, [projects]);
+	// useEffect(() => {
+	// 	getProjectProgress();
+	// }, [projects]);
 
 	const loadData = async (userProfile: IProfile) => {
 		try {
@@ -158,41 +161,6 @@ export const StoreHydrator = ({ profile }: { profile: IProfile | null }) => {
 		Object.entries(orgProjectMap).forEach(([orgId, projectIds]) => {
 			orgStore.updateOrganisation(orgId, { projectIds });
 		});
-	};
-
-	const getProjectProgress = () => {
-		const phaseStore = usePhaseStore.getState();
-		const projectStore = useProjectStore.getState();
-
-		// Calculate project properties based on phases (using already stored data)
-		Object.entries(projectStore.projects).forEach(
-			([projectId, project]) => {
-				const phases = (project.phaseIds ?? [])
-					.map((phaseId) => phaseStore.phases[phaseId])
-					.filter(Boolean);
-
-				if (phases.length > 0) {
-					const totalTasks = phases.reduce(
-						(acc, phase) => acc + (phase.totalTasks || 0),
-						0
-					);
-					const completedTasks = phases.reduce(
-						(acc, phase) => acc + (phase.completedTasks || 0),
-						0
-					);
-					const progress =
-						totalTasks > 0
-							? (completedTasks / totalTasks) * 100
-							: 0;
-
-					projectStore.updateProject(projectId, {
-						totalTasks,
-						completedTasks,
-						progress,
-					});
-				}
-			}
-		);
 	};
 
 	return null;

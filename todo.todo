@@ -32,7 +32,7 @@ NEXT:
 
         Projects:
             - makee the filter and search functionality
-            - show project progress and tasks
+            + show project progress and tasks
 
         CreateProject:
             + save custom tmeplates in DB nad show them when selecting temapltes

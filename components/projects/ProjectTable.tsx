@@ -108,7 +108,9 @@ const ProjectTable = ({ filteredProjects, admin }: Props) => {
 											<div className="space-y-2 flex flex-col items-center">
 												<span className="text-sm">
 													{project.progress
-														? project.progress
+														? project.progress.toFixed(
+																2
+														  )
 														: "0"}
 													%
 												</span>

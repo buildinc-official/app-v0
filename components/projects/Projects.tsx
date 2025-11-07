@@ -9,13 +9,14 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/base/ui/select";
-import { IProject, IRequest } from "@/lib/types";
+import { IPhase, IProject, IRequest } from "@/lib/types";
 import { Filter, Plus, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ProjectMemberRequests from "./ProjectMemberRequests";
 import ProjectStatistics from "./ProjectStatistics";
 import ProjectTable from "./ProjectTable";
+import { getProjectProgress } from "@/lib/functions/base";
 
 type statusFilter =
 	| "All"
@@ -27,10 +28,12 @@ type statusFilter =
 
 export default function Projects({
 	projects,
+	phases,
 	admin,
 	requests,
 }: {
 	projects: IProject[];
+	phases: IPhase[];
 	admin: boolean;
 	requests: IRequest[];
 }) {
@@ -41,6 +44,9 @@ export default function Projects({
 	const activeProjects = projects.filter((p) => p.status === "Active").length;
 	const totalBudget = projects.reduce((sum, p) => sum + (p.budget ?? 0), 0);
 
+	useEffect(() => {
+		getProjectProgress(projects, phases);
+	}, []);
 	return (
 		<div className="flex flex-1 flex-col pb-20">
 			<div className="flex-1 space-y-6 p-2">
