@@ -32,6 +32,7 @@ NEXT:
 
         Projects:
             - makee the filter and search functionality
+            - show project progress and tasks
 
         CreateProject:
             + save custom tmeplates in DB nad show them when selecting temapltes
@@ -48,6 +49,9 @@ NEXT:
             - make everything
 
 
+add laoding to buttons: DONE
+add toasts everywhere: DONE
+when approving a task for completion, first check if any requests are left automatically
 dont showe budget to supervisor or anyone else othervthan admin
 aadding budget per sq ft
 material costing calculator

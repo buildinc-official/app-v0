@@ -40,6 +40,7 @@ import {
 	deleteOrganisation,
 	updateOrganisation,
 } from "@/lib/middleware/organisations";
+import { toast } from "sonner";
 
 const OrgSettings = ({ organisation }: { organisation: IOrganisation }) => {
 	const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -59,7 +60,8 @@ const OrgSettings = ({ organisation }: { organisation: IOrganisation }) => {
 
 	const handleDeleteOrganization = () => {
 		deleteOrganisation(organisation.id);
-		router.push("/admin/organisations");
+		router.push("/organisations");
+		toast.success("Organisation deleted successfully.");
 	};
 	return (
 		<Card>

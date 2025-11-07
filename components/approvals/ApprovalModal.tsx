@@ -47,7 +47,7 @@ const ApprovalModal = ({
 		(p) => p.id === selectedApproval?.approvedBy
 	);
 
-	console.log("Selected Approval in Modal:", selectedApproval?.photos);
+	// console.log("Selected Approval in Modal:", selectedApproval?.photos);
 
 	return (
 		<Dialog

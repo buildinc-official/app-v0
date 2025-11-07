@@ -3,9 +3,26 @@ import { requestDB } from "@/lib/supabase/db/requestDB";
 import { approvalStatus, IRequest, IRequestDB } from "../types";
 import { useRequestStore } from "@/lib/store/requestStore";
 import { getDetailsForRequest } from "../functions/requests";
+import { toast } from "sonner";
 
 export async function addRequest(request: IRequest): Promise<IRequest> {
 	try {
+		switch (request.type) {
+			case "MaterialRequest":
+				toast.info("Submitting material request...");
+				break;
+			case "PaymentRequest":
+				toast.info("Submitting payment request...");
+				break;
+			case "TaskAssignment":
+				toast.info("Submitting task assignment request...");
+				break;
+			case "TaskCompletion":
+				toast.info("Submitting task completion request...");
+				break;
+			default:
+				break;
+		}
 		// Convert IRequest to IRequestDB by extracting only the DB fields
 		const requestData: IRequestDB = {
 			id: crypto.randomUUID(),
@@ -34,10 +51,28 @@ export async function addRequest(request: IRequest): Promise<IRequest> {
 			// The related objects will be resolved when needed
 		} as IRequest);
 
+		switch (request.type) {
+			case "MaterialRequest":
+				toast.success("Material request submitted.");
+				break;
+			case "PaymentRequest":
+				toast.success("Payment request submitted.");
+				break;
+			case "TaskAssignment":
+				toast.success("Task assignment request submitted.");
+				break;
+			case "TaskCompletion":
+				toast.success("Task completion submitted.");
+				break;
+			default:
+				break;
+		}
+
 		return result as IRequest;
 	} catch (error) {
 		console.error("Error adding request1:", error);
 		throw error;
+		toast.error("Failed to submit request. Please try again.");
 	}
 }
 
@@ -61,6 +96,16 @@ export async function updateRequest(
 	updates: Partial<IRequest>
 ): Promise<IRequest> {
 	try {
+		switch (updates.status) {
+			case "Approved":
+				toast.info("Approving...");
+				break;
+			case "Rejected":
+				toast.info("Rejecting...");
+				break;
+			default:
+				break;
+		}
 		// Convert partial IRequest to partial IRequestDB
 		const updateData: Partial<IRequestDB> = {};
 
@@ -80,10 +125,22 @@ export async function updateRequest(
 		const store = useRequestStore.getState();
 		store.updateRequest(id, updateData);
 
+		switch (updates.status) {
+			case "Approved":
+				toast.success("Request approved.");
+				break;
+			case "Rejected":
+				toast.success("Request rejected.");
+				break;
+			default:
+				break;
+		}
+
 		return result as IRequest;
 	} catch (error) {
 		console.error("Error updating request:", error);
 		throw error;
+		toast.error("Failed to update request. Please try again.");
 	}
 }
 

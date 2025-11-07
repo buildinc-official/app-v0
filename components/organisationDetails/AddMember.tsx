@@ -18,6 +18,7 @@ import { IOrganisation, IProfile } from "@/lib/types";
 import { getAllProfilesFromStore } from "@/lib/middleware/profiles";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { addMember } from "@/lib/functions/organisationDetails";
+import { toast } from "sonner";
 
 type Props = { organisation: IOrganisation };
 
@@ -76,6 +77,7 @@ const AddMember = ({ organisation }: Props) => {
 
 	const handleAdd = () => {
 		if (!selectedUser) return;
+		toast.info("Sending Join Request...");
 		addMember(
 			organisation.id,
 			organisation.name,
@@ -86,6 +88,7 @@ const AddMember = ({ organisation }: Props) => {
 		setSelectedUser(null);
 		setSearchQuery("");
 		setLoading(false);
+		toast.success("Request Sent Succesfully.");
 	};
 
 	return (

@@ -7,6 +7,7 @@ import MaterialModal from "./modals/MaterialModal";
 import PaymentModal from "./modals/PaymentModal";
 import TaskDetailModal from "./TaskDetailModal";
 import TaskTable from "./TaskTable";
+import CompleteModal from "./modals/CompleteModal";
 
 export default function Tasks({ tasks }: { tasks: ITask[] }) {
 	const [selectedTask, setSelectedTask] = useState<ITask | undefined>(
@@ -15,6 +16,7 @@ export default function Tasks({ tasks }: { tasks: ITask[] }) {
 	const [isTaskDetailOpen, setIsTaskDetailOpen] = useState(false);
 	const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 	const [isMaterialModalOpen, setIsMaterialModalOpen] = useState(false);
+	const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
 
 	const inProgressTasks = tasks.filter((task) => task.status === "Active");
 	const awaitingApprovalTasks = tasks.filter(
@@ -84,6 +86,7 @@ export default function Tasks({ tasks }: { tasks: ITask[] }) {
 					selectedTask={selectedTask}
 					setIsPaymentModalOpen={setIsPaymentModalOpen}
 					setIsMaterialModalOpen={setIsMaterialModalOpen}
+					setIsCompleteModalOpen={setIsCompleteModalOpen}
 				/>
 				<PaymentModal
 					isPaymentModalOpen={isPaymentModalOpen}
@@ -93,6 +96,11 @@ export default function Tasks({ tasks }: { tasks: ITask[] }) {
 				<MaterialModal
 					isMaterialModalOpen={isMaterialModalOpen}
 					setIsMaterialModalOpen={setIsMaterialModalOpen}
+					selectedTask={selectedTask}
+				/>
+				<CompleteModal
+					isCompleteModalOpen={isCompleteModalOpen}
+					setIsCompleteModalOpen={setIsCompleteModalOpen}
 					selectedTask={selectedTask}
 				/>
 			</div>

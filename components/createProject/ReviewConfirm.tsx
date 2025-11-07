@@ -27,6 +27,7 @@ import { saveProjectToDB } from "@/lib/functions/projectCreation";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingSpinner from "../base/layout/LoadingSpinner";
 import { addProjectTemplate } from "@/lib/middleware/projectTemplates";
+import { toast } from "sonner";
 
 const ReviewConfirm = ({
 	projectData,
@@ -64,6 +65,7 @@ const ReviewConfirm = ({
 
 	const saveProject = async () => {
 		setIsSaving(true);
+		toast.info("Starting project creation...");
 		setProgress(5);
 		setProgressMessage("Starting project creation...");
 
@@ -99,8 +101,10 @@ const ReviewConfirm = ({
 
 			setProgressMessage("Redirecting...");
 			setProgress(100);
+			toast.success("Project created successfully!");
 			setTimeout(() => router.push("/projects"), 800);
 		} catch (error) {
+			toast.error("Failed to create project. Please try again.");
 			console.error("Error saving project:", error);
 			alert("Failed to create project. Please try again.");
 			setIsSaving(false);

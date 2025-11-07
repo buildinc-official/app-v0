@@ -16,6 +16,7 @@ import { useProfileStore } from "@/lib/store/profileStore";
 import { create } from "domain";
 import { Plus } from "lucide-react";
 import React, { useState } from "react";
+import { toast } from "sonner";
 
 const AddOrgModal = ({
 	isOpen,
@@ -33,6 +34,8 @@ const AddOrgModal = ({
 	const handleCreate = () => {
 		if (!name.trim()) return; // simple validation
 
+		toast.info("Creating organisation...");
+
 		createOrganisation(
 			name,
 			ownerId,
@@ -43,6 +46,7 @@ const AddOrgModal = ({
 			setName("");
 			setDescription("");
 			onOpenChange(false);
+			toast.success("Organisation created successfully.");
 		});
 	};
 

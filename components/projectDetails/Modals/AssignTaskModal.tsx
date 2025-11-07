@@ -10,7 +10,9 @@ import {
 } from "@/components/base/ui/dialog";
 import { projectDetails } from "@/lib/functions/projectDetails";
 import { IProject, IProjectProfile, ITask } from "@/lib/types";
+import { ca } from "date-fns/locale";
 import { Dispatch, SetStateAction } from "react";
+import { toast } from "sonner";
 
 type Props = {
 	isAssignTaskOpen: boolean;
@@ -37,15 +39,23 @@ const AssignTaskModal = ({
 
 	const handleAdd = (member: IProjectProfile) => {
 		if (!selectedTask) return;
-		assignTask(
-			selectedTask.id,
-			selectedTask.phaseId,
-			member.id,
-			currentUserId,
-			projectData
-		);
-		setIsAssignTaskOpen(false);
-		setSelectedTask(null);
+		toast.info("Assigning task...");
+		try {
+			assignTask(
+				selectedTask.id,
+				selectedTask.phaseId,
+				member.id,
+				currentUserId,
+				projectData
+			);
+			setIsAssignTaskOpen(false);
+			setSelectedTask(null);
+			toast.success("Task Assignment Request Sent.");
+		} catch (error) {
+			toast.error("Failed to assign task. Please try again.");
+			console.error("Error assigning task:", error);
+			return;
+		}
 		// window.location.reload();
 	};
 	return (

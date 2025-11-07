@@ -225,7 +225,7 @@ TaskDetailModalProps) => {
 					</div>
 				)}
 				<DialogFooter>
-					{selectedTask?.status === "Reviewing" && (
+					{/* {selectedTask?.status === "Reviewing" && (
 						<div className="flex gap-2">
 							<Button
 								variant="outline"
@@ -251,7 +251,7 @@ TaskDetailModalProps) => {
 								Complete Task
 							</Button>
 						</div>
-					)}
+					)} */}
 					{selectedTask?.status === "Inactive" && (
 						<Button
 							variant="secondary"

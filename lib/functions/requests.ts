@@ -1,4 +1,5 @@
 "use client";
+import { toast } from "sonner";
 import { getMaterialFromStore, updateMaterial } from "../middleware/materials";
 import { getPhaseFromStore } from "../middleware/phases";
 import { getAllProfilesFromStore } from "../middleware/profiles";
@@ -30,14 +31,15 @@ export const handleAssigment = async (
 ) => {
 	if (!profile || profile.id !== request.requestedTo) return;
 
+	const task = await getTask(request.taskId ?? "");
+	if (!task) return;
+
 	updateRequest(request.id, {
 		status: "Approved",
 		approvedAt: new Date(),
 		approvedBy: profile.id,
 	});
-	const task = await getTask(request.taskId ?? "");
 
-	if (!task) return;
 	updateTask(request.taskId || "", {
 		assignedTo:
 			typeof request.requestedTo === "object" &&
@@ -58,6 +60,8 @@ export const handleCompletion = async (
 ) => {
 	if (!profile || profile.id !== request.requestedTo) return;
 
+	toast.info("Completing task and updating project spend...");
+
 	updateRequest(request.id, {
 		status: "Approved",
 		approvedAt: new Date(),
@@ -74,6 +78,8 @@ export const handleCompletion = async (
 			(getProjectFromStore(request.projectId || "")?.spent ?? 0) +
 			(getTaskFromStore(request.taskId || "")?.spent ?? 0),
 	});
+
+	toast.success("Task completed and project spend updated.");
 };
 
 export const handlePaymentRequest = async (

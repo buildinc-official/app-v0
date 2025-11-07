@@ -23,12 +23,14 @@ const TaskDetailModal = ({
 	selectedTask,
 	setIsPaymentModalOpen,
 	setIsMaterialModalOpen,
+	setIsCompleteModalOpen,
 }: {
 	isTaskDetailOpen: boolean;
 	setIsTaskDetailOpen: (open: boolean) => void;
 	selectedTask: ITask | undefined;
 	setIsPaymentModalOpen: (open: boolean) => void;
 	setIsMaterialModalOpen: (open: boolean) => void;
+	setIsCompleteModalOpen: (open: boolean) => void;
 }) => {
 	const [completionNotes, setCompletionNotes] = useState("");
 	const materials = getTaskMaterialsFromStore(selectedTask?.id || "");
@@ -83,47 +85,49 @@ const TaskDetailModal = ({
 					)}
 				</div>
 
-				<DialogFooter className="px-6 py-4 border-t self-end">
-					<div className="flex flex-col w-full gap-4">
-						<div className="flex gap-2 w-full items-center justify-center">
-							<Button
-								variant="default"
-								onClick={() => {
-									setIsTaskDetailOpen(false);
-									setIsPaymentModalOpen(true);
-								}}
-								className="w-full"
-							>
-								Request Payment
-							</Button>
-							{materials && materials.length > 0 && (
+				{selectedTask?.status === "Active" && (
+					<DialogFooter className="px-6 py-4 border-t self-end">
+						<div className="flex flex-col w-full gap-4">
+							<div className="flex gap-2 w-full items-center justify-center">
 								<Button
 									variant="default"
 									onClick={() => {
 										setIsTaskDetailOpen(false);
-										setIsMaterialModalOpen(true);
+										setIsPaymentModalOpen(true);
 									}}
 									className="w-full"
 								>
-									Request Material
+									Request Payment
 								</Button>
-							)}
+								{materials && materials.length > 0 && (
+									<Button
+										variant="default"
+										onClick={() => {
+											setIsTaskDetailOpen(false);
+											setIsMaterialModalOpen(true);
+										}}
+										className="w-full"
+									>
+										Request Material
+									</Button>
+								)}
+							</div>
+							<div className="flex gap-2 w-full items-center justify-center">
+								<Button
+									variant="secondary"
+									onClick={() => {
+										setIsCompleteModalOpen(true);
+										setIsTaskDetailOpen(false);
+									}}
+									className="w-full"
+								>
+									<CheckCircle className="mr-2 h-4 w-4" />
+									Mark as Complete
+								</Button>
+							</div>
 						</div>
-						<div className="flex gap-2 w-full items-center justify-center">
-							<Button
-								variant="secondary"
-								onClick={() => {
-									handleTaskCompletion(selectedTask?.id!);
-									setIsTaskDetailOpen(false);
-								}}
-								className="w-full"
-							>
-								<CheckCircle className="mr-2 h-4 w-4" />
-								Mark as Complete
-							</Button>
-						</div>
-					</div>
-				</DialogFooter>
+					</DialogFooter>
+				)}
 			</DialogContent>
 		</Dialog>
 	);

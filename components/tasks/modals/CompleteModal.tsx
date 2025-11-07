@@ -11,61 +11,48 @@ import {
 import { Input } from "@/components/base/ui/input";
 import { Label } from "@/components/base/ui/label";
 import { Textarea } from "@/components/base/ui/textarea";
-import { requestPayment } from "@/lib/functions/tasks";
+import { handleTaskCompletion, requestPayment } from "@/lib/functions/tasks";
 import { RupeeIcon } from "@/lib/functions/utils";
 import { addRequestPhoto } from "@/lib/middleware/requestPhotos";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { ITask } from "@/lib/types";
-import { set } from "date-fns";
 import { useState } from "react";
-import { toast } from "sonner";
 
-const PaymentModal = ({
-	isPaymentModalOpen,
-	setIsPaymentModalOpen,
+const CompleteModal = ({
+	isCompleteModalOpen,
+	setIsCompleteModalOpen,
 	selectedTask,
 }: {
-	isPaymentModalOpen: boolean;
-	setIsPaymentModalOpen: (open: boolean) => void;
+	isCompleteModalOpen: boolean;
+	setIsCompleteModalOpen: (open: boolean) => void;
 	selectedTask: ITask | undefined;
 }) => {
 	const projectName = selectedTask?.projectName;
 	const projectId = selectedTask?.projectId || null;
-	const [amount, setAmount] = useState<number>(0);
 	const [notes, setNotes] = useState<string>("");
 	const [photos, setPhotos] = useState<File[]>([]);
-	const [loading, setLoading] = useState<boolean>(false);
 
 	const user = useProfileStore((state) => state.profile);
 
 	const handleSubmit = async () => {
-		if (!selectedTask || !amount || !user || !projectId) return;
+		if (!selectedTask || !user || !projectId) return;
 
-		setLoading(true);
-		// Step 1: Create the request (DB row)
-		const newRequestId = await requestPayment(
-			selectedTask,
-			amount,
-			projectId,
-			notes
-		);
+		const newRequestId = await handleTaskCompletion(selectedTask?.id!);
 
+		if (!newRequestId) return;
 		// Step 2: Upload all photos for that request
 		for (const file of photos) {
 			await addRequestPhoto(newRequestId, file, user.id as string);
 		}
 
 		// Step 3: Cleanup
-		setIsPaymentModalOpen(false);
-		setAmount(0);
+		setIsCompleteModalOpen(false);
 		setNotes("");
 		setPhotos([]);
-		setLoading(false);
 	};
 
 	const handleClose = () => {
-		setIsPaymentModalOpen(false);
-		setAmount(0);
+		setIsCompleteModalOpen(false);
 		setNotes("");
 	};
 
@@ -75,20 +62,20 @@ const PaymentModal = ({
 			handleClose();
 		} else {
 			// Modal is being opened
-			setIsPaymentModalOpen(true);
+			setIsCompleteModalOpen(true);
 		}
 	};
 
 	return (
 		<Dialog
-			open={isPaymentModalOpen}
+			open={isCompleteModalOpen}
 			onOpenChange={handleOpenChange}
 		>
 			<DialogContent className="sm:max-w-[700px] h-[550px] grid grid-rows-[auto_auto_1fr_auto] p-0 gap-0 overflow-hidden">
 				{/* Header */}
 				<DialogHeader className="px-6 pt-4 pb-2 row-span-1">
 					<DialogTitle>{selectedTask?.name}</DialogTitle>
-					<DialogDescription>Payment Portal</DialogDescription>
+					<DialogDescription>Completion Portal</DialogDescription>
 				</DialogHeader>
 
 				{/* Form Container */}
@@ -96,58 +83,17 @@ const PaymentModal = ({
 					{selectedTask && (
 						<div className="px-6 py-4 overflow-y-auto max-h-[calc(550px-180px)]">
 							<div className="space-y-6">
-								{/* Amount Input */}
-								<div className="space-y-2">
-									<Label
-										htmlFor="amount"
-										className="text-sm font-medium"
-									>
-										Payment Amount *
-									</Label>
-									<div className="relative">
-										<span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500">
-											<RupeeIcon />
-										</span>
-										<Input
-											id="budget"
-											type="text"
-											placeholder="0"
-											value={
-												amount
-													? new Intl.NumberFormat(
-															"en-IN"
-													  ).format(amount)
-													: ""
-											}
-											onChange={(e) => {
-												const raw =
-													e.target.value.replace(
-														/,/g,
-														""
-													); // remove commas
-												const num =
-													Number.parseInt(raw) || 0;
-												setAmount(num);
-											}}
-											className="pl-8 focus-visible:ring-0 focus-visible:border-black w-full border-gray-300"
-										/>
-									</div>
-									<p className="text-xs text-gray-500">
-										Enter the amount you wish to request
-									</p>
-								</div>
-
 								{/* Notes Textarea */}
 								<div className="space-y-2">
 									<Label
 										htmlFor="notes"
 										className="text-sm font-medium"
 									>
-										Reason for Payment
+										Notes:
 									</Label>
 									<Textarea
 										id="notes"
-										placeholder="Describe the reason for this payment request..."
+										placeholder="Add any notes regarding the completion..."
 										value={notes}
 										onChange={(e) =>
 											setNotes(e.target.value)
@@ -155,10 +101,6 @@ const PaymentModal = ({
 										rows={4}
 										className="resize-none focus-visible:ring-0 focus-visible:border-black border-gray-300 w-full"
 									/>
-									<p className="text-xs text-gray-500">
-										Optional: Provide details about what
-										this payment covers
-									</p>
 								</div>
 
 								<div>
@@ -185,9 +127,8 @@ const PaymentModal = ({
 								variant="default"
 								onClick={handleSubmit}
 								className="w-1/2"
-								disabled={!amount || amount <= 0 || loading}
 							>
-								Request Payment
+								Submit
 							</Button>
 						</div>
 					</div>
@@ -197,4 +138,4 @@ const PaymentModal = ({
 	);
 };
 
-export default PaymentModal;
+export default CompleteModal;

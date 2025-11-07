@@ -1,12 +1,10 @@
-import { add } from "date-fns";
 import { updateMaterial } from "../middleware/materials";
-import { getPhase, getPhaseFromStore } from "../middleware/phases";
-import { getProject, getProjectFromStore } from "../middleware/projects";
+import { getPhaseFromStore } from "../middleware/phases";
+import { getProjectFromStore } from "../middleware/projects";
 import { addRequest } from "../middleware/requests";
 import { getTaskFromStore, updateTask } from "../middleware/tasks";
 import { useProfileStore } from "../store/profileStore";
 import { IMaterial, ITask } from "../types";
-import { safeUUID } from "./utils";
 
 export const getProjectNameFromPhaseId = (phaseId: string): string => {
 	const phase = getPhaseFromStore(phaseId);
@@ -107,17 +105,16 @@ export const requestMaterial = async (
 	return (await data).id;
 };
 
-export const handleTaskCompletion = (taskId: string) => {
+export const handleTaskCompletion = async (taskId: string) => {
 	const profile = useProfileStore.getState().profile;
-	if (!profile) return;
-
 	const task = getTaskFromStore(taskId);
-	if (!task) return;
+
+	if (!profile || !task?.assigneeId) return;
 	updateTask(taskId, {
 		status: "Reviewing",
 	});
 
-	addRequest({
+	const data = addRequest({
 		type: "TaskCompletion",
 		taskId: task.id,
 		notes: "",
@@ -129,8 +126,10 @@ export const handleTaskCompletion = (taskId: string) => {
 		phaseId: task.phaseId,
 		materialId: null,
 		requestedBy: profile.id,
-		requestedTo: task.assigneeId || "unassigned",
+		requestedTo: task.assigneeId,
 		approvedBy: null,
 		approvedAt: null,
 	});
+
+	return (await data).id;
 };
