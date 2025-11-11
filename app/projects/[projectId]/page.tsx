@@ -8,6 +8,7 @@ import { useProjectStore } from "@/lib/store/projectStore";
 import { use, useEffect } from "react";
 import LoadingSpinner from "@/components/base/layout/LoadingSpinner";
 import { useOrganisationStore } from "@/lib/store/organisationStore";
+import { useRouter } from "next/navigation";
 
 export default function Page({
 	params,
@@ -31,7 +32,13 @@ export default function Page({
 		}
 	}, [project, organisation, setprojectDetails]);
 
-	if (!profile) return null;
+	const router = useRouter();
+	if (!profile) {
+		// redirect and don't render until profile exists
+		window.location.href = "/";
+		window.location.reload();
+		return null;
+	}
 	if (!project) return <LoadingSpinner />;
 
 	if (profile.admin) {

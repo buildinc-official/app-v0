@@ -6,6 +6,7 @@ import { useOrganisationDetailStore } from "@/lib/store/organisationDetailStore"
 import { useOrganisationStore } from "@/lib/store/organisationStore";
 import { use, useEffect } from "react";
 import LoadingSpinner from "@/components/base/layout/LoadingSpinner";
+import { useRouter } from "next/navigation";
 
 export default function Page({
 	params,
@@ -28,7 +29,13 @@ export default function Page({
 		}
 	}, [organisation, setOrganisationDetails]);
 
-	if (!profile) return null;
+	const router = useRouter();
+	if (!profile) {
+		// redirect and don't render until profile exists
+		window.location.href = "/";
+		window.location.reload();
+		return null;
+	}
 	if (!organisation) return <LoadingSpinner />;
 
 	if (profile.admin) {

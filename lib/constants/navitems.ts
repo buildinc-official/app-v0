@@ -17,8 +17,8 @@ import {
 export const navItems = [
 	// Both sidebar and mobile
 	{
-		href: "/",
-		label: "Home",
+		href: "/dashboard",
+		label: "Dashboard",
 		group: "",
 		icon: Home,
 		sidebar: true,

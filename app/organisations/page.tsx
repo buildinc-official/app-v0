@@ -4,6 +4,7 @@ import LoadingSpinner from "@/components/base/layout/LoadingSpinner";
 import { useOrganisationStore } from "@/lib/store/organisationStore";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { useRequestStore } from "@/lib/store/requestStore";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
 	const profile = useProfileStore((state) => state.profile);
@@ -12,7 +13,13 @@ export default function Page() {
 	);
 	const requests = Object.values(useRequestStore((state) => state.requests));
 
-	if (!profile) return null;
+	const router = useRouter();
+	if (!profile) {
+		// redirect and don't render until profile exists
+		window.location.href = "/";
+		window.location.reload();
+		return null;
+	}
 
 	if (!organisations) return <LoadingSpinner />;
 	return (

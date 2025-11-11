@@ -1,11 +1,15 @@
-import React from "react";
+"use client";
+import { ClearData } from "@/lib/functions/utils";
+import { createClient } from "@/lib/supabase/client";
+import { IProfile } from "@/lib/types";
+import { User } from "@supabase/supabase-js";
+import { ThemeProvider } from "next-themes";
+import React, { useEffect, useState } from "react";
 import MobileNav from "../header/MobileNav";
 import SideBar from "../header/SideBar";
-import { ThemeProvider } from "next-themes";
 import TopBar from "../header/TopBar";
-import { IProfile } from "@/lib/types";
+import LoadingSpinner from "./LoadingSpinner";
 import { StoreHydrator } from "./StoreHydrator";
-import { User } from "@supabase/supabase-js";
 
 export function AppLayout({
 	children,
@@ -16,8 +20,44 @@ export function AppLayout({
 	profile: IProfile | null;
 	user: User | null;
 }) {
-	// console.log(user);
+	const supabase = createClient();
+	const [ready, setReady] = useState(false);
+	const EXPIRY_MS = 24 * 60 * 10 * 1000; // 1 min test; 24h prod
 
+	useEffect(() => {
+		const checkExpiry = async () => {
+			try {
+				const lastActiveAt = parseInt(
+					localStorage.getItem("lastActiveAt") || "0",
+					10
+				);
+				const now = Date.now();
+				if (now - lastActiveAt > EXPIRY_MS) {
+					await supabase.auth.signOut();
+					ClearData();
+					// router.push("/"); // redirect to home or login page
+					return;
+				}
+			} catch (err) {
+				console.error("[Layout] Expiry check failed:", err);
+			} finally {
+				setReady(true);
+				// window.location.reload();
+			}
+		};
+
+		checkExpiry();
+	}, []);
+
+	if (!ready) {
+		return (
+			<div className="flex items-center justify-center h-screen">
+				<span className="text-sm text-gray-500">
+					<LoadingSpinner />
+				</span>
+			</div>
+		);
+	}
 	return (
 		<ThemeProvider
 			attribute="class"

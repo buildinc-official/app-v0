@@ -1,12 +1,20 @@
+"use client";
 import React from "react";
 import Link from "next/link";
 import SideBarItems from "./SideBarItems";
 import { IProfile } from "@/lib/types";
 import { LogOutIcon, User } from "lucide-react";
 import { logout } from "./UserDropdown";
+import { useRouter } from "next/navigation";
 
 const SideBar = ({ profile }: { profile: IProfile | null }) => {
-	if (!profile) return null;
+	const router = useRouter();
+	if (!profile) {
+		// redirect and don't render until profile exists
+		window.location.href = "/";
+		window.location.reload();
+		return null;
+	}
 
 	return (
 		<div className="flex ">

@@ -16,9 +16,14 @@ import { ClearData } from "@/lib/functions/utils";
 
 export const logout = async () => {
 	const supabase = createClient();
-	await supabase.auth.signOut();
-	ClearData();
-	window.location.href = "/";
+	try {
+		await supabase.auth.signOut();
+		ClearData();
+	} catch (error) {
+		console.error("Error signing out:", error);
+	} finally {
+		window.location.href = "/";
+	}
 };
 
 const UserDropdown = ({ profile }: { profile: IProfile }) => {
