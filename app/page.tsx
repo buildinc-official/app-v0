@@ -8,6 +8,6 @@ export default function Home() {
 		return <Hero />;
 	} else if (profile) {
 		window.location.href = "/dashboard";
-		window.location.reload();
+		// window.location.reload();
 	}
 }
