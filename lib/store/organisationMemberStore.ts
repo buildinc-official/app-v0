@@ -21,6 +21,7 @@ interface OrganisationMemberState {
 	) => IOrganisationProfile | undefined;
 	clearOrganisationMembers: () => void;
 	clearMembersForOrganisation: (orgId: string) => void;
+	clearData: () => void;
 }
 
 export const useOrganisationMemberStore = create<OrganisationMemberState>()(
@@ -93,6 +94,9 @@ export const useOrganisationMemberStore = create<OrganisationMemberState>()(
 						state.organisationMembers;
 					return { organisationMembers: remainingMembers };
 				});
+			},
+			clearData: () => {
+				set({ organisationMembers: {} });
 			},
 		}),
 		{

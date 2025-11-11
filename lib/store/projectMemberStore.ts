@@ -15,6 +15,7 @@ interface ProjectMemberState {
 	) => IProjectProfile | undefined;
 	clearProjectMembers: () => void;
 	clearMembersForProject: (projectId: string) => void;
+	clearData: () => void;
 }
 
 export const useProjectMemberStore = create<ProjectMemberState>()(
@@ -87,6 +88,9 @@ export const useProjectMemberStore = create<ProjectMemberState>()(
 						state.projectMembers;
 					return { projectMembers: remainingMembers };
 				});
+			},
+			clearData: () => {
+				set({ projectMembers: {} });
 			},
 		}),
 		{

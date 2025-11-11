@@ -1,22 +1,8 @@
 
-Admin: 
-
-    Approvals:
-        - make the modal for approved 
-        - make the modal for rejected
-        - add stuff for material requests and payment requests
-    
-Employee:
-    Dashboard:
-        - make the quick actions
-        - make the notifications section
-        
-SHOW TO HADI BHAIYA
-
 NEXT:
     general:
         - notifications
-        - database optimisation
+        - database optimisation, RLS
         - mobile responsiveness
         - color scheme
 
@@ -38,6 +24,7 @@ NEXT:
             + save custom tmeplates in DB nad show them when selecting temapltes
 
         projectDetails:
+            - ! fix used budget not showing
             - ensure there is atleast 1 supervisor when chnaging roles
             - make settings tab
 
@@ -49,8 +36,8 @@ NEXT:
             - make everything
 
 
-add laoding to buttons: DONE
-add toasts everywhere: DONE
++ add laoding to buttons: DONE
++ add toasts everywhere: DONE
 when approving a task for completion, first check if any requests are left automatically
 dont showe budget to supervisor or anyone else othervthan admin
 aadding budget per sq ft
