@@ -1,10 +1,10 @@
 
 NEXT:
     general:
-        - notifications
-        - database optimisation, RLS
-        - mobile responsiveness
+        + database optimisation, RLS
+        + mobile responsiveness
         - color scheme
+        - notifications
 
     admin:
         home:

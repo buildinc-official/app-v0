@@ -32,11 +32,9 @@ const ActiveProjects = () => {
 								key={project.id}
 								name={project.name}
 								percentage={
-									(project.completedTasks > 0
-										? project.completedTasks
-										: 1 / project.totalTasks > 0
-										? project.totalTasks
-										: 1) * 100
+									project.progress
+										? Math.round(project.progress)
+										: 0
 								}
 								duedate={
 									project.endDate &&
@@ -70,7 +68,7 @@ const ProjectShowcase = ({
 		<div className="space-y-2 z-30">
 			<div className="flex items-center justify-between">
 				<span className="font-medium">{name}</span>
-				<Badge variant="secondary">{percentage}%</Badge>
+				<Badge variant="secondary">{percentage} %</Badge>
 			</div>
 			<Progress
 				value={percentage}

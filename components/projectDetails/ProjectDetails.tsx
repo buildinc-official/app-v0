@@ -39,7 +39,7 @@ export default function ProjectDetails() {
 			!sessionStorage.getItem("projectDetailsRefreshed")
 		) {
 			sessionStorage.setItem("projectDetailsRefreshed", "1");
-			router.refresh?.(); // triggers data revalidation but no reload
+			// router.refresh?.(); // triggers data revalidation but no reload
 		}
 	}, []);
 	const [changeRoleModal, setChangeRoleModal] = useState(false);
