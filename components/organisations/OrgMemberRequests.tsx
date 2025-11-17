@@ -74,7 +74,7 @@ const OrgMemberRequests = ({ requests }: { requests: IRequest[] }) => {
 										<TableCell className="text-center">
 											<div className="flex justify-center gap-2">
 												<Button
-													variant={"default"}
+													variant={"secondary"}
 													title="Accept"
 													onClick={() =>
 														acceptOrgInvitation(req)

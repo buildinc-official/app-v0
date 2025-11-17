@@ -3,7 +3,7 @@ NEXT:
     general:
         + database optimisation, RLS
         + mobile responsiveness
-        - color scheme
+        - ! color scheme
         - notifications
 
     admin:
@@ -11,20 +11,20 @@ NEXT:
             - make the recent avctivities component
         
         organisations:
-            - make the filter and search functionality
+            - ! make the filter and search functionality
         
         organisationDetails:
             - ensure there is 1 admin when changing roles
 
         Projects:
-            - makee the filter and search functionality
+            - ! makee the filter and search functionality
             + show project progress and tasks
 
         CreateProject:
             + save custom tmeplates in DB nad show them when selecting temapltes
 
         projectDetails:
-            - ! fix used budget not showing
+            + fix used budget not showing
             - ensure there is atleast 1 supervisor when chnaging roles
             - make settings tab
 
@@ -34,7 +34,9 @@ NEXT:
         
         Settings:
             - make everything
-
+    employees:
+        organisatiopns:
+            - let thme leave if they weant
 
 + add laoding to buttons: DONE
 + add toasts everywhere: DONE

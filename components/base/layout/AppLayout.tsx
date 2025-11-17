@@ -22,7 +22,7 @@ export function AppLayout({
 }) {
 	const supabase = createClient();
 	const [ready, setReady] = useState(false);
-	const EXPIRY_MS = 24 * 60 * 10 * 1000; // 1 min test; 24h prod
+	const EXPIRY_MS = 524 * 60 * 60 * 1000; // 1 min test; 24h prod
 
 	useEffect(() => {
 		const checkExpiry = async () => {

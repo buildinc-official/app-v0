@@ -6,47 +6,42 @@
 
 @layer base {
   :root {
-    --background: 40 20% 91%;
-    --foreground: 0 0% 3.9%;
-    /* --card: 98 9% 75%; */
-    --card: 169 21.8% 61.4%;
-    --card-foreground: 0 0% 3.9%;
+    --background: 45 27% 91%;
+    --foreground: 0 0% 0%;
+    --card: var(--primary);
+    --card-foreground: var(--primary-foreground );
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 3.9%;
-    --primary: 198 55% 66%;
-    --primary-foreground: 0 0% 0%;
-    --secondary: 169 100% 12%;
+    --secondary: 197 100% 10%;
     --secondary-foreground: 0 0% 100%;
+    --primary: 197 62% 51%;
+    --primary-foreground: 0 0% 0%;
     --muted: 0 0% 84%;
     --muted-foreground: 0 0% 45.1%;
-    --accent: 159 43% 39%;
-    --accent-foreground: 0 0% 100%;
     --destructive: 0 100% 33%;
     --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 89.8%;
-    --input: 0 0% 89.8%;
+    --border: 0 0% 81%;
+    --input: 0 0% 0%;
     --ring: 0 0% 3.9%;
     --radius: 0.5rem;
   }
   .dark {
-    --background1: 264 65% 5%;
-    --background: 323 25% 6%;
-    --foreground: 0 0% 98%;
-    --card: 277 100% 7%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
+    --background: 215 91% 9%;
+    --foreground: 206 31% 90%;
+    --card: var(--primary);
+    --card-foreground: var(--primary-foreground);
+    --popover: 0 0% 0%;
     --popover-foreground: 0 0% 98%;
-        /* --primary: 220 100% 15%; */
-    --primary: 288 100% 15%;
-    --primary-foreground: 0 0% 83%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
+    --primary: 212 82% 20%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 37 57% 57%;
+    --secondary-foreground: 0 0% 0%;
+    --muted: 37 39% 26%;
+    --muted-foreground: 0 0% 75%;
+    /* --accent: 0 0% 14.9%; */
+    /* --accent-foreground: 0 0% 98%; */
+    --destructive: 0 90% 41%;
+    --destructive-foreground: 0 0% 0%;
     --border: 0 0% 14.9%;
     --input: 0 0% 14.9%;
     --ring: 0 0% 83.1%;
