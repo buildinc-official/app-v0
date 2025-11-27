@@ -23,8 +23,8 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/base/ui/select";
-import { availableMaterials } from "@/lib/constants/materials";
 import { materialCreationFunctions } from "@/lib/functions/projectCreation";
+import { useMaterialPricingStore } from "@/lib/store/materialPricingStore";
 import {
 	IMaterialTemplate,
 	IProjectCreationData,
@@ -59,6 +59,9 @@ export default function AddMaterialModal({
 	setOpen,
 }: AddMaterialModalProps) {
 	const { addMaterial } = materialCreationFunctions();
+	const materialList = useMaterialPricingStore.getState().materialPricings
+		? Object.values(useMaterialPricingStore.getState().materialPricings!)
+		: [];
 	const form = useForm({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -74,7 +77,7 @@ export default function AddMaterialModal({
 
 	// Get selected material from form value
 	const selectedMaterialId = form.watch("materialId");
-	const selectedMaterial = availableMaterials.find(
+	const selectedMaterial = materialList.find(
 		(m) => m.id === selectedMaterialId
 	) as IMaterialTemplate | undefined;
 
@@ -82,10 +85,10 @@ export default function AddMaterialModal({
 	const filteredMaterials = useMemo(() => {
 		const q = query.trim().toLowerCase();
 		if (!q)
-			return availableMaterials.sort((a, b) =>
+			return materialList.sort((a, b) =>
 				(a.name || "").localeCompare(b.name || "")
 			);
-		return availableMaterials
+		return materialList
 			.filter((m) => (m.name || "").toLowerCase().includes(q))
 			.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
 	}, [query]);
@@ -108,9 +111,7 @@ export default function AddMaterialModal({
 	}, [open, form]);
 
 	const onSubmit = (data: z.infer<typeof formSchema>) => {
-		const material = availableMaterials.find(
-			(m) => m.id === data.materialId
-		);
+		const material = materialList.find((m) => m.id === data.materialId);
 		if (!material) return;
 
 		addMaterial(phaseId, task.id, setProjectData, {

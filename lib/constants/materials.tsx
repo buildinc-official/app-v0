@@ -1,3 +1,4 @@
+// This will only be ussed by the system as a default fallback measure.
 import { IMaterial, IMaterialTemplate } from "../types";
 
 export const availableMaterials: Partial<IMaterialTemplate>[] = [

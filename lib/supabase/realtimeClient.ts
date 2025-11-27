@@ -14,6 +14,7 @@ import { useProjectMemberStore } from "@/lib/store/projectMemberStore";
 import { profileDB } from "@/lib/supabase/db/profileDB";
 import { recomputePhaseAndProjectProgress } from "../functions/base";
 import { useProjectTemplateStore } from "../store/projectTemplateStore";
+import { useMaterialPricingStore } from "../store/materialPricingStore";
 
 // Create a single client instance for realtime
 const supabase = createClient();
@@ -118,6 +119,23 @@ export function initRealtimeListeners(profile: {
 		(material) =>
 			useMaterialStore.getState().updateMaterial?.(material.id, material),
 		(material) => useMaterialStore.getState().deleteMaterial?.(material.id)
+	);
+
+	// Material Pricings
+	createChannel(
+		"material_pricing",
+		(materialPricing) =>
+			useMaterialPricingStore
+				.getState()
+				.addMaterialPricing?.(materialPricing),
+		(materialPricing) =>
+			useMaterialPricingStore
+				.getState()
+				.updateMaterialPricing?.(materialPricing.id, materialPricing),
+		(materialPricing) =>
+			useMaterialPricingStore
+				.getState()
+				.deleteMaterialPricing?.(materialPricing.id)
 	);
 
 	// 🟢 Requests (user-specific listener)

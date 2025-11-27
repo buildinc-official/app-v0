@@ -3,7 +3,7 @@ NEXT:
     general:
         + database optimisation, RLS
         + mobile responsiveness
-        - ! color scheme
+        + color scheme
         - notifications
 
     admin:
@@ -34,6 +34,7 @@ NEXT:
         
         Settings:
             - make everything
+            - ! make the setup for material avarage cost
     employees:
         organisatiopns:
             - let thme leave if they weant
@@ -44,3 +45,5 @@ when approving a task for completion, first check if any requests are left autom
 dont showe budget to supervisor or anyone else othervthan admin
 aadding budget per sq ft
 material costing calculator
+
+ 

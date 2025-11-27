@@ -2,6 +2,7 @@
 
 import { recomputePhaseAndProjectProgress } from "@/lib/functions/base";
 import { projectDetails } from "@/lib/functions/projectDetails";
+import { getMaterialPricingsByUserId } from "@/lib/middleware/materialPricing";
 import { getTaskMaterials } from "@/lib/middleware/materials";
 import { getOrganisationMembers } from "@/lib/middleware/organisationMembers";
 import {
@@ -78,6 +79,7 @@ export const StoreHydrator = ({ profile }: { profile: IProfile | null }) => {
 		const [organisations, projects] = await Promise.all([
 			getUserOrganisations(userProfile.id),
 			getUserProjects(userProfile.id),
+			getMaterialPricingsByUserId(userProfile.id),
 		]);
 
 		await Promise.all([

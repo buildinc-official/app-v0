@@ -17,11 +17,11 @@ import {
 	Select,
 } from "@/components/base/ui/select";
 import { Textarea } from "@/components/base/ui/textarea";
-import { availableMaterials } from "@/lib/constants/materials";
 import { IMaterial } from "@/lib/types";
 import { projectDetails } from "@/lib/functions/projectDetails";
 import { Minus } from "lucide-react";
 import React, { useState } from "react";
+import { useMaterialPricingStore } from "@/lib/store/materialPricingStore";
 
 type Props = {
 	isCreateTaskOpen: boolean;
@@ -30,7 +30,8 @@ type Props = {
 
 const CreateTaskModal = ({ isCreateTaskOpen, setIsCreateTaskOpen }: Props) => {
 	const [taskMaterials, setTaskMaterials] = useState<IMaterial[]>([]);
-
+	const materials = useMaterialPricingStore.getState().materialPricings;
+	const materialList = materials ? Object.values(materials) : [];
 	return (
 		<Dialog
 			open={isCreateTaskOpen}
@@ -137,7 +138,7 @@ const CreateTaskModal = ({ isCreateTaskOpen, setIsCreateTaskOpen }: Props) => {
 											<SelectValue placeholder="Select material" />
 										</SelectTrigger>
 										<SelectContent>
-											{availableMaterials.map((mat) => (
+											{materialList.map((mat) => (
 												<SelectItem
 													key={mat.id}
 													value={

@@ -38,6 +38,12 @@ export type requestData = {
 	projectName?: string;
 };
 
+export type materialPricing = {
+	materialId: string;
+	name: string;
+	unitCost: number;
+	unit: string;
+};
 /**
  *
  * 1. Database Types
@@ -130,6 +136,14 @@ export interface IMaterialDB {
 	approved: boolean;
 	deliveredQuantity: number;
 	wasteQuantity: number;
+}
+
+export interface IMaterialPricingDB {
+	id: string;
+	user: string;
+	name: string;
+	unit: string;
+	price: number;
 }
 
 export interface IProjectTemplateDB {
