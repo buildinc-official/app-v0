@@ -33,13 +33,13 @@ export default function Settings({ profile, admin }: Props) {
 	return (
 		<div className="p-2 pb-28">
 			<Tabs
-				defaultValue="general"
+				defaultValue="projects"
 				className="rounded-xl"
 			>
 				<TabsTriggerList
 					triggers={[
-						{ value: "general", label: "General" },
-						{ value: "projects", label: "Project" },
+						// { value: "general", label: "General" },
+						{ value: "projects", label: "Projects" },
 					]}
 				/>
 
@@ -89,7 +89,7 @@ export default function Settings({ profile, admin }: Props) {
 										>
 											<table className="w-full text-sm table-fixed">
 												<thead>
-													<tr className="sticky top-0 z-10 bg-muted/95 backdrop-blur">
+													<tr className="sticky top-0 z-10 bg-primary/80 dark:bg-muted/95 backdrop-blur">
 														<th className="px-3 py-2 text-left font-medium">
 															Material
 														</th>
@@ -114,7 +114,7 @@ export default function Settings({ profile, admin }: Props) {
 															return (
 																<tr
 																	key={m.id}
-																	className="odd:bg-muted/50 even:bg-muted/10 border-t "
+																	className="odd:bg-primary/20 even:bg-primary/50 dark:odd:bg-muted/50 dark:even:bg-muted/10 border-t "
 																>
 																	<td className="px-3 py-3 align-middle">
 																		<span className="font-medium">
@@ -150,7 +150,7 @@ export default function Settings({ profile, admin }: Props) {
 																			<Edit className="inline-block size-3 " />
 																		</button> */}
 																		<button
-																			className="px-1 py-1 text-xs rounded bg-destructive/50 hover:bg-muted/20 transition"
+																			className="px-1 py-1 text-xs rounded bg-destructive hover:bg-destructive/20 text-white hover:text-black dark:bg-destructive/50 dark:hover:bg-white/20  transition"
 																			onClick={(
 																				e
 																			) => {
@@ -163,7 +163,7 @@ export default function Settings({ profile, admin }: Props) {
 																				);
 																			}}
 																		>
-																			<Trash className="inline-block size-3" />
+																			<Trash className="inline-block size-3 " />
 																		</button>
 																	</td>
 																</tr>
