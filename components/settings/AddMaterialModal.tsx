@@ -10,6 +10,7 @@ import {
 } from "@/components/base/ui/dialog";
 import { Input } from "@/components/base/ui/input";
 import { Label } from "@/components/base/ui/label";
+import { materialUnitList } from "@/lib/constants/materials";
 import { createOrganisation } from "@/lib/functions/organisationCreation";
 import { handleAddMaterial } from "@/lib/functions/settings";
 import { RupeeIcon } from "@/lib/functions/utils";
@@ -17,16 +18,6 @@ import { useProfileStore } from "@/lib/store/profileStore";
 import { Plus } from "lucide-react";
 import React, { useState } from "react";
 import { toast } from "sonner";
-
-const unitList = [
-	{ value: "", label: "Select unit" },
-	{ value: "sqft", label: "sqft (square feet)" },
-	{ value: "sqm", label: "sqm (square meters)" },
-	{ value: "meter", label: "meter" },
-	{ value: "piece", label: "piece" },
-	{ value: "kg", label: "kg" },
-	{ value: "litre", label: "litre" },
-];
 
 const AddMaterialModal = ({
 	isOpen,
@@ -116,7 +107,7 @@ const AddMaterialModal = ({
 							className="h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm focus:outline-none"
 						>
 							{(() => {
-								return unitList.map((u) => (
+								return materialUnitList.map((u) => (
 									<option
 										key={u.value || "empty"}
 										value={u.value}

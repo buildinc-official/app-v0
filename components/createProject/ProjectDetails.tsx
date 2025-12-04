@@ -73,7 +73,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 				{/* Row 1: Name & Organisation */}
 				<div className="grid gap-6 md:grid-cols-2">
 					<div className="space-y-2">
-						<Label htmlFor="project-name">Project Name *</Label>
+						<Label htmlFor="project-name">Project Name</Label>
 						<Input
 							id="project-name"
 							placeholder="Enter project name"
@@ -81,7 +81,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 							onChange={(e) =>
 								handleChange("name", e.target.value)
 							}
-							className="focus-visible:ring-0 focus-visible:border-black"
+							className="bg-white/50 border-gray-300 "
 						/>
 						{validationErrors.name && (
 							<p className="text-red-500 text-sm">
@@ -90,21 +90,30 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 						)}
 					</div>
 					<div className="space-y-2">
-						<Label htmlFor="organisation">Organisation *</Label>
+						<Label htmlFor="organisation">Organisation </Label>
 						<Select
-							value={projectData.organisationId.toString()}
+							value={
+								projectData.organisationId
+									? projectData.organisationId.toString()
+									: ""
+							}
 							onValueChange={(value) =>
 								handleChange("organisationId", value)
 							}
 						>
-							<SelectTrigger className="w-full">
-								<SelectValue placeholder="Select organisation" />
+							<SelectTrigger className="w-full bg-white/50 border-none">
+								<SelectValue
+									className="bg-white/50"
+									placeholder="Select organisation"
+								/>
 							</SelectTrigger>
-							<SelectContent>
+
+							<SelectContent className="bg-gray-50">
 								{organisations.map((org) => (
 									<SelectItem
 										key={org.id}
 										value={org.id.toString()}
+										className="bg-white/50"
 									>
 										{org.name}
 									</SelectItem>
@@ -122,7 +131,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 				{/* Row 2: Supervisor & Budget */}
 				<div className="grid gap-6 md:grid-cols-2">
 					<div className="space-y-2">
-						<Label htmlFor="supervisor">Project Supervisor *</Label>
+						<Label htmlFor="supervisor">Project Supervisor</Label>
 						<Select
 							value={projectData.supervisor}
 							onValueChange={(value) => {
@@ -135,10 +144,10 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 								}
 							}}
 						>
-							<SelectTrigger className="w-full">
+							<SelectTrigger className="w-full bg-white/50 border-none">
 								<SelectValue placeholder="Select supervisor" />
 							</SelectTrigger>
-							<SelectContent>
+							<SelectContent className="bg-gray-50">
 								{supervisors.map((sup) => (
 									<SelectItem
 										key={sup.id}
@@ -158,7 +167,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 					</div>
 
 					<div className="space-y-2">
-						<Label htmlFor="budget">Budget *</Label>
+						<Label htmlFor="budget">Budget</Label>
 						<div className="relative w-full">
 							<IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3" />
 							<Input
@@ -180,7 +189,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 									const num = Number.parseInt(raw) || 0;
 									handleChange("budget", num);
 								}}
-								className="pl-8 focus-visible:ring-0 focus-visible:border-black w-full"
+								className="pl-8 bg-white/50 border-none w-full"
 							/>
 						</div>
 						{validationErrors.budget && (
@@ -193,7 +202,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 
 				{/* Row 3: Description */}
 				<div className="space-y-2">
-					<Label htmlFor="description">Description *</Label>
+					<Label htmlFor="description">Description</Label>
 					<Textarea
 						id="description"
 						placeholder="Describe the project..."
@@ -202,7 +211,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 						onChange={(e) =>
 							handleChange("description", e.target.value)
 						}
-						className="focus-visible:ring-0 focus-visible:border-black"
+						className="border-none bg-white/50"
 					/>
 					{validationErrors.description && (
 						<p className="text-red-500 text-sm">
@@ -215,7 +224,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 				<div className="grid gap-6 md:grid-cols-2">
 					{/* Start Date */}
 					<div className="space-y-1">
-						<Label htmlFor="start-date">Start Date *</Label>
+						<Label htmlFor="start-date">Start Date</Label>
 						<Dialog
 							open={startDialogOpen}
 							onOpenChange={setStartDialogOpen}
@@ -225,7 +234,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 							<DialogTrigger asChild>
 								<Button
 									variant="outline"
-									className="w-full justify-start text-left font-normal"
+									className="w-full justify-start text-left font-normal bg-white/50 border-none"
 								>
 									<CalendarIcon className="mr-2 h-4 w-4" />
 									{projectData.startDate
@@ -257,7 +266,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 
 					{/* End Date */}
 					<div className="space-y-1">
-						<Label htmlFor="end-date">End Date *</Label>
+						<Label htmlFor="end-date">End Date</Label>
 						<Dialog
 							open={endDialogOpen}
 							onOpenChange={setEndDialogOpen}
@@ -266,7 +275,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 							<DialogTrigger asChild>
 								<Button
 									variant="outline"
-									className="w-full justify-start text-left font-normal"
+									className="w-full justify-start text-left font-normal bg-white/50 border-none"
 								>
 									<CalendarIcon className="mr-2 h-4 w-4" />
 									{projectData.endDate
@@ -322,7 +331,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 							onChange={(e) =>
 								handleChange("location", e.target.value)
 							}
-							className="pl-10"
+							className="pl-10 border-none bg-white/50 w-full"
 						/>
 					</div>
 				</div>

@@ -1,6 +1,16 @@
 // This will only be ussed by the system as a default fallback measure.
 import { IMaterial, IMaterialTemplate } from "../types";
 
+export const materialUnitList = [
+	{ value: "-", label: "Select unit" },
+	{ value: "sqft", label: "sqft (square feet)" },
+	{ value: "sqm", label: "sqm (square meters)" },
+	{ value: "meter", label: "meter" },
+	{ value: "piece", label: "piece" },
+	{ value: "kg", label: "kg" },
+	{ value: "litre", label: "litre" },
+];
+
 export const availableMaterials: Partial<IMaterialTemplate>[] = [
 	{
 		id: "1",

@@ -268,9 +268,9 @@ const ReviewConfirm = ({
 									className="flex items-center justify-between p-3 border rounded-lg bg-white/50"
 								>
 									<div className="flex items-center gap-3">
-										<Badge variant="outline">
+										<div className="text-sm font-bold">
 											Phase {index + 1}
-										</Badge>
+										</div>
 										<p className="font-medium">
 											{phase.name}
 										</p>

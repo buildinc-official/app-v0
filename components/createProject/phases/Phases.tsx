@@ -13,7 +13,7 @@ import { IProjectCreationData, IProjectTemplate } from "@/lib/types";
 import { IndianRupee, Layers, Plus } from "lucide-react";
 import { Button } from "@/components/base/ui/button";
 
-const PhasesTasks = ({
+const Phases = ({
 	projectData,
 	setProjectData,
 	customTemplates,
@@ -48,8 +48,7 @@ const PhasesTasks = ({
 							</CardTitle>
 							<CardDescription>
 								<p className="mt-2">
-									Organize your project into phases and manage
-									tasks within each phase
+									Organize your project into phases
 								</p>
 							</CardDescription>
 						</div>
@@ -127,7 +126,7 @@ const PhasesTasks = ({
 
 					{/* Budget Total */}
 					{projectData.phases.length > 0 && (
-						<div className="mt-6 p-4 bg-slate-50 rounded-lg">
+						<div className="mt-6 p-4 bg-secondary text-secondary-foreground rounded-lg">
 							<div className="flex items-center justify-between">
 								<span className="font-medium">
 									Total Budget:
@@ -155,4 +154,4 @@ const PhasesTasks = ({
 	);
 };
 
-export default PhasesTasks;
+export default Phases;

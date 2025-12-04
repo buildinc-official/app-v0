@@ -9,7 +9,6 @@ import {
 	ChevronRight,
 } from "lucide-react";
 import { phaseCreationFunctions } from "@/lib/functions/projectCreation";
-import TaskList from "./TaskList";
 import { Button } from "@/components/base/ui/button";
 import { Textarea } from "@/components/base/ui/textarea";
 import { useState, useEffect } from "react";
@@ -88,7 +87,7 @@ const PhaseTable = ({
 				<div
 					ref={provided.innerRef}
 					{...provided.draggableProps}
-					className={`rounded-lg p-4 bg-white/60 ${
+					className={`rounded-lg p-4 bg-white/60  dark:text-black ${
 						snapshot.isDragging ? "shadow-lg" : "shadow-sm"
 					}`}
 				>
@@ -135,7 +134,7 @@ const PhaseTable = ({
 									duplicatePhase(phase, setProjectData);
 								}}
 							>
-								<Copy className="h-4 w-4" />
+								<Copy className="h-4 w-4 text-black dark:text-white" />
 							</Button>
 							<Button
 								variant="outline"
@@ -255,7 +254,7 @@ const PhaseTable = ({
 							</div>
 
 							{/* Dates */}
-							<div className="grid gap-6 md:grid-cols-2">
+							<div className="grid gap-6 md:grid-cols-2 pb-3">
 								{/* Start Date */}
 								<div className="space-y-1">
 									<Label
@@ -354,10 +353,10 @@ const PhaseTable = ({
 							</div>
 
 							{/* Tasks Section */}
-							<TaskList
+							{/* <TaskList
 								phase={phase}
 								setProjectData={setProjectData}
-							/>
+							/> */}
 						</div>
 					)}
 				</div>

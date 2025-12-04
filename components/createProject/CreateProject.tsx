@@ -10,12 +10,10 @@ import {
 	IProjectTemplate,
 } from "@/lib/types";
 import ProjectDetails from "./ProjectDetails";
-import PhasesTasks from "./phasesTasks/PhasesTasks";
+import Phases from "./phases/Phases";
 import ReviewConfirm from "./ReviewConfirm";
-import {
-	getOrganisationMembers,
-	getOrganisationMembersFromStore,
-} from "@/lib/middleware/organisationMembers";
+import { getOrganisationMembersFromStore } from "@/lib/middleware/organisationMembers";
+import Tasks from "./tasks/Tasks";
 
 export default function CreateProject({
 	profile,
@@ -24,25 +22,28 @@ export default function CreateProject({
 	profile: IProfile;
 	organisations: IOrganisation[];
 }) {
+	const today = new Date();
+	const tomorrow = new Date(today);
+	tomorrow.setDate(tomorrow.getDate() + 1);
+
 	const initialProjectData: IProjectCreationData = {
 		id: crypto.randomUUID(),
 		owner: profile.id,
 		status: "Inactive",
-		name: "New Project",
-		description:
-			"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi mollis pharetra sagittis. Aenean iaculis tincidunt arcu, quis mattis quam. Sed sed sodales purus. Nulla ullamcorper ut nunc non finibus. Morbi tincidunt, nibh id rutrum interdum, nisi arcu dignissim nunc, quis feugiat nunc justo sit amet risus. Mauris diam sem, pharetra id iaculis ac, tristique et dolor. Vestibulum egestas odio ut faucibus facilisis. ",
+		name: "1",
+		description: "1",
 		organisationId: "",
-		startDate: new Date(),
-		endDate: new Date(Date.now() + 100 * 24 * 60 * 60 * 1000),
+		startDate: today,
+		endDate: tomorrow,
 		budget: 1500000,
-		location: "Hyderabad",
+		location: "",
 		supervisor: "",
 		phases: [],
 		saveAsTemplate: false,
 		templateName: "",
 		templateDescription: "",
 		supervisorName: "",
-		category: "Commercial",
+		category: "Residential",
 	};
 
 	const [currentStep, setCurrentStep] = useState(1);
@@ -65,7 +66,7 @@ export default function CreateProject({
 		  )
 		: ([] as IOrganisationProfile[]); // Ensure it's typed as IOrganisationProfile[]
 
-	const steps = ["Project Details", "Phases & Tasks", "Review & Confirm"];
+	const steps = ["Project Details", "Phases", "Tasks", "Review & Confirm"];
 	const totalSteps = steps.length;
 
 	return (
@@ -93,7 +94,7 @@ export default function CreateProject({
 					)}
 
 					{currentStep === 2 && (
-						<PhasesTasks
+						<Phases
 							projectData={projectData}
 							setProjectData={setProjectData}
 							customTemplates={customTemplates}
@@ -101,8 +102,16 @@ export default function CreateProject({
 							setValidationErrors={setValidationErrors}
 						/>
 					)}
-
 					{currentStep === 3 && (
+						<Tasks
+							projectData={projectData}
+							setProjectData={setProjectData}
+							validationErrors={validationErrors}
+							setValidationErrors={setValidationErrors}
+						/>
+					)}
+
+					{currentStep === 4 && (
 						<ReviewConfirm
 							projectData={projectData}
 							organisation={selectedOrganisation}

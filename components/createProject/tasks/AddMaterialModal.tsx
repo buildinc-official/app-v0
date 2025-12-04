@@ -23,9 +23,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/base/ui/select";
+import { materialUnitList } from "@/lib/constants/materials";
 import { materialCreationFunctions } from "@/lib/functions/projectCreation";
 import { useMaterialPricingStore } from "@/lib/store/materialPricingStore";
 import {
+	IMaterialPricingDB,
 	IMaterialTemplate,
 	IProjectCreationData,
 	ITaskTemplate,
@@ -59,9 +61,12 @@ export default function AddMaterialModal({
 	setOpen,
 }: AddMaterialModalProps) {
 	const { addMaterial } = materialCreationFunctions();
-	const materialList = useMaterialPricingStore.getState().materialPricings
-		? Object.values(useMaterialPricingStore.getState().materialPricings!)
-		: [];
+	const materialList: IMaterialPricingDB[] =
+		useMaterialPricingStore.getState().materialPricings
+			? Object.values(
+					useMaterialPricingStore.getState().materialPricings!
+			  )
+			: [];
 	const form = useForm({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -77,9 +82,9 @@ export default function AddMaterialModal({
 
 	// Get selected material from form value
 	const selectedMaterialId = form.watch("materialId");
-	const selectedMaterial = materialList.find(
+	const selectedMaterial: IMaterialPricingDB = materialList.find(
 		(m) => m.id === selectedMaterialId
-	) as IMaterialTemplate | undefined;
+	) as IMaterialPricingDB;
 
 	// Filtered materials for dropdown
 	const filteredMaterials = useMemo(() => {
@@ -96,8 +101,8 @@ export default function AddMaterialModal({
 	// Prefill unit & cost when material selected
 	useEffect(() => {
 		if (selectedMaterial) {
-			form.setValue("unit", selectedMaterial.defaultUnit || "");
-			form.setValue("cost", selectedMaterial.unitCost ?? 0);
+			form.setValue("unit", selectedMaterial.unit);
+			form.setValue("cost", selectedMaterial.price);
 		}
 	}, [selectedMaterial, form]);
 
@@ -191,7 +196,7 @@ export default function AddMaterialModal({
 																(material) => (
 																	<div
 																		key={
-																			material.id
+																			material.name
 																		}
 																		className="p-3 cursor-pointer hover:bg-gray-50 transition-colors duration-150 border-b border-gray-100 last:border-b-0"
 																		onMouseDown={(
@@ -233,7 +238,7 @@ export default function AddMaterialModal({
 								render={({ field }) => (
 									<FormItem className="space-y-2.5">
 										<FormLabel className="text-sm font-medium text-gray-700">
-											Unit Cost (Market Estimate)
+											Unit Cost
 										</FormLabel>
 										<FormControl>
 											<Input
@@ -336,20 +341,18 @@ export default function AddMaterialModal({
 													</SelectTrigger>
 												</FormControl>
 												<SelectContent>
-													{(
-														selectedMaterial?.units ?? [
-															selectedMaterial?.defaultUnit ||
-																"",
-														]
-													).map((u) => (
-														<SelectItem
-															key={u}
-															value={u}
-															className="focus:bg-blue-50 focus-visible:ring-0 focus-visible:border-muted-foreground"
-														>
-															{u}
-														</SelectItem>
-													))}
+													{materialUnitList.map(
+														(unit) => (
+															<SelectItem
+																key={unit.value}
+																value={
+																	unit.value
+																}
+															>
+																{unit.label}
+															</SelectItem>
+														)
+													)}
 												</SelectContent>
 											</Select>
 											<FormMessage />

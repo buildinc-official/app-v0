@@ -1,17 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
 import { Button } from "@/components/base/ui/button";
 import { Input } from "@/components/base/ui/input";
 import { Label } from "@/components/base/ui/label";
 import { materialCreationFunctions } from "@/lib/functions/projectCreation";
+import { IProjectCreationData, ITaskTemplate } from "@/lib/types";
 import { Plus, Trash2 } from "lucide-react";
+import React, { useState } from "react";
 import AddMaterialModal from "./AddMaterialModal";
-import {
-	IProjectCreationData,
-	ITaskTemplate,
-	IMaterialTemplate,
-} from "@/lib/types";
 
 const TaskMaterials = ({
 	phaseId,
@@ -48,7 +44,7 @@ const TaskMaterials = ({
 					{task.materials?.map((mat) => (
 						<div
 							key={mat.id}
-							className="grid grid-cols-[1fr_1fr_1fr_auto] items-center border rounded-lg p-2 bg-muted gap-4 w-full"
+							className="grid grid-cols-[1fr_1fr_1fr_auto] items-center border rounded-lg p-2 bg-white gap-4 w-full"
 						>
 							{/* Name */}
 							<p className="text-sm font-medium">{mat.name}</p>

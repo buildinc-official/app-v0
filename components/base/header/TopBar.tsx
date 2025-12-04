@@ -22,7 +22,7 @@ const TopBar = ({ profile }: { profile: IProfile | null }) => {
 				</div>
 			)}
 			<div className="flex items-center gap-4">
-				<ThemeSwitcher />
+				{/* <ThemeSwitcher /> */}
 				<div className="hidden lg:flex items-center gap-4">
 					<UserButton profile={profile} />
 				</div>

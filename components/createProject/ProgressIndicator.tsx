@@ -50,6 +50,92 @@ const ProgressIndicator = ({
 				errors.phases = "At least one phase with tasks is required";
 		}
 
+		if (step === 3) {
+			if (step === 3) {
+				// Ensure phases exist
+				if (!projectData.phases || projectData.phases.length === 0) {
+					errors.phases = "At least one phase with tasks is required";
+				} else {
+					projectData.phases.forEach((phase, pIdx) => {
+						const phaseBudget = Number(phase?.budget ?? 0);
+
+						// Phase budget required
+						if (!phase?.budget || phaseBudget <= 0) {
+							errors[`phase_${pIdx}_budget`] = `Phase ${
+								pIdx + 1
+							} budget is required`;
+						}
+
+						// Tasks must exist
+						if (!phase.tasks || phase.tasks.length === 0) {
+							errors[`phase_${pIdx}_tasks`] = `Phase ${
+								pIdx + 1
+							} must have at least one task`;
+							return;
+						}
+
+						// Sum task budgets and validate each task budget
+						let tasksTotal = 0;
+						phase.tasks.forEach((task, tIdx) => {
+							const taskBudget = Number(task?.plannedBudget ?? 0);
+							if (!task?.plannedBudget || taskBudget <= 0) {
+								errors[
+									`phase_${pIdx}_task_${tIdx}_budget`
+								] = `Task ${tIdx + 1} in phase ${
+									pIdx + 1
+								} requires a valid budget`;
+							}
+							tasksTotal += taskBudget;
+						});
+
+						// Compare totals and add warning/error if tasks exceed phase budget
+						if (phaseBudget > 0 && tasksTotal > phaseBudget) {
+							errors[
+								`phase_${pIdx + 1}`
+							] = `Total task budgets (${tasksTotal.toLocaleString(
+								"en-IN"
+							)}) exceed phase budget (${phaseBudget.toLocaleString(
+								"en-IN"
+							)})`;
+						}
+					});
+				}
+			}
+			// Check each task's materials total and compare with the task planned budget
+			if (projectData.phases && projectData.phases.length > 0) {
+				projectData.phases.forEach((phase, pIdx) => {
+					phase?.tasks?.forEach((task, tIdx) => {
+						const taskBudget = Number(task?.plannedBudget ?? 0);
+						const materials = Array.isArray(task?.materials)
+							? task!.materials
+							: [];
+
+						// Compute total material cost (supporting unitCost|cost and quantity|qty)
+						const materialTotal = materials.reduce((sum, m) => {
+							const unitCost = Number(
+								m?.unitCost ?? m?.unitCost ?? 0
+							);
+							const qty = Number(m?.plannedQuantity ?? 1);
+							return sum + unitCost * qty;
+						}, 0);
+
+						// If planned budget is higher than material cost, add an error (as requested)
+						if (taskBudget < materialTotal) {
+							errors[
+								`Error`
+							] = `Planned budget (${taskBudget.toLocaleString(
+								"en-IN"
+							)}) for task ${tIdx + 1} in phase ${
+								pIdx + 1
+							} exceeds total material cost (${materialTotal.toLocaleString(
+								"en-IN"
+							)})`;
+						}
+					});
+				});
+			}
+		}
+
 		setValidationErrors(errors);
 		return Object.keys(errors).length === 0;
 	};

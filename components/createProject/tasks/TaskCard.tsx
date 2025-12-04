@@ -1,105 +1,29 @@
-"use client";
-import { useState } from "react";
-import { Card } from "@/components/base/ui/card";
 import { Button } from "@/components/base/ui/button";
+import { Card } from "@/components/base/ui/card";
 import { Input } from "@/components/base/ui/input";
 import { Label } from "@/components/base/ui/label";
 import { Textarea } from "@/components/base/ui/textarea";
+import { taskCreationFunctions } from "@/lib/functions/projectCreation";
+import { IProjectCreationData, ITaskTemplate } from "@/lib/types";
 import {
 	ChevronDown,
 	ChevronRight,
-	Plus,
-	Trash2,
-	Copy,
 	Clock,
+	Copy,
 	IndianRupee,
+	Trash2,
 } from "lucide-react";
-import { taskCreationFunctions } from "@/lib/functions/projectCreation";
-import {
-	Draggable,
-	DraggableProvidedDragHandleProps,
-	Droppable,
-} from "@hello-pangea/dnd";
+import React, { useState } from "react";
 import TaskMaterials from "./TaskMaterials";
-import {
-	IPhaseTemplate,
-	IProjectCreationData,
-	ITaskTemplate,
-} from "@/lib/types";
-
-const TaskList = ({
-	phase,
-	setProjectData,
-}: {
-	phase: IPhaseTemplate;
-	setProjectData: React.Dispatch<React.SetStateAction<IProjectCreationData>>;
-}) => {
-	const { updateTask, duplicateTask, removeTask, addTask } =
-		taskCreationFunctions();
-	return (
-		<div className="space-y-2 mt-4">
-			<h4 className="text-sm font-bold">Tasks</h4>
-			{phase.tasks && (
-				<Droppable
-					droppableId={phase.id}
-					type="task"
-				>
-					{(provided) => (
-						<div
-							{...provided.droppableProps}
-							ref={provided.innerRef}
-							className="space-y-2"
-						>
-							{phase.tasks.map((task, index) => (
-								<Draggable
-									key={task.id}
-									draggableId={task.id}
-									index={index}
-								>
-									{(provided) => (
-										<div
-											ref={provided.innerRef}
-											{...provided.draggableProps}
-										>
-											<TaskCard
-												task={task}
-												phaseId={phase.id}
-												setProjectData={setProjectData}
-												dragHandleProps={
-													provided.dragHandleProps
-												}
-											/>
-										</div>
-									)}
-								</Draggable>
-							))}
-							{provided.placeholder}
-						</div>
-					)}
-				</Droppable>
-			)}
-			<Button
-				className="bg-muted-foreground/30 w-full"
-				onClick={() => addTask(phase.id, setProjectData)}
-			>
-				{" "}
-				<Plus className="" />
-				Add Task{" "}
-			</Button>
-		</div>
-	);
-};
 
 const TaskCard = ({
 	task,
 	phaseId,
 	setProjectData,
-	dragHandleProps,
 }: {
 	task: ITaskTemplate;
 	phaseId: string;
 	setProjectData: React.Dispatch<React.SetStateAction<IProjectCreationData>>;
-	dragHandleProps: DraggableProvidedDragHandleProps | null;
 }) => {
 	const { updateTask, duplicateTask, removeTask, addTask } =
 		taskCreationFunctions();
@@ -113,15 +37,12 @@ const TaskCard = ({
 		) || 0;
 
 	return (
-		<Card className="p-3 shadow-sm border bg-slate-50">
-			{/* Summary Header (Drag Handle Zone) */}
+		<Card className="p-3 shadow-sm border bg-white/70">
 			<div
 				className="flex justify-between items-center cursor-pointer"
 				onClick={() => setExpanded((prev) => !prev)}
-				{...dragHandleProps}
 			>
 				<div className="flex items-center gap-2">
-					{/* <GripVertical className="h-4 w-4 text-slate-400" /> */}
 					{expanded ? (
 						<ChevronDown className="h-4 w-4 text-slate-500" />
 					) : (
@@ -130,7 +51,7 @@ const TaskCard = ({
 					{editingTitle ? (
 						<Input
 							autoFocus
-							className="h-6 text-sm font-medium bg-muted focus-visible:ring-0 focus-visible:border-muted-foreground"
+							className="h-6 text-sm font-medium bg-white focus-visible:ring-0 focus-visible:border-muted-foreground dark:focus:text-black"
 							value={task.name}
 							onChange={(e) =>
 								updateTask(
@@ -199,7 +120,7 @@ const TaskCard = ({
 							Description
 						</Label>
 						<Textarea
-							className="bg-muted focus-visible:ring-0 focus-visible:border-muted-foreground"
+							className="bg-white text-black"
 							value={task.description}
 							placeholder="Task details..."
 							onChange={(e) =>
@@ -217,13 +138,13 @@ const TaskCard = ({
 					<div className="grid gap-4 md:grid-cols-2">
 						<div className="space-y-1">
 							<Label className="font-semibold text-muted-foreground">
-								Estimated Duration
+								Estimated Duration (Days)
 							</Label>
 							<div className="relative">
 								<Clock className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 " />
 								<Input
 									type="number"
-									className="pl-10 bg-muted focus-visible:ring-0 focus-visible:border-muted-foreground"
+									className="pl-10 bg-white focus-visible:ring-0 focus-visible:border-muted-foreground"
 									value={
 										task.estimatedDuration === undefined
 											? ""
@@ -266,7 +187,7 @@ const TaskCard = ({
 								<IndianRupee className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 " />
 								<Input
 									type="text"
-									className="pl-10 bg-muted focus-visible:ring-0 focus-visible:border-muted-foreground"
+									className="pl-10 bg-white focus-visible:ring-0 focus-visible:border-muted-foreground"
 									value={
 										task.plannedBudget === undefined ||
 										task.plannedBudget === null
@@ -334,4 +255,4 @@ const TaskCard = ({
 	);
 };
 
-export default TaskList;
+export default TaskCard;
