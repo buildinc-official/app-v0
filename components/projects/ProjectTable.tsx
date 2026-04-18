@@ -1,3 +1,5 @@
+"use client";
+
 import {
 	Card,
 	CardContent,
@@ -13,175 +15,259 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/base/ui/table";
+import { Badge } from "@/components/base/ui/badge";
 import { RupeeIcon } from "@/lib/functions/utils";
+import { useOrganisationStore } from "@/lib/store/organisationStore";
 import { IProject } from "@/lib/types";
+import { ChevronRight, FolderOpen, MapPin } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useMemo } from "react";
+import { cn } from "@/lib/functions/utils";
 
 type Props = {
 	filteredProjects: IProject[];
 	admin: boolean;
 };
 
+function statusVariant(
+	status: string | undefined
+):
+	| "active"
+	| "reviewing"
+	| "inactive"
+	| "pending"
+	| "completed"
+	| "secondary" {
+	if (!status) return "secondary";
+	const s = status.toLowerCase();
+	if (
+		s === "active" ||
+		s === "reviewing" ||
+		s === "inactive" ||
+		s === "pending" ||
+		s === "completed"
+	) {
+		return s;
+	}
+	return "secondary";
+}
+
+function ProjectMobileRow({
+	project,
+	admin,
+	orgName,
+	onOpen,
+}: {
+	project: IProject;
+	admin: boolean;
+	orgName: string;
+	onOpen: () => void;
+}) {
+	const pct =
+		project.budget && project.budget > 0
+			? Math.round(((project.spent ?? 0) / project.budget) * 100)
+			: 0;
+
+	return (
+		<button
+			type="button"
+			disabled={!admin}
+			onClick={onOpen}
+			className={cn(
+				"flex w-full items-center justify-between gap-3 rounded-xl border border-border/60 bg-background/60 p-4 text-left shadow-sm transition-colors",
+				admin
+					? "hover:bg-primary/5 active:bg-primary/10"
+					: "cursor-default opacity-95"
+			)}
+		>
+			<div className="min-w-0 flex-1">
+				<div className="flex items-center gap-2">
+					<FolderOpen className="h-4 w-4 shrink-0 text-primary" aria-hidden />
+					<span className="truncate font-medium">{project.name}</span>
+				</div>
+				<div className="mt-2 flex flex-wrap items-center gap-2">
+					<Badge variant={statusVariant(project.status)} className="text-[10px]">
+						{project.status}
+					</Badge>
+					{orgName ? (
+						<span className="text-xs text-muted-foreground">{orgName}</span>
+					) : null}
+				</div>
+				{admin ? (
+					<div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+						<span className="tabular-nums">
+							{Math.round(project.progress ?? 0)}% progress
+						</span>
+						<span className="inline-flex items-center gap-0.5 tabular-nums">
+							{project.budget?.toLocaleString("en-IN") ?? "0"}
+							<RupeeIcon />
+							<span className="text-muted-foreground/80">
+								{" "}
+								({pct}% spent)
+							</span>
+						</span>
+						<span className="tabular-nums">{project.totalTasks ?? 0} tasks</span>
+					</div>
+				) : (
+					<p className="mt-2 flex items-center gap-1 text-sm text-muted-foreground">
+						<MapPin className="h-3.5 w-3.5 shrink-0" aria-hidden />
+						<span className="truncate">{project.location || "—"}</span>
+					</p>
+				)}
+			</div>
+			{admin && (
+				<ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" aria-hidden />
+			)}
+		</button>
+	);
+}
+
 const ProjectTable = ({ filteredProjects, admin }: Props) => {
 	const router = useRouter();
+	const organisations = useOrganisationStore((s) => s.organisations);
+
+	const orgNameById = useMemo(() => {
+		const map: Record<string, string> = {};
+		Object.values(organisations).forEach((o) => {
+			map[o.id] = o.name;
+		});
+		return map;
+	}, [organisations]);
 
 	const handleClick = (project: IProject) => {
-		const projectName = project.id;
-
-		router.push(`/projects/${projectName}`);
+		if (admin) router.push(`/projects/${project.id}`);
 	};
 
 	return (
-		<Card className="shadow-sm">
-			<CardHeader>
-				<CardTitle>All Projects</CardTitle>
+		<Card className="border-border/60 bg-background/80 shadow-sm ring-1 ring-border/40 backdrop-blur-sm">
+			<CardHeader className="space-y-1 pb-4 sm:pb-6">
+				<CardTitle className="text-lg sm:text-xl">All projects</CardTitle>
 				<CardDescription>
-					{/* Comprehensive list of all construction projects */}
+					{admin
+						? "Select a row to open project details."
+						: "Projects you are assigned to."}
 				</CardDescription>
 			</CardHeader>
-			<CardContent>
-				<Table>
-					<TableHeader>
-						<TableRow className="divide-x divide-gray-200 border-b-2 border-gray-200 hover:bg-card border-l border-r border-t">
-							<TableHead className="min-w-[200px] text-center">
-								Project
-							</TableHead>
-							<TableHead className="min-w-[120px] text-center">
-								Status
-							</TableHead>
-							{admin && (
-								<TableHead className="min-w-[100px] text-center">
-									Progress
-								</TableHead>
-							)}
-							{admin && (
-								<TableHead className="min-w-[100px] text-center">
-									Budget
-								</TableHead>
-							)}
-							{admin && (
-								<TableHead className="min-w-[100px] text-center">
-									Tasks
-								</TableHead>
-							)}
-							{!admin && (
-								<TableHead className="min-w-[100px] text-center">
-									Location
-								</TableHead>
-							)}
-							{/* <TableHead className="w-[80px] text-center">
-								Actions
-							</TableHead> */}
-						</TableRow>
-					</TableHeader>
-					<TableBody>
-						{filteredProjects.length > 0 ? (
-							filteredProjects.map((project) => (
-								<TableRow
-									key={project.id}
-									className=" hover:bg-secondary/30 cursor-pointer bg-white/50"
-									onClick={() => {
-										if (admin) {
-											handleClick(project);
+			<CardContent className="px-0 pb-6 sm:px-6">
+				{filteredProjects.length > 0 ? (
+					<>
+						<ul className="space-y-3 px-4 sm:px-0 lg:hidden">
+							{filteredProjects.map((project) => (
+								<li key={project.id}>
+									<ProjectMobileRow
+										project={project}
+										admin={admin}
+										orgName={
+											project.orgId
+												? orgNameById[project.orgId] ?? ""
+												: ""
 										}
-									}}
-								>
-									<TableCell className="text-center">
-										<div className="space-y-1">
-											<p className="font-medium">
-												{project.name}
-											</p>
-											{/* <p className="text-xs text-blue-900">
-												{project.location}
-											</p> */}
-										</div>
-									</TableCell>
+										onOpen={() => handleClick(project)}
+									/>
+								</li>
+							))}
+						</ul>
 
-									<TableCell className="items-center justify-center">
-										<p className="w-full justify-center text-center ">
-											{project.status}
-										</p>
-									</TableCell>
-
-									{admin && (
-										<TableCell className="text-center">
-											<div className="space-y-2 flex flex-col items-center">
-												<span className="text-sm">
-													{project.progress
-														? Math.round(
-																project.progress
-														  )
-														: "0"}
-													%
-												</span>
-												{/* <Progress
-												value={project.progress}
-												className="h-2 w-20"
-											/> */}
-											</div>
-										</TableCell>
-									)}
-
-									{admin && (
-										<TableCell className="text-center">
-											<div className="space-y-1">
-												<p className="font-medium">
-													{project.budget?.toLocaleString(
-														"en-IN"
-													)}
-													<RupeeIcon />
-												</p>
-												<p className="text-sm text-slate-600">
-													Spent:
-													{project.spent?.toLocaleString(
-														"en-IN"
-													)}
-													<RupeeIcon /> (
-													{Math.round(
-														((project.spent ?? 0) /
-															(project.budget ??
-																1)) *
-															100
-													)}
-													%)
-												</p>
-											</div>
-										</TableCell>
-									)}
-
-									{admin && (
-										<TableCell className="text-center">
-											<div className="space-y-1">
-												<p className="text-sm font-medium">
-													{project.totalTasks}
-												</p>
-											</div>
-										</TableCell>
-									)}
-
-									{!admin && (
-										<TableCell className="text-center">
-											<div className="space-y-1">
-												<p className="text-sm">
-													{project.location}
-												</p>
-											</div>
-										</TableCell>
-									)}
-								</TableRow>
-							))
-						) : (
-							<TableRow>
-								<TableCell
-									colSpan={5}
-									className="h-[100px] text-center"
-								>
-									No projects found
-								</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
-				</Table>
+						<div className="hidden overflow-x-auto lg:block">
+							<Table>
+								<TableHeader>
+									<TableRow className="border-border/50 hover:bg-transparent">
+										<TableHead className="min-w-[200px] pl-4 text-left">
+											Project
+										</TableHead>
+										<TableHead className="min-w-[100px] text-center">
+											Status
+										</TableHead>
+										{admin ? (
+											<>
+												<TableHead className="text-center tabular-nums">
+													Progress
+												</TableHead>
+												<TableHead className="text-center">
+													Budget
+												</TableHead>
+												<TableHead className="pr-4 text-center tabular-nums">
+													Tasks
+												</TableHead>
+											</>
+										) : (
+											<TableHead className="pr-4 text-center">
+												Location
+											</TableHead>
+										)}
+									</TableRow>
+								</TableHeader>
+								<TableBody>
+									{filteredProjects.map((project) => {
+										const pct =
+											project.budget && project.budget > 0
+												? Math.round(
+														((project.spent ?? 0) / project.budget) * 100
+												  )
+												: 0;
+										return (
+											<TableRow
+												key={project.id}
+												className={cn(
+													"border-border/40",
+													admin && "cursor-pointer hover:bg-muted/40"
+												)}
+												onClick={() => handleClick(project)}
+											>
+												<TableCell className="pl-4">
+													<div className="space-y-0.5">
+														<p className="font-medium">{project.name}</p>
+														{project.orgId && orgNameById[project.orgId] ? (
+															<p className="text-xs text-muted-foreground">
+																{orgNameById[project.orgId]}
+															</p>
+														) : null}
+													</div>
+												</TableCell>
+												<TableCell className="text-center">
+													<Badge variant={statusVariant(project.status)}>
+														{project.status}
+													</Badge>
+												</TableCell>
+												{admin ? (
+													<>
+														<TableCell className="text-center tabular-nums">
+															{Math.round(project.progress ?? 0)}%
+														</TableCell>
+														<TableCell className="text-center">
+															<div className="space-y-0.5">
+																<p className="font-medium tabular-nums">
+																	{project.budget?.toLocaleString("en-IN")}
+																	<RupeeIcon />
+																</p>
+																<p className="text-xs text-muted-foreground tabular-nums">
+																	Spent{" "}
+																	{project.spent?.toLocaleString("en-IN")}
+																	<RupeeIcon /> ({pct}%)
+																</p>
+															</div>
+														</TableCell>
+														<TableCell className="pr-4 text-center tabular-nums">
+															{project.totalTasks ?? 0}
+														</TableCell>
+													</>
+												) : (
+													<TableCell className="pr-4 text-center text-muted-foreground">
+														{project.location || "—"}
+													</TableCell>
+												)}
+											</TableRow>
+										);
+									})}
+								</TableBody>
+							</Table>
+						</div>
+					</>
+				) : (
+					<div className="mx-4 flex min-h-[10rem] items-center justify-center rounded-xl border border-dashed border-border/60 bg-muted/20 px-4 py-10 text-center text-sm text-muted-foreground sm:mx-0">
+						No projects match your filters.
+					</div>
+				)}
 			</CardContent>
 		</Card>
 	);

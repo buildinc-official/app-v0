@@ -109,10 +109,30 @@ export const handleTaskCompletion = async (taskId: string) => {
 	const profile = useProfileStore.getState().profile;
 	const task = getTaskFromStore(taskId);
 
-	if (!profile || !task?.assigneeId) return;
-	updateTask(taskId, {
+	// assigneeId is derived when loading tasks; persisted/zustand state may only have assignedTo
+	const approvalRecipient = task?.assigneeId ?? task?.assignedTo ?? null;
+
+	if (!profile || !task || !approvalRecipient) {
+		console.warn(
+			"[handleTaskCompletion] missing profile, task, or assignee",
+			{ taskId, hasTask: !!task, approvalRecipient }
+		);
+		return undefined;
+	}
+
+	await updateTask(taskId, {
 		status: "Reviewing",
 	});
+
+	const projectId =
+		task.projectId || getProjectIdFromPhaseId(task.phaseId);
+	if (!projectId) {
+		console.warn(
+			"[handleTaskCompletion] could not resolve projectId",
+			task.phaseId
+		);
+		return undefined;
+	}
 
 	const data = addRequest({
 		type: "TaskCompletion",
@@ -121,12 +141,12 @@ export const handleTaskCompletion = async (taskId: string) => {
 		status: "Pending",
 		requestData: {},
 		created_at: new Date(),
-		projectId: getProjectIdFromPhaseId(task.phaseId),
+		projectId,
 		id: crypto.randomUUID(),
 		phaseId: task.phaseId,
 		materialId: null,
 		requestedBy: profile.id,
-		requestedTo: task.assigneeId,
+		requestedTo: approvalRecipient,
 		approvedBy: null,
 		approvedAt: null,
 	});

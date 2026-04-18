@@ -46,4 +46,10 @@ when approving a task for completion, first check if any requests are left autom
 dont showe budget to supervisor or anyone else othervthan admin
 aadding budget per sq ft
 
- 
+TODO:
+    + A front page.
+    + A looks make over it
+    + A code review for security.
+    setup billing and payment gateway
+
+    when makign an org, assign a bdget and be able to change it and then we can assign budget to projects from that org

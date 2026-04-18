@@ -1,5 +1,6 @@
 // lib/supabase/db/organisationDB.ts
 import { createClient } from "@/lib/supabase/client";
+import { serializeRowForInsert } from "@/lib/supabase/insertSerialize";
 import { IOrganisationDB } from "../../types";
 
 const supabase = createClient();
@@ -32,11 +33,20 @@ export const organisationDB = {
 	async addOrganisation(organisation: IOrganisationDB) {
 		const { data, error } = await supabase
 			.from("organisations")
-			.insert([organisation])
+			.insert([serializeRowForInsert(organisation as unknown as Record<string, unknown>)])
 			.select()
 			.single();
 
-		if (error) throw error;
+		if (error) {
+			console.error(
+				"organisationDB.addOrganisation",
+				error.message,
+				error.code,
+				error.details,
+				error.hint
+			);
+			throw error;
+		}
 		return data as IOrganisationDB;
 	},
 

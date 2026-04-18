@@ -1,5 +1,6 @@
 // lib/supabase/db/projectMemberDB.ts
 import { createClient } from "@/lib/supabase/client";
+import { serializeRowForInsert } from "@/lib/supabase/insertSerialize";
 import { IProjectMemberDB } from "../../types";
 
 const supabase = createClient();
@@ -31,7 +32,7 @@ export const projectMemberDB = {
 	async addProjectMember(member: IProjectMemberDB) {
 		const { data, error } = await supabase
 			.from("project_members")
-			.insert([member])
+			.insert([serializeRowForInsert(member as unknown as Record<string, unknown>)])
 			.select()
 			.single();
 

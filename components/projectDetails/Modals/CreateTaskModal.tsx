@@ -18,6 +18,10 @@ import {
 } from "@/components/base/ui/select";
 import { Textarea } from "@/components/base/ui/textarea";
 import { IMaterial } from "@/lib/types";
+import {
+	modalButtonCancelClass,
+	modalButtonConfirmClass,
+} from "@/lib/functions/modalButtonStyles";
 import { projectDetails } from "@/lib/functions/projectDetails";
 import { Minus } from "lucide-react";
 import React, { useState } from "react";
@@ -215,14 +219,18 @@ const CreateTaskModal = ({ isCreateTaskOpen, setIsCreateTaskOpen }: Props) => {
 						))}
 					</div>
 				</div>
-				<DialogFooter>
+				<DialogFooter className="gap-2 border-t border-border/60 pt-4 sm:gap-2">
 					<Button
+						type="button"
 						variant="outline"
+						className={modalButtonCancelClass}
 						onClick={() => setIsCreateTaskOpen(false)}
 					>
 						Cancel
 					</Button>
-					<Button>Create Task</Button>
+					<Button type="button" variant="outline" className={modalButtonConfirmClass}>
+						Create task
+					</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>

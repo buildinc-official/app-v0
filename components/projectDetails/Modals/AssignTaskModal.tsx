@@ -8,6 +8,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 } from "@/components/base/ui/dialog";
+import { modalButtonCancelClass } from "@/lib/functions/modalButtonStyles";
 import { projectDetails } from "@/lib/functions/projectDetails";
 import { IProject, IProjectProfile, ITask } from "@/lib/types";
 import { ca } from "date-fns/locale";
@@ -113,12 +114,14 @@ const AssignTaskModal = ({
 							))}
 					</div>
 				</div>
-				<DialogFooter>
+				<DialogFooter className="gap-2 border-t border-border/60 pt-4 sm:gap-2">
 					<Button
+						type="button"
 						variant="outline"
+						className={modalButtonCancelClass}
 						onClick={() => setIsAssignTaskOpen(false)}
 					>
-						Cancel
+						Close
 					</Button>
 				</DialogFooter>
 			</DialogContent>

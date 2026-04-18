@@ -127,7 +127,7 @@ const ReviewConfirm = ({
 			<AnimatePresence>
 				{isSaving && (
 					<motion.div
-						className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
+						className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm"
 						initial={{ opacity: 0 }}
 						animate={{ opacity: 1 }}
 						exit={{ opacity: 0 }}
@@ -136,21 +136,21 @@ const ReviewConfirm = ({
 							initial={{ scale: 0.9, opacity: 0 }}
 							animate={{ scale: 1, opacity: 1 }}
 							exit={{ scale: 0.9, opacity: 0 }}
-							className="bg-white rounded-2xl shadow-2xl w-[90%] max-w-md p-8 flex flex-col items-center justify-center text-center border border-gray-100"
+							className="flex w-[90%] max-w-md flex-col items-center justify-center rounded-2xl border border-border/60 bg-card p-8 text-center shadow-2xl ring-1 ring-border/40"
 						>
 							<LoadingSpinner />
-							<p className="mt-4 text-base font-medium text-gray-800">
+							<p className="mt-4 text-base font-medium text-foreground">
 								{progressMessage}
 							</p>
-							<div className="w-full h-2 mt-6 bg-gray-200 rounded-full overflow-hidden">
+							<div className="mt-6 h-2 w-full overflow-hidden rounded-full bg-muted">
 								<motion.div
-									className="h-full bg-blue-600 rounded-full"
+									className="h-full rounded-full bg-primary"
 									initial={{ width: "0%" }}
 									animate={{ width: `${progress}%` }}
 									transition={{ duration: 0.3 }}
 								/>
 							</div>
-							<p className="mt-2 text-xs text-gray-500">
+							<p className="mt-2 text-xs text-muted-foreground">
 								{Math.floor(progress)}%
 							</p>
 						</motion.div>
@@ -159,18 +159,21 @@ const ReviewConfirm = ({
 			</AnimatePresence>
 
 			{/* 🧾 Main review content */}
-			<Card className="shadow-sm">
-				<CardHeader>
-					<CardTitle className="flex items-center gap-2">
-						<Eye className="h-5 w-5 text-blue-600" />
-						Project Overview
+			<Card className="border-border/60 bg-background/80 shadow-sm ring-1 ring-border/40 backdrop-blur-sm">
+				<CardHeader className="space-y-2 pb-4">
+					<CardTitle className="flex items-center gap-3 text-xl">
+						<span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/20">
+							<Eye className="h-5 w-5" aria-hidden />
+						</span>
+						Review & confirm
 					</CardTitle>
-					<CardDescription>
-						Review your project details before creating
+					<CardDescription className="text-pretty">
+						Check everything below, then create the project or save
+						as a template.
 					</CardDescription>
 				</CardHeader>
 
-				<CardContent className="space-y-6">
+				<CardContent className="space-y-8 pb-8">
 					{/* Project + Organisation */}
 					<div className="grid md:grid-cols-2 gap-6">
 						<div>
@@ -240,7 +243,7 @@ const ReviewConfirm = ({
 						<Label className="text-sm font-bold text-muted-foreground">
 							Description
 						</Label>
-						<p className="text-sm text-slate-700">
+						<p className="text-sm leading-relaxed text-foreground">
 							{projectData.description ||
 								"No description provided"}
 						</p>
@@ -265,7 +268,7 @@ const ReviewConfirm = ({
 							{projectData.phases.map((phase, index) => (
 								<div
 									key={phase.id}
-									className="flex items-center justify-between p-3 border rounded-lg bg-white/50"
+									className="flex items-center justify-between gap-3 rounded-lg border border-border/60 bg-muted/30 p-3 ring-1 ring-border/30"
 								>
 									<div className="flex items-center gap-3">
 										<div className="text-sm font-bold">
@@ -285,7 +288,7 @@ const ReviewConfirm = ({
 					</div>
 
 					{/* Template Option */}
-					<div className="p-4 border rounded-lg bg-white/50">
+					<div className="rounded-xl border border-border/60 bg-muted/30 p-4 ring-1 ring-border/30">
 						<div className="flex items-start space-x-3">
 							<Checkbox
 								id="save-template"
@@ -315,7 +318,7 @@ const ReviewConfirm = ({
 											</Label>
 											<Input
 												placeholder="Enter template name"
-												className="bg-white"
+												className="h-11 border-border/60 bg-background/80"
 												value={newProjectTemplateName}
 												onChange={(e) =>
 													setNewProjectTemplateName(
@@ -329,7 +332,7 @@ const ReviewConfirm = ({
 												Template Description
 											</Label>
 											<Textarea
-												className="bg-white"
+												className="min-h-[80px] resize-y border-border/60 bg-background/80"
 												placeholder="Describe this template..."
 												rows={2}
 												value={
@@ -350,9 +353,10 @@ const ReviewConfirm = ({
 
 					{/* Submit Button */}
 					<Button
+						type="button"
 						onClick={saveProject}
-						variant="secondary"
-						className="w-full"
+						variant="default"
+						className="h-11 w-full border border-blue-500/40 bg-blue-600 text-white shadow-md ring-1 ring-blue-500/25 hover:bg-blue-700 hover:text-white dark:bg-blue-600 dark:hover:bg-blue-500"
 						disabled={isSaving}
 					>
 						{isSaving ? (

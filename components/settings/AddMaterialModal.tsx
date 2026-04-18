@@ -11,7 +11,10 @@ import {
 import { Input } from "@/components/base/ui/input";
 import { Label } from "@/components/base/ui/label";
 import { materialUnitList } from "@/lib/constants/materials";
-import { createOrganisation } from "@/lib/functions/organisationCreation";
+import {
+	modalButtonCancelClass,
+	modalButtonConfirmClass,
+} from "@/lib/functions/modalButtonStyles";
 import { handleAddMaterial } from "@/lib/functions/settings";
 import { RupeeIcon } from "@/lib/functions/utils";
 import { useProfileStore } from "@/lib/store/profileStore";
@@ -74,26 +77,34 @@ const AddMaterialModal = ({
 			onOpenChange={onOpenChange}
 		>
 			<DialogTrigger asChild>
-				<Button variant={"secondary"}>
-					<Plus className="mr-2 h-5 w-5" />
-					Add Material
+				<Button
+					type="button"
+					variant="outline"
+					className="group h-11 w-auto max-w-full shrink-0 border-border/60 bg-background/80 shadow-sm ring-1 ring-border/40 backdrop-blur-sm transition-all duration-200 ease-out hover:border-primary/35 hover:bg-primary/5 hover:shadow-md hover:ring-primary/25"
+				>
+					<span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 text-primary ring-1 ring-primary/20 transition-transform duration-200 ease-out group-hover:scale-105 group-hover:bg-primary/25">
+						<Plus className="h-4 w-4" aria-hidden />
+					</span>
+					<span className="inline-flex h-8 shrink-0 items-center leading-none font-medium">
+						Add material
+					</span>
 				</Button>
 			</DialogTrigger>
-			<DialogContent className="sm:max-w-[425px]">
-				<DialogHeader>
-					<DialogTitle>Add New Material</DialogTitle>
+			<DialogContent className="border-border/60 sm:max-w-[440px]">
+				<DialogHeader className="space-y-2">
+					<DialogTitle>Add material</DialogTitle>
 					<DialogDescription>
-						Fill in the details below to add a new material to your
-						profile.
+						Add a default price for a material. You can use it when planning
+						tasks and projects.
 					</DialogDescription>
 				</DialogHeader>
-				<div className="grid gap-4 py-4">
+				<div className="grid gap-4 py-2">
 					<div className="space-y-2">
-						<Label htmlFor="mat-name">Material Name</Label>
+						<Label htmlFor="mat-name">Material name</Label>
 						<Input
 							id="mat-name"
-							placeholder="Enter material name"
-							className="h-10"
+							placeholder="e.g. Cement"
+							className="h-11 border-border/60"
 							value={name}
 							onChange={(e) => setName(e.target.value)}
 						/>
@@ -104,7 +115,7 @@ const AddMaterialModal = ({
 							id="mat-unit"
 							value={unit}
 							onChange={(e) => setUnit(e.target.value)}
-							className="h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm focus:outline-none"
+							className="h-11 w-full rounded-md border border-border/60 bg-background px-3 py-2 text-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
 						>
 							{(() => {
 								return materialUnitList.map((u) => (
@@ -119,36 +130,41 @@ const AddMaterialModal = ({
 						</select>
 					</div>
 					<div className="space-y-2">
-						<Label htmlFor="mat-price">Price / Unit</Label>
-						<div className="flex items-center gap-2">
-							<div className="h-10 inline-flex items-center  px-1 text-sm bg-transparent">
+						<Label htmlFor="mat-price">Price per unit</Label>
+						<div className="relative flex items-center">
+							<span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
 								<RupeeIcon />
-							</div>
+							</span>
 							<Input
 								id="mat-price"
 								type="number"
 								step="0.01"
+								min={0}
 								placeholder="0.00"
-								className="h-10"
+								className="h-11 border-border/60 pl-9"
 								value={price}
 								onChange={(e) => setPrice(e.target.value)}
 							/>
 						</div>
 					</div>
 				</div>
-				<DialogFooter>
+				<DialogFooter className="gap-2 border-t border-border/60 pt-4 sm:gap-2">
 					<Button
+						type="button"
 						variant="outline"
+						className={modalButtonCancelClass}
 						onClick={() => onOpenChange(false)}
 					>
 						Cancel
 					</Button>
 					<Button
-						variant={"secondary"}
+						type="button"
+						variant="outline"
+						className={modalButtonConfirmClass}
 						onClick={handleCreate}
 						disabled={isLoading}
 					>
-						{isLoading ? "Adding..." : "Add Material"}
+						{isLoading ? "Adding…" : "Add material"}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

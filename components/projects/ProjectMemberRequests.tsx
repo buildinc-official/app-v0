@@ -19,7 +19,7 @@ const ProjectMemberRequests = ({ requests }: { requests: IRequest[] }) => {
 		(req) => req.type === "JoinProject" && req.status === "Pending"
 	);
 	return (
-		<Card className="shadow-sm">
+		<Card className="border-border/60 bg-background/80 shadow-sm ring-1 ring-border/40 backdrop-blur-sm">
 			<CardHeader>
 				<CardTitle className="flex items-center gap-2">
 					Project Requests

@@ -11,8 +11,8 @@ export const createOrganisation = async (
 	try {
 		if (!ownerId) return;
 		setIsLoading(true);
-		const newOrg = addOrganisation({
-			id: crypto.randomUUID(), // ID will be set by the database
+		const newOrg = await addOrganisation({
+			id: crypto.randomUUID(),
 			name: name.trim(),
 			created_at: new Date(),
 			owner: ownerId,
@@ -21,19 +21,16 @@ export const createOrganisation = async (
 			projectIds: [],
 		});
 
-		// console.log("Created organisation:", newOrg);
-
-		const addedMember = addOrganisationMember({
-			id: crypto.randomUUID(), // ID will be set by the database
+		await addOrganisationMember({
+			id: crypto.randomUUID(),
 			joinedAt: new Date(),
-			orgId: (await newOrg).id,
+			orgId: newOrg.id,
 			userId: ownerId,
 			role: "Admin",
 		});
-
-		// console.log("Added organisation member:", addedMember);
 	} catch (err) {
 		console.error("Failed to create organisation", err);
+		throw err;
 	} finally {
 		setIsLoading(false);
 	}

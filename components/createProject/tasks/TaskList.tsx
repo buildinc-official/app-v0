@@ -1,6 +1,8 @@
 "use client";
 import { Button } from "@/components/base/ui/button";
+import { getTaskSectionTheme } from "@/lib/constants/phaseColorThemes";
 import { taskCreationFunctions } from "@/lib/functions/projectCreation";
+import { cn } from "@/lib/functions/utils";
 import { IPhaseTemplate, IProjectCreationData } from "@/lib/types";
 import { Plus } from "lucide-react";
 import TaskCard from "./TaskCard";
@@ -13,13 +15,13 @@ const TaskList = ({
 	phase: IPhaseTemplate;
 	setProjectData: React.Dispatch<React.SetStateAction<IProjectCreationData>>;
 }) => {
-	const { updateTask, duplicateTask, removeTask, addTask } =
-		taskCreationFunctions();
+	const { addTask } = taskCreationFunctions();
+	const taskTheme = getTaskSectionTheme();
 	return (
-		<div className="space-y-2 mt-4">
+		<div className="space-y-5">
 			{phase.tasks && (
-				<div className="">
-					<div className="space-y-2">
+				<div>
+					<div className="space-y-4">
 						<DragDropContext
 							onDragEnd={(result) => {
 								const { source, destination } = result;
@@ -56,7 +58,7 @@ const TaskList = ({
 									<div
 										ref={provided.innerRef}
 										{...provided.droppableProps}
-										className="space-y-2"
+										className="space-y-4"
 									>
 										{phase.tasks.map((task, index) => (
 											<Draggable
@@ -94,11 +96,16 @@ const TaskList = ({
 				</div>
 			)}
 			<Button
-				className="w-full mt-4 bg-secondary/50 text-secondary-foreground hover:bg-muted hover:text-black dark:bg-muted dark:hover:bg-secondary/50 dark:text-white"
+				type="button"
+				variant="default"
+				className={cn(
+					"h-12 w-full text-base font-medium shadow-sm",
+					taskTheme.primaryAction,
+				)}
 				onClick={() => addTask(phase.id, setProjectData)}
 			>
-				<Plus className="" />
-				Add Task{" "}
+				<Plus className="mr-2 h-4 w-4" aria-hidden />
+				Add task
 			</Button>
 		</div>
 	);

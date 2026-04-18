@@ -11,6 +11,7 @@ import {
 } from "@/components/base/ui/dialog";
 import { Label } from "@/components/base/ui/label";
 import { IMaterial, ITask } from "@/lib/types";
+import { modalButtonConfirmClass } from "@/lib/functions/modalButtonStyles";
 import { completeTask, projectDetails } from "@/lib/functions/projectDetails";
 import { getStatusColor } from "@/lib/functions/utils";
 import { Package } from "lucide-react";
@@ -224,7 +225,7 @@ TaskDetailModalProps) => {
 						)}
 					</div>
 				)}
-				<DialogFooter>
+				<DialogFooter className="gap-2 border-t border-border/60 pt-4 sm:gap-2">
 					{/* {selectedTask?.status === "Reviewing" && (
 						<div className="flex gap-2">
 							<Button
@@ -240,7 +241,7 @@ TaskDetailModalProps) => {
 								Request Changes
 							</Button>
 							<Button
-								className="bg-secondary hover:bg-secondary/80 text-secondary-foreground"
+								className="bg-secondary text-secondary-foreground ring-1 ring-border/50 hover:brightness-110 dark:ring-border"
 								onClick={() =>
 									completeTask(
 										selectedTask.id,
@@ -254,13 +255,15 @@ TaskDetailModalProps) => {
 					)} */}
 					{selectedTask?.status === "Inactive" && (
 						<Button
-							variant="secondary"
+							type="button"
+							variant="outline"
+							className={modalButtonConfirmClass}
 							onClick={() => {
 								setIsTaskDetailOpen(false);
 								setIsAssignTaskOpen(true);
 							}}
 						>
-							Assign Task
+							Assign task
 						</Button>
 					)}
 					{/* <Button

@@ -1,5 +1,6 @@
 // lib/supabase/db/taskDB.ts
 import { createClient } from "@/lib/supabase/client";
+import { serializeRowForInsert } from "@/lib/supabase/insertSerialize";
 import { ITaskDB } from "../../types";
 
 const supabase = createClient();
@@ -44,7 +45,7 @@ export const taskDB = {
 	async addTask(task: ITaskDB) {
 		const { data, error } = await supabase
 			.from("tasks")
-			.insert([task])
+			.insert([serializeRowForInsert(task as unknown as Record<string, unknown>)])
 			.select()
 			.single();
 

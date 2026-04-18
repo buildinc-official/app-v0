@@ -27,7 +27,8 @@ export async function addOrganisation(organisation: IOrganisation) {
 
 		return result;
 	} catch (error) {
-		console.error("Error adding organisation:", error);
+		const e = error as { message?: string; code?: string; details?: string };
+		console.error("Error adding organisation:", e?.message, e?.code, e?.details, error);
 		throw error;
 	}
 }

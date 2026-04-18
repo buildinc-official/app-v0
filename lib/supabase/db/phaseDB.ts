@@ -1,5 +1,6 @@
 // lib/supabase/db/phaseDB.ts
 import { createClient } from "@/lib/supabase/client";
+import { serializeRowForInsert } from "@/lib/supabase/insertSerialize";
 import { IPhaseDB } from "../../types";
 
 const supabase = createClient();
@@ -33,7 +34,7 @@ export const phaseDB = {
 	async addPhase(phase: IPhaseDB) {
 		const { data, error } = await supabase
 			.from("phases")
-			.insert([phase])
+			.insert([serializeRowForInsert(phase as unknown as Record<string, unknown>)])
 			.select()
 			.single();
 

@@ -3,13 +3,15 @@ import { Button } from "@/components/base/ui/button";
 import {
 	Dialog,
 	DialogContent,
+	DialogDescription,
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 } from "@/components/base/ui/dialog";
 import { Label } from "@/components/base/ui/label";
-import { Separator } from "@/components/base/ui/separator";
 import { Textarea } from "@/components/base/ui/textarea";
+import { acceptOrgInvitation } from "@/lib/functions/organisationDetails";
+import { acceptProjectInvitation } from "@/lib/functions/projectDetails";
 import {
 	handleAssigment,
 	handleCompletion,
@@ -17,12 +19,80 @@ import {
 	handlePaymentRequest,
 	handleReject,
 } from "@/lib/functions/requests";
-import { getStatusColor, RupeeIcon } from "@/lib/functions/utils";
+import {
+	modalButtonCancelClass,
+	modalButtonConfirmClass,
+	modalButtonDangerClass,
+} from "@/lib/functions/modalButtonStyles";
+import { requestStatusBadgeVariant } from "@/lib/functions/taskStatusUi";
+import { RupeeIcon } from "@/lib/functions/utils";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { IProfile, IRequest } from "@/lib/types";
 import { CheckCircle, XCircle } from "lucide-react";
 import React from "react";
+import { toast } from "sonner";
 import { PhotoGalleryViewer } from "../base/general/PhotoViewer";
+
+function requestTitle(type: IRequest["type"] | undefined): string {
+	switch (type) {
+		case "MaterialRequest":
+			return "Material request";
+		case "TaskAssignment":
+			return "Task assignment";
+		case "PaymentRequest":
+			return "Payment request";
+		case "TaskCompletion":
+			return "Task completion";
+		case "JoinOrganisation":
+			return "Join organisation";
+		case "JoinProject":
+			return "Join project";
+		default:
+			return "Request";
+	}
+}
+
+/** Approve flow for pending requests; returns whether the modal may close. */
+async function runApprove(
+	selectedApproval: IRequest,
+	profile: IProfile | null,
+): Promise<boolean> {
+	switch (selectedApproval.type) {
+		case "TaskAssignment":
+			await handleAssigment(selectedApproval, profile);
+			return true;
+		case "MaterialRequest":
+			await handleMaterialRequest(selectedApproval, profile);
+			return true;
+		case "PaymentRequest":
+			await handlePaymentRequest(selectedApproval, profile);
+			return true;
+		case "TaskCompletion":
+			await handleCompletion(selectedApproval, profile);
+			return true;
+		case "JoinOrganisation":
+		case "JoinProject": {
+			if (!profile || profile.id !== String(selectedApproval.requestedTo)) {
+				toast.error("Only the invited user can accept this invitation.");
+				return false;
+			}
+			if (selectedApproval.type === "JoinOrganisation") {
+				acceptOrgInvitation(selectedApproval);
+			} else {
+				acceptProjectInvitation(selectedApproval);
+			}
+			return true;
+		}
+		default: {
+			const kind = selectedApproval.type as string;
+			toast.error(
+				"This request type can't be approved from this screen. If this keeps happening, contact support.",
+			);
+			console.warn("ApprovalModal: unhandled request type on approve:", kind);
+			return false;
+		}
+	}
+}
 
 const ApprovalModal = ({
 	isDetailDialogOpen,
@@ -41,202 +111,155 @@ const ApprovalModal = ({
 }) => {
 	const profiles = useProfileStore((state) => state.allProfiles);
 	const requestedByProfile = profiles.find(
-		(p) => p.id === selectedApproval?.requestedBy
+		(p) => p.id === selectedApproval?.requestedBy,
 	);
-	const approvedByProfile = profiles.find(
-		(p) => p.id === selectedApproval?.approvedBy
-	);
-
-	// console.log("Selected Approval in Modal:", selectedApproval?.photos);
 
 	return (
-		<Dialog
-			open={isDetailDialogOpen}
-			onOpenChange={setIsDetailDialogOpen}
-		>
-			<DialogContent className="sm:max-w-[600px] text-md overflow-auto max-h-[90vh]">
-				<DialogHeader>
-					<DialogTitle className="flex items-center gap-2">
-						{selectedApproval?.type === "MaterialRequest" ? (
-							<p>Material Request</p>
-						) : selectedApproval?.type === "TaskAssignment" ? (
-							<p>Task Assignment Request</p>
-						) : selectedApproval?.type === "PaymentRequest" ? (
-							<p>Payment Request</p>
-						) : selectedApproval?.type === "TaskCompletion" ? (
-							<p>Task Completion Request</p>
-						) : null}
+		<Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
+			<DialogContent className="flex max-h-[90vh] flex-col gap-0 overflow-hidden border-border/60 p-0 sm:max-w-[700px]">
+				<DialogHeader className="shrink-0 space-y-2 border-b border-border/60 px-6 pb-4 pt-6">
+					<DialogTitle className="text-left text-xl leading-tight">
+						{requestTitle(selectedApproval?.type)}
 					</DialogTitle>
+					<DialogDescription className="hidden text-left lg:block">
+						{selectedApproval?.project?.name
+							? `${selectedApproval.project.name} · `
+							: null}
+						Request details and photos
+					</DialogDescription>
 				</DialogHeader>
 
 				{selectedApproval && (
-					<div className="space-y-5 px-2 sm:px-1 pt-4">
+					<div className="min-h-0 flex-1 space-y-4 overflow-y-auto px-6 py-4">
 						{selectedApproval.requestedBy ? (
-							<FieldRow label="Requested By">
-								<div className="flex items-center gap-2 text-primary-foreground">
-									<span>
-										{requestedByProfile?.name ||
-											"Unknown User"}
-									</span>
-								</div>
-							</FieldRow>
-						) : (
-							<></>
-						)}
+							<Row label="Requested by">
+								<span className="font-medium">
+									{requestedByProfile?.name || "Unknown user"}
+								</span>
+							</Row>
+						) : null}
 
-						<FieldRow label="Date Submitted">
-							<div className="text-primary-foreground">
-								{new Date(
-									selectedApproval.created_at
-								).toLocaleDateString("en-GB", {
-									day: "2-digit",
-									month: "2-digit",
-									year: "2-digit",
-								})}
-							</div>
-						</FieldRow>
+						<Row label="Date submitted">
+							{new Date(selectedApproval.created_at).toLocaleDateString("en-GB", {
+								day: "2-digit",
+								month: "2-digit",
+								year: "2-digit",
+							})}
+						</Row>
 
 						{selectedApproval.type === "MaterialRequest" && (
 							<>
-								<FieldRow label="Item">
-									<p className="font-medium text-primary-foreground">
-										{
-											selectedApproval.requestData
-												.materialName
-										}
+								<Row label="Item">
+									<p className="font-medium">
+										{selectedApproval.requestData.materialName}
 									</p>
-								</FieldRow>
-								<FieldRow label="Quantity">
-									<p className="font-medium text-primary-foreground">
+								</Row>
+								<Row label="Quantity">
+									<p className="font-medium">
 										{selectedApproval.requestData.units}{" "}
 										{selectedApproval.requestData.unitName}
 									</p>
-								</FieldRow>
-								<FieldRow
+								</Row>
+								<Row
 									label={
 										`Cost per ` +
-										(selectedApproval.requestData.unitName?.endsWith(
-											"s"
-										)
-											? selectedApproval.requestData.unitName.slice(
-													0,
-													-1
-											  )
-											: selectedApproval.requestData
-													.unitName)
+										(selectedApproval.requestData.unitName?.endsWith("s")
+											? selectedApproval.requestData.unitName.slice(0, -1)
+											: selectedApproval.requestData.unitName)
 									}
 								>
-									<p className="font-medium text-primary-foreground">
+									<p className="font-medium">
 										{selectedApproval.requestData.unitCost?.toLocaleString(
-											"en-IN"
+											"en-IN",
 										)}{" "}
 										<RupeeIcon />
 									</p>
-								</FieldRow>
-								<FieldRow label="Total Cost">
-									<p className="font-medium text-primary-foreground">
+								</Row>
+								<Row label="Total cost">
+									<p className="font-medium">
 										{(
-											(selectedApproval.requestData
-												?.unitCost ?? 0) *
-											(selectedApproval.requestData
-												?.units ?? 0)
+											(selectedApproval.requestData?.unitCost ?? 0) *
+											(selectedApproval.requestData?.units ?? 0)
 										).toLocaleString("en-IN")}{" "}
 										<RupeeIcon />
 									</p>
-								</FieldRow>
+								</Row>
 							</>
 						)}
 
 						{selectedApproval.requestData.description ? (
-							<FieldRow label="Description">
-								<p className="text-sm text-primary-foreground">
+							<Row label="Description">
+								<p className="leading-relaxed">
 									{selectedApproval.requestData.description}
 								</p>
-							</FieldRow>
-						) : (
-							<></>
-						)}
+							</Row>
+						) : null}
 						{selectedApproval.notes ? (
-							<FieldRow label="Notes">
-								<p className="text-sm text-primary-foreground">
-									{selectedApproval.notes}
+							<Row label="Notes">
+								<p className="leading-relaxed">{selectedApproval.notes}</p>
+							</Row>
+						) : null}
+						{selectedApproval.requestData.amount != null &&
+						selectedApproval.requestData.amount > 0 ? (
+							<Row label="Amount">
+								<p className="font-medium tabular-nums">
+									{selectedApproval.requestData.amount?.toLocaleString("en-IN")}{" "}
+									<RupeeIcon />
 								</p>
-							</FieldRow>
-						) : (
-							<></>
-						)}
-						{selectedApproval.requestData.amount && (
-							<FieldRow label="Amount">
-								<p className="text-sm text-primary-foreground">
-									{selectedApproval.requestData.amount?.toLocaleString(
-										"en-IN"
-									)}
-								</p>
-							</FieldRow>
-						)}
+							</Row>
+						) : null}
 
-						{/* Photos */}
-						{selectedApproval.photos &&
-							selectedApproval.photos.length > 0 && (
-								<FieldRow label="Photos">
-									<PhotoGalleryViewer
-										photos={selectedApproval.photos}
-									/>
-								</FieldRow>
-							)}
+						{selectedApproval.photos && selectedApproval.photos.length > 0 ? (
+							<Row label="Photos">
+								<PhotoGalleryViewer photos={selectedApproval.photos} />
+							</Row>
+						) : null}
 
-						{/* Project Name */}
-						<FieldRow label="Project">
-							<div>
-								<p className="font-medium text-primary-foreground">
-									{selectedApproval.project?.name}
-								</p>
-							</div>
-						</FieldRow>
+						<Row label="Project">
+							<p className="font-medium">{selectedApproval.project?.name}</p>
+						</Row>
 
-						<FieldRow label="Location">
-							<p className="text-primary-foreground">
-								{selectedApproval.project?.location}
-							</p>
-						</FieldRow>
+						<Row label="Location">
+							<p>{selectedApproval.project?.location ?? "—"}</p>
+						</Row>
 
 						{selectedApproval.requestData.supplier ? (
-							<FieldRow label="Supplier">
-								<p className="text-primary-foreground">
-									{selectedApproval.requestData.supplier}
-								</p>
-							</FieldRow>
-						) : (
-							<></>
-						)}
+							<Row label="Supplier">
+								<p>{selectedApproval.requestData.supplier}</p>
+							</Row>
+						) : null}
 
-						<FieldRow label="Status">
+						<Row label="Status">
 							<Badge
-								className={getStatusColor(
-									selectedApproval.status
-								)}
-								variant="secondary"
+								variant={requestStatusBadgeVariant(selectedApproval.status)}
+								className="capitalize"
 							>
 								{selectedApproval.status}
 							</Badge>
-						</FieldRow>
+						</Row>
 
-						{selectedApproval.status === "Pending" && (
-							<FieldRow label="Add Comment">
+						{selectedApproval.status === "Pending" ? (
+							<div className="space-y-2 pt-1">
+								<Label
+									htmlFor="approval-comment"
+									className="text-sm font-medium text-muted-foreground"
+								>
+									Comment
+								</Label>
 								<Textarea
 									id="approval-comment"
-									placeholder="Add  comments or notes about this approval..."
+									placeholder="Optional notes for this decision…"
 									value={comment}
 									onChange={(e) => setComment(e.target.value)}
 									rows={3}
-									className="text-sm text-primary-foreground focus-visible:ring-0 focus-visible:border-black"
+									className="resize-none border-border/60"
 								/>
-							</FieldRow>
-						)}
+							</div>
+						) : null}
 					</div>
 				)}
 
-				<DialogFooter className="mt-4">
+				<DialogFooter className="shrink-0 gap-2 border-t border-border/60 px-6 py-4 sm:gap-2">
 					{selectedApproval?.status === "Pending" ? (
 						<ApprovalButtons
 							selectedApproval={selectedApproval}
@@ -245,8 +268,10 @@ const ApprovalModal = ({
 						/>
 					) : (
 						<Button
-							variant="default"
+							type="button"
+							variant="outline"
 							onClick={() => setIsDetailDialogOpen(false)}
+							className={modalButtonCancelClass}
 						>
 							Close
 						</Button>
@@ -257,19 +282,15 @@ const ApprovalModal = ({
 	);
 };
 
-const FieldRow = ({
+const Row = ({
 	label,
 	children,
 }: {
 	label: React.ReactNode;
 	children: React.ReactNode;
 }) => (
-	<div className="grid grid-cols-1 sm:grid-cols-[12rem_1fr] gap-2 sm:gap-4 items-start">
-		<div className="col-span-full">
-			<Separator className="h-px bg-primary/10 mb-2" />
-		</div>
-
-		<Label className="text-sm font-medium ">{label}:</Label>
+	<div className="grid grid-cols-1 gap-1.5 sm:grid-cols-[minmax(0,11rem)_1fr] sm:gap-4 sm:items-start">
+		<Label className="text-sm font-medium text-muted-foreground">{label}</Label>
 		<div className="min-w-0 break-words text-sm">{children}</div>
 	</div>
 );
@@ -283,37 +304,36 @@ const ApprovalButtons = ({
 	setIsDetailDialogOpen: (open: boolean) => void;
 	profile: IProfile | null;
 }) => (
-	<div className="flex gap-2 w-full ">
+	<>
 		<Button
-			variant="destructive"
-			onClick={() => {
-				if (selectedApproval) handleReject(selectedApproval, profile);
+			type="button"
+			variant="outline"
+			onClick={async () => {
+				if (selectedApproval) await handleReject(selectedApproval, profile);
 				setIsDetailDialogOpen(false);
 			}}
-			className="w-1/2"
+			className={modalButtonDangerClass}
 		>
-			<XCircle className="mr-2 h-4 w-4" />
+			<XCircle className="h-4 w-4" aria-hidden />
 			Reject
 		</Button>
 		<Button
-			variant={"secondary"}
-			className="w-1/2"
-			onClick={() => {
-				if (selectedApproval?.type === "TaskAssignment") {
-					handleAssigment(selectedApproval, profile);
-				} else if (selectedApproval?.type === "MaterialRequest") {
-					handleMaterialRequest(selectedApproval, profile);
-				} else if (selectedApproval?.type === "PaymentRequest") {
-					handlePaymentRequest(selectedApproval, profile);
-				} else if (selectedApproval?.type === "TaskCompletion") {
-					handleCompletion(selectedApproval, profile);
+			type="button"
+			variant="outline"
+			className={modalButtonConfirmClass}
+			onClick={async () => {
+				if (!selectedApproval) {
+					setIsDetailDialogOpen(false);
+					return;
 				}
-				setIsDetailDialogOpen(false);
+				const mayClose = await runApprove(selectedApproval, profile);
+				if (mayClose) setIsDetailDialogOpen(false);
 			}}
 		>
-			<CheckCircle className="mr-2 h-4 w-4" />
+			<CheckCircle className="h-4 w-4" aria-hidden />
 			Approve
 		</Button>
-	</div>
+	</>
 );
+
 export default ApprovalModal;

@@ -3,7 +3,9 @@
 import { Button } from "@/components/base/ui/button";
 import { Input } from "@/components/base/ui/input";
 import { Label } from "@/components/base/ui/label";
+import { getTaskSectionTheme } from "@/lib/constants/phaseColorThemes";
 import { materialCreationFunctions } from "@/lib/functions/projectCreation";
+import { cn } from "@/lib/functions/utils";
 import { IProjectCreationData, ITaskTemplate } from "@/lib/types";
 import { Plus, Trash2 } from "lucide-react";
 import React, { useState } from "react";
@@ -21,30 +23,35 @@ const TaskMaterials = ({
 	const { addMaterial, updateMaterial, removeMaterial } =
 		materialCreationFunctions();
 	const [open, setOpen] = useState(false);
+	const taskTheme = getTaskSectionTheme();
 
 	return (
-		<div className="space-y-2">
-			<div className="flex items-center justify-between">
+		<div className="space-y-4">
+			<div className="flex flex-wrap items-center justify-between gap-3">
 				<Label className="font-semibold text-muted-foreground">
 					Materials
 				</Label>
 				<Button
-					variant="secondary"
+					type="button"
+					variant="outline"
 					size="sm"
+					className={cn("h-9", taskTheme.outlineIcon)}
 					onClick={() => setOpen(true)}
 				>
-					<Plus className="h-4 w-4 mr-1" /> Add Material
+					<Plus className="mr-1 h-4 w-4" aria-hidden /> Add material
 				</Button>
 			</div>
 
 			{task.materials?.length === 0 ? (
-				<p className="text-sm text-slate-500">No materials added.</p>
+				<p className="text-sm text-muted-foreground">
+					No materials added yet.
+				</p>
 			) : (
-				<div className="space-y-2">
+				<div className="space-y-3">
 					{task.materials?.map((mat) => (
 						<div
 							key={mat.id}
-							className="grid grid-cols-[1fr_1fr_1fr_auto] items-center border rounded-lg p-2 bg-white gap-4 w-full"
+							className="grid w-full grid-cols-[1fr_1fr_1fr_auto] items-center gap-4 rounded-lg border border-border/60 bg-background/80 p-3 ring-1 ring-border/30"
 						>
 							{/* Name */}
 							<p className="text-sm font-medium">{mat.name}</p>
@@ -62,7 +69,7 @@ const TaskMaterials = ({
 											? ""
 											: mat.plannedQuantity
 									}
-									className="w-20 focus-visible:ring-0 focus-visible:border-muted-foreground"
+									className="h-9 w-20 border-border/60 bg-background/90"
 									onChange={(e) =>
 										updateMaterial(
 											phaseId,
@@ -89,7 +96,7 @@ const TaskMaterials = ({
 									value={
 										mat.unitCost === 0 ? "" : mat.unitCost
 									}
-									className="w-24 focus-visible:ring-0 focus-visible:border-muted-foreground"
+									className="h-9 w-24 border-border/60 bg-background/90"
 									onChange={(e) =>
 										updateMaterial(
 											phaseId,
@@ -109,9 +116,10 @@ const TaskMaterials = ({
 
 							{/* Delete button */}
 							<Button
-								variant="ghost"
+								type="button"
+								variant="destructive"
 								size="icon"
-								className="text-red-600 hover:text-red-700 justify-self-end"
+								className="h-9 w-9 justify-self-end"
 								onClick={() =>
 									removeMaterial(
 										phaseId,
@@ -120,6 +128,7 @@ const TaskMaterials = ({
 										setProjectData
 									)
 								}
+								aria-label="Remove material"
 							>
 								<Trash2 className="h-4 w-4" />
 							</Button>

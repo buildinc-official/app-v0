@@ -1,173 +1,183 @@
 "use client";
 
+import { Avatar, AvatarFallback } from "@/components/base/ui/avatar";
+import { Badge } from "@/components/base/ui/badge";
+import { requestStatusBadgeVariant } from "@/lib/functions/taskStatusUi";
+import { cn, RupeeIcon } from "@/lib/functions/utils";
+import { IRequest, requestType } from "@/lib/types";
+import { Calendar, IndianRupee } from "lucide-react";
 import React from "react";
-import {
-	Table,
-	TableHeader,
-	TableRow,
-	TableHead,
-	TableBody,
-	TableCell,
-} from "@/components/base/ui/table";
-import { Avatar, AvatarFallback } from "@/components/base/ui/avatar"; // ✅ correct import
-import { IRequest } from "@/lib/types";
-import { RupeeIcon } from "@/lib/functions/utils";
+
+function requestTypeLabel(type: requestType): string {
+	switch (type) {
+		case "MaterialRequest":
+			return "Material";
+		case "PaymentRequest":
+			return "Payment";
+		case "TaskCompletion":
+			return "Task completion";
+		case "TaskAssignment":
+			return "Task assignment";
+		case "JoinOrganisation":
+			return "Join organisation";
+		case "JoinProject":
+			return "Join project";
+		default:
+			return type;
+	}
+}
+
+function itemSummary(request: IRequest): string {
+	const rd = request.requestData;
+	if (request.type === "MaterialRequest" && rd.materialName) {
+		return `${rd.materialName} (${rd.units ?? 0} ${rd.unitName ?? ""})`.trim();
+	}
+	if (request.type === "PaymentRequest") {
+		return rd.description || rd.reason || "Payment request";
+	}
+	if (request.type === "TaskCompletion") {
+		return request.task?.name || rd.completionNotes || "Task completion";
+	}
+	if (request.type === "TaskAssignment") {
+		return request.task?.name || rd.description || "Task assignment";
+	}
+	if (request.type === "JoinOrganisation") {
+		return rd.organisationName || "Organisation request";
+	}
+	if (request.type === "JoinProject") {
+		return rd.projectName || "Project request";
+	}
+	return "—";
+}
+
+function amountLine(request: IRequest): React.ReactNode {
+	const rd = request.requestData;
+	if (request.type === "PaymentRequest" && rd.amount != null) {
+		return (
+			<span className="inline-flex items-center gap-0.5 font-medium tabular-nums text-foreground">
+				{rd.amount.toLocaleString("en-IN")}
+				<RupeeIcon />
+			</span>
+		);
+	}
+	if (request.type === "MaterialRequest") {
+		const u = rd.units ?? 0;
+		const c = rd.unitCost ?? 0;
+		const total = u * c;
+		return (
+			<span className="inline-flex items-center gap-0.5 font-medium tabular-nums text-foreground">
+				{total.toLocaleString("en-IN")}
+				<RupeeIcon />
+			</span>
+		);
+	}
+	return <span className="text-muted-foreground">—</span>;
+}
+
+const SECTION_SURFACE: Record<
+	"pending" | "approved" | "rejected",
+	string
+> = {
+	pending:
+		"border-amber-500/25 bg-amber-500/[0.06] hover:bg-amber-500/10 dark:bg-amber-950/20",
+	approved:
+		"border-emerald-500/25 bg-emerald-500/[0.06] hover:bg-emerald-500/10 dark:bg-emerald-950/20",
+	rejected:
+		"border-rose-500/25 bg-rose-500/[0.06] hover:bg-rose-500/10 dark:bg-rose-950/20",
+};
 
 const ApprovalTable = ({
 	data,
+	variant,
 	setSelectedApproval,
 	setIsDetailDialogOpen,
 }: {
 	data: IRequest[];
-	showActions?: boolean;
+	variant: "pending" | "approved" | "rejected";
 	setSelectedApproval: (request: IRequest) => void;
 	setIsDetailDialogOpen: (open: boolean) => void;
 }) => {
+	const surface = SECTION_SURFACE[variant];
+
 	const openDetailDialog = (request: IRequest) => {
 		setSelectedApproval(request);
 		setIsDetailDialogOpen(true);
 	};
+
 	return (
-		<Table>
-			<TableHeader>
-				<TableRow className="divide-x divide-gray-200 border-b-2 border-gray-200 hover:bg-card border-l border-r border-t">
-					<TableHead className="min-w-[150px] text-center">
-						Type
-					</TableHead>
-					<TableHead className="min-w-[200px] text-center">
-						From
-					</TableHead>
-					<TableHead className="min-w-[250px] text-center">
-						Item
-					</TableHead>
-					<TableHead className="min-w-[200px] text-center">
-						Project
-					</TableHead>
-					<TableHead className="min-w-[150px] text-center">
-						Amount
-					</TableHead>
-					<TableHead className="min-w-[100px] text-center">
-						Date
-					</TableHead>
+		<ul className="space-y-3">
+			{data.map((request) => {
+				const name =
+					request.requestedByProfile?.name?.trim() || "Unknown";
+				const initial = name.charAt(0).toUpperCase() || "?";
 
-					{/* {showActions && (
-						<TableHead className="text-center">Actions</TableHead>
-					)} */}
-				</TableRow>
-			</TableHeader>
-			<TableBody>
-				{data.map((request) => (
-					<TableRow
-						className=" hover:bg-white/20 cursor-pointer h-[70px]"
-						key={request.id}
-						onClick={() => openDetailDialog(request)}
-					>
-						{/* type */}
-						<TableCell className="items-center justify-center">
-							<div className="flex items-center gap-2 justify-center">
-								{request.type === "MaterialRequest" ? (
-									<p>Material Request</p>
-								) : request.type === "PaymentRequest" ? (
-									<p>Payment Request</p>
-								) : request.type === "TaskCompletion" ? (
-									<p>Task Review</p>
-								) : request.type === "TaskAssignment" ? (
-									<p>Task Assignment</p>
-								) : null}
-							</div>
-						</TableCell>
-
-						{/* User */}
-						<TableCell className="items-center justify-center">
-							<div className="flex items-center gap-2 justify-center">
-								<Avatar className="h-8 w-8">
-									<AvatarFallback>
-										{request.requestedByProfile?.name[0]}
-									</AvatarFallback>
-								</Avatar>
-								{request.requestedByProfile?.name}
-							</div>
-						</TableCell>
-
-						{/* Item */}
-						{request.type === "MaterialRequest" ? (
-							<TableCell className="items-center justify-center">
-								<div className="justify-center items-center flex flex-col">
-									<div className="font-medium">
-										{request.requestData.materialName} (
-										{request.requestData.units}{" "}
-										{request.requestData.unitName})
+				return (
+					<li key={request.id}>
+						<button
+							type="button"
+							className={cn(
+								"w-full rounded-xl border p-4 text-left shadow-sm transition-colors",
+								"focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+								surface,
+							)}
+							onClick={() => openDetailDialog(request)}
+						>
+							<div className="flex items-start justify-between gap-3">
+								<div className="min-w-0 flex-1">
+									<div className="flex flex-wrap items-center gap-2">
+										<Badge variant="outline" className="text-xs font-normal">
+											{requestTypeLabel(request.type)}
+										</Badge>
+										<Badge
+											variant={requestStatusBadgeVariant(request.status)}
+											className="capitalize"
+										>
+											{request.status}
+										</Badge>
 									</div>
-									<div className="text-sm text-slate-500">
-										{"quantity" in request.requestData
-											? request.requestData.quantity
-											: null}
-									</div>
+									<p className="mt-2 line-clamp-2 text-sm font-semibold leading-snug">
+										{itemSummary(request)}
+									</p>
+									<p className="mt-0.5 truncate text-xs text-muted-foreground">
+										{request.project?.name ?? "—"}
+									</p>
 								</div>
-							</TableCell>
-						) : (
-							<TableCell className="items-center justify-center">
-								<p className="flex items-center gap-1 justify-center">
-									N/A
-								</p>
-							</TableCell>
-						)}
-
-						{/* Project */}
-						<TableCell className="items-center justify-center">
-							<div className="justify-center items-center flex flex-col">
-								<div className="font-medium">
-									{request.project?.name}
-								</div>
-							</div>
-						</TableCell>
-
-						{/* Amount */}
-						{request.type === "PaymentRequest" ? (
-							<TableCell className="items-center justify-center">
-								<div className="flex items-center gap-1 justify-center">
-									<span className="font-medium">
-										{request.requestData.amount?.toLocaleString()}
-										<RupeeIcon />
+								<div className="flex max-w-[11rem] shrink-0 items-center gap-2">
+									<Avatar className="h-8 w-8 ring-1 ring-border/60">
+										<AvatarFallback className="text-xs">{initial}</AvatarFallback>
+									</Avatar>
+									<span className="truncate text-sm font-medium text-foreground">
+										{name}
 									</span>
 								</div>
-							</TableCell>
-						) : request.type === "MaterialRequest" ? (
-							<TableCell className="items-center justify-center">
-								<div className="flex items-center gap-1 justify-center">
-									<span className="font-medium">
-										{(
-											(request.requestData
-												.units as number) *
-											(request.requestData
-												.unitCost as number)
-										).toLocaleString()}
-										<RupeeIcon />
+							</div>
+
+							<div className="mt-3 grid grid-cols-1 gap-2 text-sm sm:grid-cols-2">
+								<div className="flex min-h-[1.25rem] items-center gap-2">
+									<IndianRupee
+										className="h-4 w-4 shrink-0 text-muted-foreground opacity-70"
+										aria-hidden
+									/>
+									<div className="text-muted-foreground">
+										<span className="sr-only">Amount: </span>
+										{amountLine(request)}
+									</div>
+								</div>
+								<div className="flex items-center gap-2 text-muted-foreground">
+									<Calendar className="h-4 w-4 shrink-0 opacity-70" aria-hidden />
+									<span>
+										Submitted{" "}
+										<span className="font-medium text-foreground">
+											{new Date(request.created_at).toLocaleDateString()}
+										</span>
 									</span>
 								</div>
-							</TableCell>
-						) : (
-							<TableCell className="items-center justify-center">
-								<p className="flex items-center gap-1 justify-center">
-									N/A
-								</p>
-							</TableCell>
-						)}
-
-						{/* Date */}
-						<TableCell className="items-center justify-center">
-							<div className="flex items-center gap-1 justify-center">
-								<span className="text-sm">
-									{new Date(
-										request.created_at
-									).toLocaleDateString()}
-								</span>
 							</div>
-						</TableCell>
-					</TableRow>
-				))}
-			</TableBody>
-		</Table>
+						</button>
+					</li>
+				);
+			})}
+		</ul>
 	);
 };
 

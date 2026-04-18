@@ -1,7 +1,9 @@
 import type { Config } from "tailwindcss";
 
 export default {
-	darkMode: ["class"],
+	// v3.4+: "class" uses legacy `&:is(.dark *)` and breaks many `dark:` utilities.
+	// "selector" uses `&:where(.dark, .dark *)` — works with next-themes `class` on <html>.
+	darkMode: ["selector", ".dark"],
 	content: [
 		"./pages/**/*.{js,ts,jsx,tsx,mdx}",
 		"./components/**/*.{js,ts,jsx,tsx,mdx}",

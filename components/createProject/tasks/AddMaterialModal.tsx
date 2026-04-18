@@ -4,6 +4,7 @@ import {
 	Dialog,
 	DialogClose,
 	DialogContent,
+	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 } from "@/components/base/ui/dialog";
@@ -24,6 +25,10 @@ import {
 	SelectValue,
 } from "@/components/base/ui/select";
 import { materialUnitList } from "@/lib/constants/materials";
+import {
+	modalButtonCancelClass,
+	modalButtonConfirmClass,
+} from "@/lib/functions/modalButtonStyles";
 import { materialCreationFunctions } from "@/lib/functions/projectCreation";
 import { useMaterialPricingStore } from "@/lib/store/materialPricingStore";
 import {
@@ -362,21 +367,24 @@ export default function AddMaterialModal({
 							)}
 						</div>
 
-						<div className="pt-4 mt-2 border-t border-gray-200 flex justify-end space-x-2">
+						<DialogFooter className="mt-2 gap-2 border-t border-border/60 pt-4 sm:gap-2">
 							<Button
 								type="button"
+								variant="outline"
+								className={modalButtonCancelClass}
 								onClick={() => setOpen(false)}
 							>
 								Cancel
 							</Button>
 							<Button
 								type="submit"
-								variant={"secondary"}
+								variant="outline"
+								className={modalButtonConfirmClass}
 								disabled={!selectedMaterial}
 							>
-								Add Material
+								Add material
 							</Button>
-						</div>
+						</DialogFooter>
 					</form>
 				</Form>
 			</DialogContent>

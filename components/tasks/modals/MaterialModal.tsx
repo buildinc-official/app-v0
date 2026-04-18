@@ -1,6 +1,10 @@
 import PhotoUploader from "@/components/base/general/PhotoUploader";
 import { Button } from "@/components/base/ui/button";
 import {
+	modalButtonCancelClass,
+	modalButtonConfirmClass,
+} from "@/lib/functions/modalButtonStyles";
+import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
@@ -152,17 +156,15 @@ const MaterialModal = ({
 			open={isMaterialModalOpen}
 			onOpenChange={handleOpenChange}
 		>
-			<DialogContent className="sm:max-w-[700px] h-[550px] grid grid-rows-[auto_auto_1fr_auto] p-0 gap-0 overflow-hidden">
-				{/* Header */}
-				<DialogHeader className="px-6 pt-4 pb-2 row-span-1">
+			<DialogContent className="flex max-h-[90vh] flex-col gap-0 overflow-hidden border-border/60 p-0 sm:max-w-[700px]">
+				<DialogHeader className="shrink-0 border-b border-border/60 px-6 pb-4 pt-6">
 					<DialogTitle>{selectedTask?.name}</DialogTitle>
-					<DialogDescription>Material Portal</DialogDescription>
+					<DialogDescription>Request materials for this task</DialogDescription>
 				</DialogHeader>
 
-				{/* Form Container */}
-				<div className="row-span-1 min-h-0 w-full h-full">
+				<div className="min-h-0 flex-1 overflow-y-auto">
 					{selectedTask && (
-						<div className="px-6 py-4 overflow-y-auto max-h-[calc(550px-180px)]">
+						<div className="px-6 py-4">
 							<div className="space-y-6">
 								{/* Material Selection */}
 								<div className="space-y-2 ">
@@ -403,31 +405,29 @@ const MaterialModal = ({
 					)}
 				</div>
 
-				<DialogFooter className="px-6 py-4 border-t self-end">
-					<div className="flex flex-col w-full gap-4">
-						<div className="flex gap-2 w-full items-center justify-center">
-							<Button
-								variant="outline"
-								onClick={handleClose}
-								className="w-1/2"
-							>
-								Cancel
-							</Button>
-							<Button
-								variant="default"
-								onClick={handleSubmit}
-								className="w-1/2"
-								disabled={
-									!selectedMaterial ||
-									units <= 0 ||
-									unitCost <= 0 ||
-									!unitName
-								}
-							>
-								Request Material
-							</Button>
-						</div>
-					</div>
+				<DialogFooter className="shrink-0 gap-2 border-t border-border/60 px-6 py-4 sm:gap-2">
+					<Button
+						type="button"
+						variant="outline"
+						onClick={handleClose}
+						className={modalButtonCancelClass}
+					>
+						Cancel
+					</Button>
+					<Button
+						type="button"
+						variant="outline"
+						onClick={handleSubmit}
+						className={modalButtonConfirmClass}
+						disabled={
+							!selectedMaterial ||
+							units <= 0 ||
+							unitCost <= 0 ||
+							!unitName
+						}
+					>
+						Request material
+					</Button>
 				</DialogFooter>
 			</DialogContent>
 		</Dialog>

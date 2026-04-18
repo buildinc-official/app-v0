@@ -3,11 +3,23 @@ import { type EmailOtpType } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { type NextRequest } from "next/server";
 
+/** Only allow same-origin relative redirects after OTP (prevents open redirects). */
+function safeNextPath(request: NextRequest, next: string | null): string {
+  if (!next?.trim()) return "/";
+  try {
+    const resolved = new URL(next, request.nextUrl.origin);
+    if (resolved.origin !== request.nextUrl.origin) return "/";
+    return `${resolved.pathname}${resolved.search}${resolved.hash}`;
+  } catch {
+    return "/";
+  }
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const token_hash = searchParams.get("token_hash");
   const type = searchParams.get("type") as EmailOtpType | null;
-  const next = searchParams.get("next") ?? "/";
+  const next = safeNextPath(request, searchParams.get("next"));
 
   if (token_hash && type) {
     const supabase = await createClient();

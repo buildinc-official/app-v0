@@ -17,11 +17,10 @@ import {
 } from "@/components/base/ui/dropdown-menu";
 import {
 	IOrganisation,
-	IOrganisationMemberDB,
 	IOrganisationProfile,
 } from "@/lib/types";
 import { formatDate } from "@/lib/functions/utils";
-import { MoreHorizontal } from "lucide-react";
+import { Mail, MoreHorizontal, UserCircle } from "lucide-react";
 import AddMember from "./AddMember";
 import {
 	Card,
@@ -34,7 +33,6 @@ import {
 	getOrganisationMembersFromStore,
 	removeOrganisationMember,
 } from "@/lib/middleware/organisationMembers";
-import ChangeRoleModal from "./ChangeRoleModal";
 
 const PAGE_SIZE = 10;
 
@@ -43,7 +41,6 @@ const OrgMembers = ({
 	setChangeRole,
 	setChangeRoleModal,
 	setChangeRoleUser,
-
 	setChangeRoleId,
 }: {
 	organisation: IOrganisation;
@@ -52,7 +49,6 @@ const OrgMembers = ({
 	setChangeRoleUser: (user: string) => void;
 	setChangeRoleId: (role: string) => void;
 }) => {
-	// Pagination
 	const [page, setPage] = useState(1);
 
 	const members = getOrganisationMembersFromStore(organisation.id);
@@ -63,7 +59,7 @@ const OrgMembers = ({
 	const handleChangeRole = (member: IOrganisationProfile) => {
 		const userId = member.id;
 		const id = member.memberInfo?.id;
-		const currentRole = ""; // get currentRole from context
+		const currentRole = "";
 		if (!userId) return;
 		setChangeRoleUser(userId);
 		setChangeRoleId(id || "");
@@ -79,174 +75,181 @@ const OrgMembers = ({
 		);
 		window.location.reload();
 	};
+
 	return (
-		<div>
-			<Card className="shadow-sm">
-				<CardHeader className="flex flex-col md:flex-row md:justify-between md:items-center space-y-3 md:space-y-0">
-					<div className="space-y-1">
-						<CardTitle>Members</CardTitle>
-						<CardDescription>
-							All the members associated with this organisation
-						</CardDescription>
-					</div>
-					<AddMember organisation={organisation} />
-				</CardHeader>
+		<Card className="border-border/60 bg-background/80 shadow-sm ring-1 ring-border/40 backdrop-blur-sm">
+			<CardHeader className="flex flex-col gap-4 space-y-0 pb-4 sm:flex-row sm:items-center sm:justify-between sm:pb-6">
+				<div className="space-y-1">
+					<CardTitle className="text-lg sm:text-xl">Members</CardTitle>
+					<CardDescription>
+						People with access to this organisation
+					</CardDescription>
+				</div>
+				<AddMember organisation={organisation} />
+			</CardHeader>
 
-				<CardContent>
-					<Table>
-						<TableHeader>
-							<TableRow className="divide-x divide-gray-200 border-b-2 border-gray-200 hover:bg-card border-l border-r border-t">
-								<TableHead className="min-w-[200px] text-center">
-									Name
-								</TableHead>
-								<TableHead className="min-w-[110px] text-center">
-									Role
-								</TableHead>
-								<TableHead className="min-w-[200px] text-center">
-									Email
-								</TableHead>
-								<TableHead className="min-w-[100px] text-center">
-									Joined
-								</TableHead>
-								<TableHead className="text-center min-w-[80px]">
-									Actions
-								</TableHead>
-							</TableRow>
-						</TableHeader>
+			<CardContent className="px-0 pb-6 sm:px-6">
+				{paginatedMembers.length > 0 ? (
+					<>
+						<ul className="space-y-3 px-4 sm:px-0 lg:hidden">
+							{paginatedMembers.map((member: IOrganisationProfile) => (
+								<li
+									key={member.id}
+									className="rounded-xl border border-border/60 bg-background/60 p-4 shadow-sm"
+								>
+									<div className="flex items-start justify-between gap-2">
+										<div className="min-w-0">
+											<p className="flex items-center gap-2 font-medium">
+												<UserCircle className="h-4 w-4 shrink-0 text-muted-foreground" />
+												<span className="truncate">
+													{member.name ?? "Unnamed"}
+												</span>
+											</p>
+											<p className="mt-1 flex items-center gap-1.5 text-sm text-muted-foreground">
+												<Mail className="h-3.5 w-3.5 shrink-0" />
+												<span className="truncate">{member.email}</span>
+											</p>
+											<div className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
+												<span className="rounded-md bg-secondary/15 px-2 py-0.5 font-medium text-secondary-foreground">
+													{member.memberInfo?.role}
+												</span>
+												<span className="tabular-nums">
+													Joined{" "}
+													{member.memberInfo?.joinedAt
+														? formatDate(member.memberInfo.joinedAt)
+														: "—"}
+												</span>
+											</div>
+										</div>
+										<DropdownMenu>
+											<DropdownMenuTrigger asChild>
+												<Button variant="ghost" size="icon" className="shrink-0">
+													<MoreHorizontal className="h-4 w-4" />
+												</Button>
+											</DropdownMenuTrigger>
+											<DropdownMenuContent align="end" className="w-44">
+												<DropdownMenuItem
+													onClick={() => handleChangeRole(member)}
+												>
+													Change role
+												</DropdownMenuItem>
+												<DropdownMenuItem disabled>View profile</DropdownMenuItem>
+												{member.memberInfo?.role !== "Admin" && (
+													<DropdownMenuItem
+														className="text-destructive focus:text-destructive"
+														onClick={() => handleRemoveOrgMember(member)}
+													>
+														Remove member
+													</DropdownMenuItem>
+												)}
+											</DropdownMenuContent>
+										</DropdownMenu>
+									</div>
+								</li>
+							))}
+						</ul>
 
-						<TableBody>
-							{paginatedMembers.length > 0 ? (
-								paginatedMembers.map(
-									(member: IOrganisationProfile) => (
-										<TableRow key={member.id}>
-											<TableCell className="text-center font-medium">
+						<div className="hidden overflow-x-auto lg:block">
+							<Table>
+								<TableHeader>
+									<TableRow className="border-border/50 hover:bg-transparent">
+										<TableHead className="pl-4">Name</TableHead>
+										<TableHead className="text-center">Role</TableHead>
+										<TableHead>Email</TableHead>
+										<TableHead className="text-center">Joined</TableHead>
+										<TableHead className="w-[70px] pr-4 text-right">
+											<span className="sr-only">Actions</span>
+										</TableHead>
+									</TableRow>
+								</TableHeader>
+								<TableBody>
+									{paginatedMembers.map((member: IOrganisationProfile) => (
+										<TableRow
+											key={member.id}
+											className="border-border/40"
+										>
+											<TableCell className="pl-4 font-medium">
 												{member.name ?? "Unnamed"}
 											</TableCell>
 											<TableCell className="text-center">
-												{member.memberInfo?.role}
+												<span className="inline-flex rounded-md bg-muted/80 px-2 py-0.5 text-xs font-medium">
+													{member.memberInfo?.role}
+												</span>
 											</TableCell>
-											<TableCell className="text-center">
+											<TableCell className="max-w-[220px] truncate text-muted-foreground">
 												{member.email}
 											</TableCell>
-											<TableCell className="text-center">
+											<TableCell className="text-center tabular-nums text-sm">
 												{member.memberInfo?.joinedAt
-													? formatDate(
-															member.memberInfo
-																.joinedAt
-													  )
-													: "N/A"}
+													? formatDate(member.memberInfo.joinedAt)
+													: "—"}
 											</TableCell>
-											<TableCell className="text-center">
+											<TableCell className="pr-4 text-right">
 												<DropdownMenu>
-													<DropdownMenuTrigger
-														asChild
-													>
-														<Button
-															variant="ghost"
-															size="sm"
-														>
+													<DropdownMenuTrigger asChild>
+														<Button variant="ghost" size="icon">
 															<MoreHorizontal className="h-4 w-4" />
 														</Button>
 													</DropdownMenuTrigger>
-
-													<DropdownMenuContent
-														align="end"
-														className="p-0 min-w-[150px] border-0 shadow-lg"
-													>
-														{/* ✅ Open Modal */}
-														<DropdownMenuItem className="p-0">
-															<button
-																className="w-full px-3 py-3 hover:bg-black/20 cursor-pointer transition-colors text-center"
-																onClick={() => {
-																	handleChangeRole(
-																		member
-																	);
-																}}
-															>
-																Change Role
-															</button>
+													<DropdownMenuContent align="end" className="w-44">
+														<DropdownMenuItem
+															onClick={() => handleChangeRole(member)}
+														>
+															Change role
 														</DropdownMenuItem>
-
-														{/* View Profile */}
-														<DropdownMenuItem className="p-0">
-															<button
-																className="w-full px-3 py-3 hover:bg-black/20 cursor-pointer transition-colors text-center"
-																onClick={() => {
-																	// implement if needed
-																}}
-															>
-																View Profile
-															</button>
+														<DropdownMenuItem disabled>
+															View profile
 														</DropdownMenuItem>
-
-														{/* Remove Member */}
-														{member.memberInfo
-															?.role !==
-															"Admin" && (
-															<DropdownMenuItem className="p-0">
-																<button
-																	className="w-full px-3 py-3 text-red-600 hover:bg-red-600 hover:text-white cursor-pointer transition-colors text-center"
-																	onClick={() =>
-																		handleRemoveOrgMember(
-																			member
-																		)
-																	}
-																>
-																	Remove
-																	Member
-																</button>
+														{member.memberInfo?.role !== "Admin" && (
+															<DropdownMenuItem
+																className="text-destructive focus:text-destructive"
+																onClick={() =>
+																	handleRemoveOrgMember(member)
+																}
+															>
+																Remove member
 															</DropdownMenuItem>
 														)}
 													</DropdownMenuContent>
 												</DropdownMenu>
 											</TableCell>
 										</TableRow>
-									)
-								)
-							) : (
-								<TableRow>
-									<TableCell
-										colSpan={5}
-										className="text-center text-muted-foreground"
-									>
-										No members found
-									</TableCell>
-								</TableRow>
-							)}
-						</TableBody>
-					</Table>
-
-					{/* Pagination */}
-					{totalPages > 1 && (
-						<div className="flex justify-end items-center space-x-2 mt-4">
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={() =>
-									setPage((p) => Math.max(1, p - 1))
-								}
-								disabled={page === 1}
-							>
-								Previous
-							</Button>
-							<span className="text-sm">
-								Page {page} of {totalPages}
-							</span>
-							<Button
-								variant="outline"
-								size="sm"
-								onClick={() =>
-									setPage((p) => Math.min(totalPages, p + 1))
-								}
-								disabled={page === totalPages}
-							>
-								Next
-							</Button>
+									))}
+								</TableBody>
+							</Table>
 						</div>
-					)}
-				</CardContent>
-			</Card>
-		</div>
+					</>
+				) : (
+					<div className="mx-4 flex min-h-[8rem] items-center justify-center rounded-xl border border-dashed border-border/60 bg-muted/20 px-4 py-10 text-center text-sm text-muted-foreground sm:mx-0">
+						No members yet. Invite someone to get started.
+					</div>
+				)}
+
+				{totalPages > 1 && (
+					<div className="mt-6 flex flex-wrap items-center justify-center gap-2 px-4 sm:px-0">
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => setPage((p) => Math.max(1, p - 1))}
+							disabled={page === 1}
+						>
+							Previous
+						</Button>
+						<span className="text-sm text-muted-foreground tabular-nums">
+							Page {page} of {totalPages}
+						</span>
+						<Button
+							variant="outline"
+							size="sm"
+							onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+							disabled={page === totalPages}
+						>
+							Next
+						</Button>
+					</div>
+				)}
+			</CardContent>
+		</Card>
 	);
 };
 

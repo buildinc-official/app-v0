@@ -1,6 +1,5 @@
 @tailwind base;
 
-@custom-variant dark (&:is(.dark *));
 @tailwind components;
 @tailwind utilities;
 
@@ -26,34 +25,26 @@
     --radius: 0.5rem;
   }
   .dark {
-    --background: 215 91% 9%;
-    --foreground: 206 31% 90%;
-    --card: var(--primary);
-    --card-foreground: var(--primary-foreground);
-    --popover: 0 0% 0%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 212 82% 20%;
-    --primary-foreground: 0 0% 100%;
-    --secondary: 37 57% 57%;
-    --secondary-foreground: 0 0% 0%;
-    --muted: 37 39% 26%;
-    --muted-foreground: 0 0% 75%;
-    /* --accent: 0 0% 14.9%; */
-    /* --accent-foreground: 0 0% 98%; */
-    --destructive: 0 90% 41%;
-    --destructive-foreground: 0 0% 0%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
+    /* Modern sleek: near-black blue-gray, crisp blue accent, restrained chrome */
+    --background: 224 20% 4%;
+    --foreground: 210 25% 98%;
+    --card: 224 14% 7%;
+    --card-foreground: 210 25% 98%;
+    --popover: 224 16% 6%;
+    --popover-foreground: 210 25% 98%;
+    --primary: 217 91% 59%;
+    --primary-foreground: 222 47% 5%;
+    --secondary: 220 14% 22%;
+    --secondary-foreground: 210 25% 98%;
+    --muted: 220 12% 13%;
+    --muted-foreground: 215 14% 56%;
+    --accent: 220 14% 18%;
+    --accent-foreground: 210 25% 98%;
+    --destructive: 0 72% 52%;
+    --destructive-foreground: 210 25% 98%;
+    --border: 220 12% 26%;
+    --input: 220 12% 24%;
+    --ring: 217 91% 59%;
   }
 }
 
@@ -69,14 +60,14 @@
 }
 
 .dark {
-  --sidebar: hsl(240 5.9% 10%);
-  --sidebar-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-primary: hsl(224.3 76.3% 48%);
-  --sidebar-primary-foreground: hsl(0 0% 100%);
-  --sidebar-accent: hsl(240 3.7% 15.9%);
-  --sidebar-accent-foreground: hsl(240 4.8% 95.9%);
-  --sidebar-border: hsl(240 3.7% 15.9%);
-  --sidebar-ring: hsl(217.2 91.2% 59.8%);
+  --sidebar: hsl(224 18% 5%);
+  --sidebar-foreground: hsl(210 22% 96%);
+  --sidebar-primary: hsl(217 91% 59%);
+  --sidebar-primary-foreground: hsl(222 47% 5%);
+  --sidebar-accent: hsl(220 12% 11%);
+  --sidebar-accent-foreground: hsl(210 22% 96%);
+  --sidebar-border: hsl(220 12% 14%);
+  --sidebar-ring: hsl(217 91% 59%);
 }
 
 @theme inline {
@@ -94,7 +85,50 @@
   * {
     @apply border-border outline-ring/50;
   }
+  html {
+    @apply cursor-default;
+  }
+  /*
+    Default text is selectable (errors, labels, copy-paste). Use `select-none`
+    on specific chrome (e.g. nav) if you want to avoid I-beam on static UI.
+  */
   body {
-    @apply bg-background text-foreground;
+    @apply cursor-default bg-background text-foreground antialiased;
+  }
+  a[href] {
+    @apply cursor-pointer;
+  }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]) {
+    @apply cursor-pointer;
+  }
+  label {
+    @apply cursor-pointer;
+  }
+  /* Real text fields (including input with no type → text) */
+  input:not([type]),
+  input[type="text"],
+  input[type="search"],
+  input[type="email"],
+  input[type="password"],
+  input[type="tel"],
+  input[type="url"],
+  input[type="number"],
+  input[type="date"],
+  input[type="datetime-local"],
+  input[type="time"],
+  input[type="month"],
+  input[type="week"],
+  textarea,
+  select,
+  [contenteditable="true"] {
+    @apply cursor-text select-text;
+  }
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="range"],
+  input[type="file"],
+  input[type="color"] {
+    @apply cursor-pointer select-none;
   }
 }

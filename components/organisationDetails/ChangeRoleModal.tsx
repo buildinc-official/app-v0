@@ -12,6 +12,10 @@ import {
 import { Label } from "../base/ui/label";
 import { role } from "@/lib/types";
 import { changeUserRole } from "@/lib/functions/organisationDetails";
+import {
+	modalButtonCancelClass,
+	modalButtonConfirmClass,
+} from "@/lib/functions/modalButtonStyles";
 
 const ChangeRoleModal = ({
 	isOpen,
@@ -131,20 +135,24 @@ const ChangeRoleModal = ({
 								</select>
 							</div>
 
-							<DialogFooter>
+							<DialogFooter className="gap-2 border-t border-border/60 pt-4 sm:gap-2">
 								<Button
-									variant="ghost"
 									type="button"
+									variant="outline"
+									className={modalButtonCancelClass}
 									onClick={() => onOpenChange(false)}
 									disabled={loading}
 								>
 									Cancel
 								</Button>
 								<Button
+									type="button"
+									variant="outline"
+									className={modalButtonConfirmClass}
 									disabled={loading}
 									onClick={handleSubmit}
 								>
-									{loading ? "Saving..." : "Save changes"}
+									{loading ? "Saving…" : "Save changes"}
 								</Button>
 							</DialogFooter>
 						</div>

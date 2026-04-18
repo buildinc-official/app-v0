@@ -10,6 +10,7 @@ import SideBar from "../header/SideBar";
 import TopBar from "../header/TopBar";
 import LoadingSpinner from "./LoadingSpinner";
 import { StoreHydrator } from "./StoreHydrator";
+import { Toaster } from "@/components/base/ui/sonner";
 
 export function AppLayout({
 	children,
@@ -29,7 +30,7 @@ export function AppLayout({
 			try {
 				const lastActiveAt = parseInt(
 					localStorage.getItem("lastActiveAt") || "0",
-					10
+					10,
 				);
 				const now = Date.now();
 				if (now - lastActiveAt > EXPIRY_MS) {
@@ -66,11 +67,16 @@ export function AppLayout({
 			disableTransitionOnChange
 		>
 			<div className=" min-h-screen min-w-screen">
+				<Toaster />
 				<StoreHydrator profile={profile} />
 				{user && <TopBar profile={profile} />}
 				{user && <SideBar profile={profile} />}
 				{user ? (
-					<div className="lg:max-w-[calc(100%-15rem)] lg:ml-[15rem] ml-0 min-w-screen mt-14 h-screen p-4 lg:p-6 z-30">
+					<div
+						className={`z-30 ml-0 min-h-screen min-w-screen lg:ml-[15rem] lg:max-w-[calc(100%-15rem)] lg:p-6 ${
+							profile ? "mt-14 lg:mt-0" : "mt-14"
+						} h-screen p-4`}
+					>
 						{children}
 					</div>
 				) : (

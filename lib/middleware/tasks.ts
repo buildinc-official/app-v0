@@ -2,6 +2,7 @@
 import { taskDB } from "@/lib/supabase/db/taskDB";
 import { ITask, ITaskDB } from "../types";
 import { useTaskStore } from "@/lib/store/taskStore";
+import { recomputePhaseAndProjectProgress } from "@/lib/functions/base";
 
 export async function addTask(task: ITask) {
 	try {
@@ -39,6 +40,7 @@ export async function addTask(task: ITask) {
 			materialIds: [],
 			assigneeId: result.assignedTo || null,
 		});
+		recomputePhaseAndProjectProgress();
 
 		return result;
 	} catch (error) {
@@ -54,6 +56,7 @@ export async function deleteTask(id: string) {
 		// Remove from store
 		const store = useTaskStore.getState();
 		store.deleteTask(id);
+		recomputePhaseAndProjectProgress();
 
 		return { success: true, message: "Task deleted successfully" };
 	} catch (error) {
@@ -115,6 +118,7 @@ export async function updateTask(id: string, updates: Partial<ITask>) {
 			assigneeId: updateData.assignedTo || null,
 		};
 		store.updateTask(id, updateDataWithAssignee);
+		recomputePhaseAndProjectProgress();
 
 		return result;
 	} catch (error) {

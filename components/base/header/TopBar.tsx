@@ -10,9 +10,9 @@ const TopBar = ({ profile }: { profile: IProfile | null }) => {
 		<nav
 			className={`${
 				profile
-					? " lg:max-w-[calc(100%-15rem)]  self-end px-4"
-					: "min-w-screen  px-6"
-			} fixed top-0 right-0 bg-background border-b py-2.5 z-50 flex items-center justify-between w-full border-primary/10 h-16`}
+					? "px-4 lg:hidden"
+					: "min-w-screen px-6"
+			} fixed top-0 right-0 z-50 flex h-16 w-full items-center justify-between border-b border-primary/10 bg-background py-2.5`}
 		>
 			{profile ? (
 				<CurrentPage />
@@ -23,7 +23,7 @@ const TopBar = ({ profile }: { profile: IProfile | null }) => {
 			)}
 			<div className="flex items-center gap-4">
 				{/* <ThemeSwitcher /> */}
-				<div className="hidden lg:flex items-center gap-4">
+				<div className="hidden items-center gap-4 lg:flex">
 					<UserButton profile={profile} />
 				</div>
 			</div>

@@ -18,6 +18,10 @@ import { IOrganisation, IProfile } from "@/lib/types";
 import { getAllProfilesFromStore } from "@/lib/middleware/profiles";
 import { useProfileStore } from "@/lib/store/profileStore";
 import { addMember } from "@/lib/functions/organisationDetails";
+import {
+	modalButtonCancelClass,
+	modalButtonConfirmClass,
+} from "@/lib/functions/modalButtonStyles";
 import { toast } from "sonner";
 
 type Props = { organisation: IOrganisation };
@@ -97,13 +101,20 @@ const AddMember = ({ organisation }: Props) => {
 			onOpenChange={setIsOpen}
 		>
 			<DialogTrigger asChild>
-				<Button variant="secondary">
-					<UserPlus className="h-4 w-4 mr-2" />
-					Add Member
+				<Button
+					variant="outline"
+					className="group h-11 w-full border-border/60 bg-background/80 shadow-sm ring-1 ring-border/40 backdrop-blur-sm transition-all duration-200 hover:border-primary/35 hover:bg-primary/5 hover:shadow-md hover:ring-primary/25 active:scale-[0.98] sm:w-auto"
+				>
+					<span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 text-primary ring-1 ring-primary/20 transition-transform duration-200 group-hover:scale-105 group-hover:bg-primary/25">
+						<UserPlus className="h-4 w-4" aria-hidden />
+					</span>
+					<span className="inline-flex h-8 shrink-0 items-center leading-none font-medium">
+						Add member
+					</span>
 				</Button>
 			</DialogTrigger>
 
-			<DialogContent className="sm:max-w-[500px]">
+			<DialogContent className="border-border/60 sm:max-w-[500px]">
 				<DialogHeader>
 					<DialogTitle>Add Member</DialogTitle>
 					<DialogDescription>
@@ -170,13 +181,23 @@ const AddMember = ({ organisation }: Props) => {
 					</ScrollArea>
 				</div>
 
-				<DialogFooter>
+				<DialogFooter className="gap-2 border-t border-border/60 pt-4 sm:gap-2">
 					<Button
+						type="button"
+						variant="outline"
+						className={modalButtonCancelClass}
+						onClick={() => setIsOpen(false)}
+					>
+						Cancel
+					</Button>
+					<Button
+						type="button"
+						variant="outline"
 						onClick={handleAdd}
 						disabled={!selectedUser || loading}
-						variant={selectedUser?.id ? "secondary" : "default"}
+						className={modalButtonConfirmClass}
 					>
-						{loading ? "Adding..." : "Add Member"}
+						{loading ? "Adding…" : "Add member"}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

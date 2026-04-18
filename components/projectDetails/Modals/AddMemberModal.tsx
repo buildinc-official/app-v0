@@ -27,6 +27,10 @@ import { addMember } from "@/lib/functions/organisationDetails";
 import { getProjectMembersByProjectIdFromStore } from "@/lib/middleware/projectMembers";
 import { getOrganisationMembersFromStore } from "@/lib/middleware/organisationMembers";
 import { addProjectMember } from "@/lib/functions/projectDetails";
+import {
+	modalButtonCancelClass,
+	modalButtonConfirmClass,
+} from "@/lib/functions/modalButtonStyles";
 
 type Props = {
 	organisationMembers: IOrganisationProfile[];
@@ -152,9 +156,20 @@ const AddMemberModal = ({
 			onOpenChange={setIsOpen}
 		>
 			<DialogTrigger asChild>
-				<Button variant="secondary">
-					<UserPlus className="h-4 w-4 mr-2" />
-					Add Member
+				<Button
+					type="button"
+					variant="outline"
+					className="group h-11 w-full border-border/60 bg-background/80 shadow-sm ring-1 ring-border/40 backdrop-blur-sm transition-all duration-200 ease-out hover:border-primary/35 hover:bg-primary/5 hover:shadow-md hover:ring-primary/25 active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-primary/40 sm:w-auto"
+				>
+					<span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/15 text-primary ring-1 ring-primary/20 transition-transform duration-200 ease-out group-hover:scale-105 group-hover:bg-primary/25 group-hover:ring-primary/35 group-active:scale-95">
+						<UserPlus
+							className="h-4 w-4 transition-transform duration-200 ease-out group-hover:scale-110"
+							aria-hidden
+						/>
+					</span>
+					<span className="inline-flex h-8 shrink-0 items-center leading-none font-medium transition-colors group-hover:text-foreground">
+						Add member
+					</span>
 				</Button>
 			</DialogTrigger>
 
@@ -225,13 +240,23 @@ const AddMemberModal = ({
 					</ScrollArea>
 				</div>
 
-				<DialogFooter>
+				<DialogFooter className="gap-2 border-t border-border/60 pt-4 sm:gap-2">
 					<Button
+						type="button"
+						variant="outline"
+						className={modalButtonCancelClass}
+						onClick={() => setIsOpen(false)}
+					>
+						Cancel
+					</Button>
+					<Button
+						type="button"
+						variant="outline"
 						onClick={handleAdd}
 						disabled={!selectedUser || loading}
-						variant={selectedUser?.id ? "secondary" : "default"}
+						className={modalButtonConfirmClass}
 					>
-						{loading ? "Adding..." : "Add to Project"}
+						{loading ? "Adding…" : "Add to project"}
 					</Button>
 				</DialogFooter>
 			</DialogContent>

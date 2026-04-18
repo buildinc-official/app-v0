@@ -71,9 +71,6 @@ export async function removeOrganisationMember(
 		const store = useOrganisationMemberStore.getState();
 		store.removeOrganisationMember(orgId, id);
 
-		console.log("removed member with id:", id);
-		console.log(store.getOrganisationMembers(orgId));
-
 		return {
 			success: true,
 			message: "Organisation member removed successfully",

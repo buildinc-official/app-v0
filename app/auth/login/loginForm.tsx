@@ -40,7 +40,7 @@ export function LoginForm({
 			window.location.href = "/dashboard";
 		} catch (error: unknown) {
 			setError(
-				error instanceof Error ? error.message : "An error occurred"
+				error instanceof Error ? error.message : "An error occurred",
 			);
 		} finally {
 			setIsLoading(false);

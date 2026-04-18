@@ -1,132 +1,107 @@
 import { Badge } from "@/components/base/ui/badge";
 import { Label } from "@/components/base/ui/label";
 import { TabsContent } from "@/components/base/ui/tabs";
-import { getStatusColor, RupeeIcon } from "@/lib/functions/utils";
+import { taskStatusBadgeVariant } from "@/lib/functions/taskStatusUi";
+import { RupeeIcon } from "@/lib/functions/utils";
 import { ITask } from "@/lib/types";
 import React from "react";
-
-type Props = {};
 
 const TaskDetails = ({
 	selectedTask,
 	projectName,
-	completionNotes,
-	setCompletionNotes,
 }: {
 	selectedTask: ITask;
 	projectName: string;
-	completionNotes: string;
-	setCompletionNotes: React.Dispatch<React.SetStateAction<string>>;
 }) => {
-	function completeTask(id: string): void {
-		throw new Error("Function not implemented.");
-	}
-
 	return (
-		<TabsContent
-			value="details"
-			className="space-y-4"
-		>
+		<TabsContent value="details" className="mt-0 space-y-5">
 			<div className="space-y-2">
-				<Label className="text-sm font-medium text-slate-600">
+				<Label className="text-sm font-medium text-muted-foreground">
 					Description
 				</Label>
-				<p className="text-sm">{selectedTask.description}</p>
+				<p className="text-sm leading-relaxed">
+					{selectedTask.description?.trim()
+						? selectedTask.description
+						: "No description."}
+				</p>
 			</div>
-			<div className="grid grid-cols-2 gap-4">
-				<div className="space-y-1">
-					<Label className="text-sm font-medium text-slate-600">
+
+			<div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+				<div className="space-y-1.5">
+					<Label className="text-sm font-medium text-muted-foreground">
 						Project
 					</Label>
-					<p className="text-sm font-medium ">{projectName}</p>
+					<p className="text-sm font-medium">{projectName || "—"}</p>
 				</div>
 
-				<div className="space-y-1 flex flex-col">
-					<Label className="text-sm font-medium text-slate-600">
+				<div className="space-y-1.5">
+					<Label className="text-sm font-medium text-muted-foreground">
 						Status
 					</Label>
-					<Badge
-						className={`w-fit ${getStatusColor(
-							selectedTask.status
-						)}`}
-						variant="secondary"
-					>
-						{selectedTask.status
-							.replace("-", " ")
-							.replace(/\b\w/g, (l: string) => l.toUpperCase())}
-					</Badge>
-				</div>
-				<div className="space-y-1">
-					<Label className="text-sm font-medium text-slate-600">
-						Estimated Days
-					</Label>
-					<p className="text-sm">
-						{selectedTask.estimatedDuration} Days
-					</p>
-				</div>
-				<div className="space-y-1">
-					<Label className="text-sm font-medium text-slate-600">
-						Due Date
-					</Label>
-					<p className="text-sm">
-						{selectedTask.endDate
-							? new Date(
-									selectedTask.endDate
-							  ).toLocaleDateString()
-							: "N/A"}
-					</p>
-				</div>
-
-				{/* {selectedTask?.plannedBudget && (
 					<div>
-						<Label className="text-sm font-medium text-slate-600">
-							Budget
-						</Label>
-						<p className="text-sm">
-							{selectedTask.plannedBudget
-								? selectedTask.plannedBudget.toFixed()
-								: "0.00"}{" "}
-							<RupeeIcon />
-						</p>
+						<Badge
+							variant={taskStatusBadgeVariant(selectedTask.status)}
+							className="capitalize"
+						>
+							{selectedTask.status}
+						</Badge>
 					</div>
-				)} */}
+				</div>
 
-				<div>
-					<Label className="text-sm font-medium text-slate-600">
-						Payment Done:
+				<div className="space-y-1.5">
+					<Label className="text-sm font-medium text-muted-foreground">
+						Estimated days
 					</Label>
-					<p className="text-sm">
-						{selectedTask?.spent.toFixed(2)} <RupeeIcon />
+					<p className="text-sm tabular-nums">
+						{selectedTask.estimatedDuration ?? 0}
+					</p>
+				</div>
+
+				<div className="space-y-1.5">
+					<Label className="text-sm font-medium text-muted-foreground">
+						Due date
+					</Label>
+					<p className="text-sm tabular-nums">
+						{selectedTask.endDate
+							? new Date(selectedTask.endDate).toLocaleDateString()
+							: "—"}
+					</p>
+				</div>
+
+				<div className="space-y-1.5 sm:col-span-2">
+					<Label className="text-sm font-medium text-muted-foreground">
+						Payment recorded
+					</Label>
+					<p className="text-sm tabular-nums">
+						{(selectedTask.spent ?? 0).toFixed(2)} <RupeeIcon />
 					</p>
 				</div>
 			</div>
 
-			{selectedTask.completionNotes && (
-				<div className="space-y-1">
-					<Label className="text-sm font-medium text-slate-600">
-						Completion Notes
+			{selectedTask.completionNotes ? (
+				<div className="space-y-2">
+					<Label className="text-sm font-medium text-muted-foreground">
+						Completion notes
 					</Label>
-					<p className="text-sm bg-slate-50 p-3 rounded">
+					<p className="rounded-lg border border-border/60 bg-muted/30 p-3 text-sm">
 						{selectedTask.completionNotes}
 					</p>
 				</div>
-			)}
+			) : null}
 
-			{selectedTask.approvedBy && (
-				<div className="space-y-1">
-					<Label className="text-sm font-medium text-slate-600">
-						Approved By
+			{selectedTask.approvedBy ? (
+				<div className="space-y-1.5">
+					<Label className="text-sm font-medium text-muted-foreground">
+						Approved by
 					</Label>
 					<p className="text-sm">
-						{selectedTask.approvedBy} on{" "}
+						{selectedTask.approvedBy}
 						{selectedTask.completedDate
-							? new Date(
-									selectedTask.completedDate
-							  ).toLocaleDateString()
-							: "N/A"}
+							? ` · ${new Date(selectedTask.completedDate).toLocaleDateString()}`
+							: ""}
 					</p>
 				</div>
-			)}
+			) : null}
 		</TabsContent>
 	);
 };

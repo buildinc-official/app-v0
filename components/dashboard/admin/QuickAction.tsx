@@ -1,9 +1,10 @@
 import { Button } from "@/components/base/ui/button";
-import { AlertCircle, CheckSquare, CreditCard, Package } from "lucide-react";
+import { Package } from "lucide-react";
 import React from "react";
 import {
 	Card,
 	CardContent,
+	CardDescription,
 	CardHeader,
 	CardTitle,
 } from "@/components/base/ui/card";
@@ -11,49 +12,33 @@ import Link from "next/link";
 
 const QuickAction = () => {
 	return (
-		<Card className="shadow-sm">
-			<CardHeader>
-				<CardTitle>Quick Actions</CardTitle>
+		<Card className="border-border/60 bg-background/80 shadow-sm ring-1 ring-border/40 backdrop-blur-sm">
+			<CardHeader className="space-y-1 pb-4 sm:pb-6">
+				<CardTitle className="text-lg sm:text-xl">Quick actions</CardTitle>
+				<CardDescription>
+					Jump straight into common workflows.
+				</CardDescription>
 			</CardHeader>
-			<CardContent>
-				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-					{/* <Button
-						size="lg"
-						variant="outline"
-						className="h-20 flex-col bg-transparent"
-					>
-						<CheckSquare className="h-6 w-6 mb-2" />
-						View 
-					</Button> */}
+			<CardContent className="pb-6">
+				<div className="grid grid-cols-1 gap-3 sm:max-w-lg">
 					<Button
+						asChild
 						size="lg"
 						variant="outline"
-						className="h-20 flex-col bg-transparent"
+						className="h-auto min-h-[4.5rem] w-full flex-col gap-2 border-border/60 bg-background/60 py-4 text-center shadow-none transition-colors hover:bg-primary/5"
 					>
 						<Link
 							href="/projects/create-project"
-							className="flex flex-col items-center"
+							className="flex flex-col items-center justify-center gap-2"
 						>
-							<Package className="h-6 w-6 mb-2" />
-							Create new project
+							<span className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/20">
+								<Package className="h-5 w-5" aria-hidden />
+							</span>
+							<span className="text-sm font-medium leading-snug">
+								Create new project
+							</span>
 						</Link>
 					</Button>
-					{/* <Button
-						size="lg"
-						variant="outline"
-						className="h-20 flex-col bg-transparent"
-					>
-						<CreditCard className="h-6 w-6 mb-2" />
-						Log Payment
-					</Button>
-					<Button
-						size="lg"
-						variant="outline"
-						className="h-20 flex-col bg-transparent"
-					>
-						<AlertCircle className="h-6 w-6 mb-2" />
-						Report Issue
-					</Button> */}
 				</div>
 			</CardContent>
 		</Card>

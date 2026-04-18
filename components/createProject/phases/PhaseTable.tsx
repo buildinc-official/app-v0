@@ -23,6 +23,8 @@ import {
 	DialogTitle,
 } from "@/components/base/ui/dialog";
 import { IPhaseTemplate, IProjectCreationData } from "@/lib/types";
+import { getPhaseSectionTheme } from "@/lib/constants/phaseColorThemes";
+import { cn } from "@/lib/functions/utils";
 
 const PhaseTable = ({
 	phase,
@@ -78,6 +80,11 @@ const PhaseTable = ({
 		}
 	}, [phase.tasks, phase.id, setProjectData, phase.budget]);
 
+	const fieldClass =
+		"h-11 border-border/60 bg-background/80 shadow-sm ring-1 ring-border/30 focus-visible:ring-2 focus-visible:ring-ring";
+
+	const phaseTheme = getPhaseSectionTheme();
+
 	return (
 		<Draggable
 			draggableId={phase.id.toString()}
@@ -87,9 +94,13 @@ const PhaseTable = ({
 				<div
 					ref={provided.innerRef}
 					{...provided.draggableProps}
-					className={`rounded-lg p-4 bg-white/60  dark:text-black ${
-						snapshot.isDragging ? "shadow-lg" : "shadow-sm"
-					}`}
+					className={cn(
+						"group/phase rounded-2xl border p-5 shadow-sm backdrop-blur-sm ring-1 transition-all sm:p-6",
+						phaseTheme.card,
+						phaseTheme.cardHover,
+						snapshot.isDragging &&
+							cn("shadow-lg", phaseTheme.drag),
+					)}
 				>
 					{/* Header row */}
 
@@ -97,29 +108,42 @@ const PhaseTable = ({
 						className="flex items-center justify-between cursor-pointer"
 						onClick={() => setExpanded(!expanded)}
 					>
-						<div className="flex items-center gap-2">
+						<div className="flex min-w-0 items-center gap-3">
 							{/* Drag handle icon */}
 							<div
 								{...provided.dragHandleProps}
 								className="cursor-grab"
 							>
 								{expanded ? (
-									<ChevronDown className="h-5 w-5 text-slate-500" />
+									<ChevronDown className="h-5 w-5 text-muted-foreground" />
 								) : (
-									<ChevronRight className="h-5 w-5 text-slate-500" />
+									<ChevronRight className="h-5 w-5 text-muted-foreground" />
 								)}
 							</div>
+							<span
+								className={cn(
+									"shrink-0 rounded-md px-2 py-0.5 text-xs font-bold tabular-nums",
+									phaseTheme.chip,
+								)}
+							>
+								{index + 1}
+							</span>
 
 							{!expanded && (
-								<span className="font-semibold">
+								<span className="truncate font-semibold">
+									{phase.name || "Unnamed Phase"}
+								</span>
+							)}
+							{expanded && (
+								<span className="min-w-0 truncate font-semibold">
 									{phase.name || "Unnamed Phase"}
 								</span>
 							)}
 						</div>
 
-						<div className="flex items-center gap-4">
+						<div className="flex shrink-0 items-center gap-2 sm:gap-3">
 							{!expanded && (
-								<span className="text-slate-600">
+								<span className="tabular-nums text-muted-foreground">
 									{new Intl.NumberFormat("en-IN").format(
 										phase.budget || 0
 									)}
@@ -128,22 +152,28 @@ const PhaseTable = ({
 							)}
 							<Button
 								variant="outline"
-								size="sm"
+								size="icon"
+								className={cn(
+									"h-9 w-9 shrink-0",
+									phaseTheme.outlineIcon,
+								)}
 								onClick={(e) => {
 									e.stopPropagation();
 									duplicatePhase(phase, setProjectData);
 								}}
+								aria-label="Duplicate phase"
 							>
-								<Copy className="h-4 w-4 text-black dark:text-white" />
+								<Copy className="h-4 w-4" />
 							</Button>
 							<Button
-								variant="outline"
-								size="sm"
+								variant="destructive"
+								size="icon"
+								className="h-9 w-9 shrink-0"
 								onClick={(e) => {
 									e.stopPropagation();
 									removePhase(phase.id, setProjectData);
 								}}
-								className="text-red-600 hover:text-red-700"
+								aria-label="Remove phase"
 							>
 								<Trash2 className="h-4 w-4" />
 							</Button>
@@ -151,15 +181,15 @@ const PhaseTable = ({
 					</div>
 					{/* Expanded details */}
 					{expanded && (
-						<div className="mt-4 space-y-4">
+						<div className="mt-6 space-y-6 border-t border-border/50 pt-6">
 							{/* Phase Details */}
-							<div className="grid gap-4 md:grid-cols-2">
+							<div className="grid gap-6 md:grid-cols-2">
 								<div className="space-y-2">
 									<Label className="font-bold">
 										Phase Name
 									</Label>
 									<Input
-										className="bg-white focus-visible:ring-0 focus-visible:border-muted-foreground"
+										className={fieldClass}
 										placeholder="Enter phase name"
 										value={phase.name}
 										onChange={(e) =>
@@ -176,9 +206,9 @@ const PhaseTable = ({
 								<div className="space-y-2">
 									<Label className="font-bold">Budget</Label>
 									<div className="relative">
-										<IndianRupee className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 " />
+										<IndianRupee className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
 										<Input
-											className="bg-white pl-10 focus-visible:ring-0 focus-visible:border-muted-foreground"
+											className={cn(fieldClass, "pl-10")}
 											type="text"
 											inputMode="numeric"
 											value={budgetInput}
@@ -239,7 +269,10 @@ const PhaseTable = ({
 							<div className="space-y-2">
 								<Label className="font-bold">Description</Label>
 								<Textarea
-									className="bg-white focus-visible:ring-0 focus-visible:border-muted-foreground"
+									className={cn(
+										"min-h-[80px] resize-y",
+										fieldClass,
+									)}
 									placeholder="Describe this phase..."
 									rows={2}
 									value={phase.description}
@@ -271,9 +304,10 @@ const PhaseTable = ({
 										<DialogTrigger asChild>
 											<Button
 												variant="outline"
-												className="w-full justify-start text-left font-normal bg-white"
+												type="button"
+												className="h-11 w-full justify-start border-border/60 bg-background/80 text-left font-normal shadow-sm ring-1 ring-border/30"
 											>
-												<CalendarIcon className="mr-2 h-4 w-4" />
+												<CalendarIcon className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
 												{phase.startDate
 													? format(
 															phase.startDate,
@@ -319,9 +353,10 @@ const PhaseTable = ({
 										<DialogTrigger asChild>
 											<Button
 												variant="outline"
-												className="w-full justify-start text-left font-normal bg-white"
+												type="button"
+												className="h-11 w-full justify-start border-border/60 bg-background/80 text-left font-normal shadow-sm ring-1 ring-border/30"
 											>
-												<CalendarIcon className="mr-2 h-4 w-4" />
+												<CalendarIcon className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
 												{phase.endDate
 													? format(
 															phase.endDate,

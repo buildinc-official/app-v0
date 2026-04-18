@@ -18,7 +18,6 @@ export async function getAllProfiles() {
 export async function getProfile(id: string): Promise<IProfile> {
 	try {
 		if (!id || id === "") throw new Error("Profile ID is required");
-		console.log("profile id", id);
 
 		// First check if we have it in the store (current user profile)
 		const store = useProfileStore.getState();

@@ -1,3 +1,6 @@
+/*
+	lib/types.d.ts
+ */
 // 0. Common Types
 export type role = "Admin" | "Supervisor" | "Employee";
 export type category = "Commercial" | "Residential";

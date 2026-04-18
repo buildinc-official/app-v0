@@ -9,6 +9,7 @@ import { use, useEffect } from "react";
 import LoadingSpinner from "@/components/base/layout/LoadingSpinner";
 import { useOrganisationStore } from "@/lib/store/organisationStore";
 import { useRouter } from "next/navigation";
+import { hydrateProjectBoardData } from "@/lib/middleware/phases";
 
 export default function Page({
 	params,
@@ -31,6 +32,13 @@ export default function Page({
 			setprojectDetails(project, organisation);
 		}
 	}, [project, organisation, setprojectDetails]);
+
+	useEffect(() => {
+		if (!projectId || !project) return;
+		hydrateProjectBoardData(projectId).catch((err) => {
+			console.error("Failed to load project board (phases/tasks):", err);
+		});
+	}, [projectId, project?.id]);
 
 	const router = useRouter();
 	if (!profile) {

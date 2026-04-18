@@ -66,7 +66,7 @@ export const projectTemplateDB = {
 				.eq("id", id)
 				.throwOnError();
 		} catch (error) {
-			console.log("error", error);
+			console.error("removeProjectTemplate failed:", error);
 		}
 	},
 

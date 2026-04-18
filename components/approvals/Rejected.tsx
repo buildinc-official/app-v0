@@ -1,15 +1,16 @@
 import {
 	Card,
+	CardContent,
+	CardDescription,
 	CardHeader,
 	CardTitle,
-	CardDescription,
-	CardContent,
 } from "@/components/base/ui/card";
 import { TabsContent } from "@/components/base/ui/tabs";
-import { AlertTriangle, XCircle } from "lucide-react";
+import { cn } from "@/lib/functions/utils";
+import { IRequest } from "@/lib/types";
+import { XCircle } from "lucide-react";
 import React from "react";
 import ApprovalTable from "./ApprovalTable";
-import { IRequest } from "@/lib/types";
 
 type Props = {
 	rejectedApprovals: IRequest[];
@@ -23,35 +24,37 @@ const Rejected = ({
 	setSelectedApproval,
 }: Props) => {
 	return (
-		<TabsContent value="rejected">
-			<Card className="shadow-sm">
-				<CardHeader>
-					<CardTitle className="flex items-center gap-2">
-						<XCircle className="h-5 w-5 text-red-600" />
-						Rejected Requests
-					</CardTitle>
-					<CardDescription>
-						Requests that were rejected with reasons
-					</CardDescription>
+		<TabsContent value="rejected" className="mt-0">
+			<Card className="border-border/60 bg-background/80 shadow-sm ring-1 ring-border/40 backdrop-blur-sm">
+				<CardHeader className="space-y-1 pb-4 sm:pb-6">
+					<div className="flex items-start gap-3">
+						<span
+							className={cn(
+								"flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ring-1",
+								"bg-rose-500/15 text-rose-700 ring-rose-500/25 dark:text-rose-400",
+							)}
+						>
+							<XCircle className="h-4 w-4" aria-hidden />
+						</span>
+						<div className="min-w-0">
+							<CardTitle className="text-lg sm:text-xl">Rejected</CardTitle>
+							<CardDescription>
+								Requests that were declined (open a row for details).
+							</CardDescription>
+						</div>
+					</div>
 				</CardHeader>
-				<CardContent>
+				<CardContent className="space-y-3 pb-6 sm:px-6">
 					{rejectedApprovals.length > 0 ? (
 						<ApprovalTable
+							variant="rejected"
 							data={rejectedApprovals}
-							showActions={false}
 							setIsDetailDialogOpen={setIsDetailDialogOpen}
 							setSelectedApproval={setSelectedApproval}
 						/>
 					) : (
-						<div className="flex flex-col items-center justify-center py-20">
-							<AlertTriangle className="mb-4 h-12 w-12" />
-							<h2 className="mb-2 text-xl font-semibold text-gray-700">
-								No Approvals Found
-							</h2>
-							<p className="text-center text-gray-500">
-								There are currently no approvals to display.
-								Please check back later.
-							</p>
+						<div className="flex min-h-[8rem] items-center justify-center rounded-xl border border-dashed border-border/60 bg-muted/20 px-4 py-10 text-center text-sm text-muted-foreground">
+							No rejected requests.
 						</div>
 					)}
 				</CardContent>

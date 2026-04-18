@@ -58,7 +58,7 @@ export function SignUpForm({
 			router.push("/auth/sign-up-success");
 		} catch (error: unknown) {
 			setError(
-				error instanceof Error ? error.message : "An error occurred"
+				error instanceof Error ? error.message : "An error occurred",
 			);
 		} finally {
 			setIsLoading(false);
@@ -84,7 +84,7 @@ export function SignUpForm({
 								"flex-1 rounded-none rounded-l-md",
 								!admin
 									? "bg-white text-gray-700 border"
-									: "bg-white/10 text-gray-500"
+									: "bg-white/10 text-gray-500",
 							)}
 						>
 							User
@@ -96,7 +96,7 @@ export function SignUpForm({
 								"flex-1 rounded-none rounded-r-md",
 								admin
 									? "bg-white text-gray-700 border"
-									: "bg-white/10 text-gray-500"
+									: "bg-white/10 text-gray-500",
 							)}
 						>
 							Admin

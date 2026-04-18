@@ -25,7 +25,7 @@ import {
 	DialogContent,
 	DialogTitle,
 } from "@/components/base/ui/dialog";
-import { getEstimatedDuration } from "@/lib/functions/utils";
+import { cn, getEstimatedDuration } from "@/lib/functions/utils";
 import {
 	IOrganisation,
 	IOrganisationProfile,
@@ -67,9 +67,12 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 		}
 	};
 
+	const inputClass =
+		"h-11 border-border/60 bg-background/80 shadow-sm ring-1 ring-border/30 focus-visible:ring-2 focus-visible:ring-ring";
+
 	return (
-		<Card className="shadow-sm pt-6 pb-4">
-			<CardContent className="space-y-6">
+		<Card className="border-border/60 bg-background/80 pt-2 shadow-sm ring-1 ring-border/40 backdrop-blur-sm">
+			<CardContent className="space-y-6 pb-6 pt-6">
 				{/* Row 1: Name & Organisation */}
 				<div className="grid gap-6 md:grid-cols-2">
 					<div className="space-y-2">
@@ -81,10 +84,10 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 							onChange={(e) =>
 								handleChange("name", e.target.value)
 							}
-							className="bg-white/50 border-gray-300 "
+							className={inputClass}
 						/>
 						{validationErrors.name && (
-							<p className="text-red-500 text-sm">
+							<p className="text-sm text-destructive">
 								{validationErrors.name}
 							</p>
 						)}
@@ -101,28 +104,26 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 								handleChange("organisationId", value)
 							}
 						>
-							<SelectTrigger className="w-full bg-white/50 border-none">
-								<SelectValue
-									className="bg-white/50"
-									placeholder="Select organisation"
-								/>
+							<SelectTrigger className={inputClass + " w-full"}>
+								<SelectValue placeholder="Select organisation" />
 							</SelectTrigger>
 
-							<SelectContent className="bg-gray-50">
+							<SelectContent>
 								{organisations.map((org) => (
 									<SelectItem
 										key={org.id}
 										value={org.id.toString()}
-										className="bg-white/50"
 									>
 										{org.name}
 									</SelectItem>
 								))}
 							</SelectContent>
 						</Select>
-						{validationErrors.organisationId && (
-							<p className="text-red-500 text-sm">
-								{validationErrors.organisationId}
+						{(validationErrors.organisation ||
+							validationErrors.organisationId) && (
+							<p className="text-sm text-destructive">
+								{validationErrors.organisation ||
+									validationErrors.organisationId}
 							</p>
 						)}
 					</div>
@@ -144,10 +145,10 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 								}
 							}}
 						>
-							<SelectTrigger className="w-full bg-white/50 border-none">
+							<SelectTrigger className={inputClass + " w-full"}>
 								<SelectValue placeholder="Select supervisor" />
 							</SelectTrigger>
-							<SelectContent className="bg-gray-50">
+							<SelectContent>
 								{supervisors.map((sup) => (
 									<SelectItem
 										key={sup.id}
@@ -160,7 +161,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 						</Select>
 
 						{validationErrors.supervisor && (
-							<p className="text-red-500 text-sm">
+							<p className="text-sm text-destructive">
 								{validationErrors.supervisor}
 							</p>
 						)}
@@ -169,7 +170,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 					<div className="space-y-2">
 						<Label htmlFor="budget">Budget</Label>
 						<div className="relative w-full">
-							<IndianRupee className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3" />
+							<IndianRupee className="absolute left-3 top-1/2 h-3 w-3 -translate-y-1/2 text-muted-foreground" />
 							<Input
 								id="budget"
 								type="text"
@@ -189,11 +190,11 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 									const num = Number.parseInt(raw) || 0;
 									handleChange("budget", num);
 								}}
-								className="pl-8 bg-white/50 border-none w-full"
+								className={cn("w-full pl-8", inputClass)}
 							/>
 						</div>
 						{validationErrors.budget && (
-							<p className="text-red-500 text-sm">
+							<p className="text-sm text-destructive">
 								{validationErrors.budget}
 							</p>
 						)}
@@ -211,10 +212,10 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 						onChange={(e) =>
 							handleChange("description", e.target.value)
 						}
-						className="border-none bg-white/50"
+						className={cn("min-h-[88px] resize-y", inputClass)}
 					/>
 					{validationErrors.description && (
-						<p className="text-red-500 text-sm">
+						<p className="text-sm text-destructive">
 							{validationErrors.description}
 						</p>
 					)}
@@ -234,9 +235,13 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 							<DialogTrigger asChild>
 								<Button
 									variant="outline"
-									className="w-full justify-start text-left font-normal bg-white/50 border-none"
+									type="button"
+									className={cn(
+										"h-11 w-full justify-start border-border/60 bg-background/80 text-left font-normal shadow-sm ring-1 ring-border/30 transition-colors",
+										"hover:border-blue-500/35 hover:bg-blue-500/[0.05] dark:hover:bg-blue-950/30",
+									)}
 								>
-									<CalendarIcon className="mr-2 h-4 w-4" />
+									<CalendarIcon className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
 									{projectData.startDate
 										? format(projectData.startDate, "PPP")
 										: "Pick a date"}
@@ -258,7 +263,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 							</DialogContent>
 						</Dialog>
 						{validationErrors.startDate && (
-							<p className="text-red-500 text-sm">
+							<p className="text-sm text-destructive">
 								{validationErrors.startDate}
 							</p>
 						)}
@@ -275,9 +280,13 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 							<DialogTrigger asChild>
 								<Button
 									variant="outline"
-									className="w-full justify-start text-left font-normal bg-white/50 border-none"
+									type="button"
+									className={cn(
+										"h-11 w-full justify-start border-border/60 bg-background/80 text-left font-normal shadow-sm ring-1 ring-border/30 transition-colors",
+										"hover:border-blue-500/35 hover:bg-blue-500/[0.05] dark:hover:bg-blue-950/30",
+									)}
 								>
-									<CalendarIcon className="mr-2 h-4 w-4" />
+									<CalendarIcon className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
 									{projectData.endDate
 										? format(projectData.endDate, "PPP")
 										: "Pick a date"}
@@ -297,7 +306,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 							</DialogContent>
 						</Dialog>
 						{validationErrors.endDate && (
-							<p className="text-red-500 text-sm">
+							<p className="text-sm text-destructive">
 								{validationErrors.endDate}
 							</p>
 						)}
@@ -306,9 +315,9 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 
 				{/* Row 5: Duration */}
 				{projectData.startDate && projectData.endDate && (
-					<div className="p-4 bg-white/50 rounded-lg flex items-center gap-2">
-						<Clock className="h-3 w-3" />
-						<p className="text-sm">
+					<div className="flex items-center gap-2 rounded-lg border border-border/60 bg-muted/40 px-4 py-3 text-sm ring-1 ring-border/30">
+						<Clock className="h-4 w-4 shrink-0 text-muted-foreground" />
+						<p className="text-foreground">
 							Project Duration:{" "}
 							{getEstimatedDuration(
 								projectData.startDate,
@@ -323,7 +332,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 				<div className="space-y-2">
 					<Label htmlFor="location">Location</Label>
 					<div className="relative">
-						<MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3" />
+						<MapPin className="absolute left-3 top-1/2 h-3 w-3 -translate-y-1/2 text-muted-foreground" />
 						<Input
 							id="location"
 							placeholder="Enter project location"
@@ -331,7 +340,7 @@ const ProjectDetails: React.FC<projectDetailsProps> = ({
 							onChange={(e) =>
 								handleChange("location", e.target.value)
 							}
-							className="pl-10 border-none bg-white/50 w-full"
+							className={cn("w-full pl-10", inputClass)}
 						/>
 					</div>
 				</div>

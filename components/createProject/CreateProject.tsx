@@ -70,8 +70,18 @@ export default function CreateProject({
 	const totalSteps = steps.length;
 
 	return (
-		<div className="flex flex-col pb-20">
-			<div className="flex-1 p-6">
+		<div className="flex min-h-0 flex-1 flex-col">
+			<div className="mx-auto w-full max-w-6xl flex-1 space-y-6 px-4 pb-24 pt-4 sm:space-y-8 sm:px-6 sm:pb-12 sm:pt-6">
+				<header className="space-y-1">
+					<h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+						Create project
+					</h1>
+					<p className="max-w-2xl text-sm text-muted-foreground sm:text-base">
+						Set up details, phases, tasks, then review before
+						publishing.
+					</p>
+				</header>
+
 				<ProgressIndicator
 					steps={steps}
 					currentStep={currentStep}
@@ -81,7 +91,7 @@ export default function CreateProject({
 					setValidationErrors={setValidationErrors}
 				/>
 
-				<div className="max-w-6xl mx-auto">
+				<div className="min-w-0">
 					{currentStep === 1 && (
 						<ProjectDetails
 							projectData={projectData}

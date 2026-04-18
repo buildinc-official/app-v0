@@ -29,7 +29,7 @@ const SideBarItems = ({ profile }: { profile: IProfile }) => {
 								className={clsx(
 									"w-full rounded-none px-4 py-7 justify-start text-left font-normal",
 									isActive &&
-										"bg-secondary text-secondary-foreground hover:bg-secondary/60 font-semibold"
+										"bg-secondary font-semibold text-secondary-foreground ring-1 ring-border/50 hover:brightness-110 dark:ring-border",
 								)}
 							>
 								<item.icon className="mr-2 h-5 w-5" />

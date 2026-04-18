@@ -24,13 +24,13 @@ export const useRequestStore = create<RequestState>()(
 			requests: {},
 
 			setRequests: (requests) => {
-				const requestsObj: Record<string, IRequest> = {};
-				requests.forEach((request) => {
-					requestsObj[request.id] = request;
+				set((state) => {
+					const merged: Record<string, IRequest> = { ...state.requests };
+					requests.forEach((request) => {
+						merged[request.id] = getDetailsForRequest(request) as IRequest;
+					});
+					return { requests: merged };
 				});
-				// console.log("Setting requests in store:", requestsObj);
-
-				set({ requests: requestsObj });
 			},
 
 			updateRequest: (id, updates) => {

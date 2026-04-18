@@ -1,5 +1,3 @@
-// AsyncAppLayout.tsx
-import { getProfile } from "@/lib/middleware/profiles";
 import { createClient } from "@/lib/supabase/server";
 import { IProfile } from "@/lib/types";
 import { AppLayout } from "./AppLayout";
@@ -14,7 +12,20 @@ export default async function AsyncAppLayout({
 		data: { user },
 	} = await supabase.auth.getUser();
 
-	const profile: IProfile | null = user && (await getProfile(user.id));
+	let profile: IProfile | null = null;
+	if (user) {
+		const { data, error } = await supabase
+			.from("profiles")
+			.select("*")
+			.eq("id", user.id)
+			.single();
+
+		if (error) {
+			console.error("Error getting profile:", error);
+		} else {
+			profile = data as IProfile;
+		}
+	}
 	return (
 		// <ClearDataStorage>
 		<AppLayout

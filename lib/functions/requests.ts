@@ -1,6 +1,9 @@
 "use client";
 import { toast } from "sonner";
-import { getMaterialFromStore, updateMaterial } from "../middleware/materials";
+import {
+	getMaterialFromStore,
+	updateMaterial,
+} from "../middleware/materials";
 import { getPhaseFromStore } from "../middleware/phases";
 import { getAllProfilesFromStore } from "../middleware/profiles";
 import { getProjectFromStore, updateProject } from "../middleware/projects";
@@ -131,12 +134,40 @@ export const handleReject = async (
 ) => {
 	if (!profile || profile.id !== String(request.requestedTo)) return;
 
-	updateRequest(request.id, { status: "Rejected" });
+	await updateRequest(request.id, { status: "Rejected" });
 
-	updateTask(request.taskId || "", {
-		assignedTo: null,
-		startDate: null,
-		status: "Inactive",
-		endDate: null,
-	});
+	const taskId = request.taskId;
+	if (!taskId) return;
+
+	switch (request.type) {
+		case "TaskCompletion": {
+			// Was "Reviewing" while awaiting approval — send back to active work
+			await updateTask(taskId, {
+				status: "Active",
+				completedDate: null,
+			});
+			break;
+		}
+		case "PaymentRequest":
+			// No task / assignment change on payment denial
+			break;
+		case "MaterialRequest": {
+			const mid =
+				request.requestData?.materialId ?? request.materialId ?? null;
+			if (mid) {
+				await updateMaterial(mid, { requested: false });
+			}
+			break;
+		}
+		case "TaskAssignment":
+			await updateTask(taskId, {
+				assignedTo: null,
+				startDate: null,
+				status: "Inactive",
+				endDate: null,
+			});
+			break;
+		default:
+			break;
+	}
 };

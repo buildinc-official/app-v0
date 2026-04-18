@@ -1,5 +1,6 @@
 // lib/supabase/db/projectDB.ts
 import { createClient } from "@/lib/supabase/client";
+import { serializeRowForInsert } from "@/lib/supabase/insertSerialize";
 import { IProjectDB } from "../../types";
 
 const supabase = createClient();
@@ -41,13 +42,26 @@ export const projectDB = {
 
 	// Adds a new project
 	async addProject(project: IProjectDB) {
+		const serialized = serializeRowForInsert(
+			project as unknown as Record<string, unknown>
+		);
+
 		const { data, error } = await supabase
 			.from("projects")
-			.insert([project])
+			.insert([serialized])
 			.select()
 			.single();
 
-		if (error) throw error;
+		if (error) {
+			console.error(
+				"projectDB.addProject",
+				error.message,
+				error.code,
+				error.details,
+				error.hint
+			);
+			throw error;
+		}
 		return data as IProjectDB;
 	},
 

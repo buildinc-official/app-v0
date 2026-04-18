@@ -4,45 +4,56 @@ import { useProjectStore } from "@/lib/store/projectStore";
 import { FolderOpen, Building2, CheckSquare } from "lucide-react";
 import React from "react";
 
-type Props = {};
-
-const Summary = (props: Props) => {
+const Summary = () => {
 	const organisations = Object.values(
-		useOrganisationStore((state) => state.organisations)
+		useOrganisationStore((state) => state.organisations),
 	);
 	const projects = useProjectStore((state) => state.projects);
 	const activeProjects = Object.values(projects).filter(
-		(project) => project.status === "Active"
+		(project) => project.status === "Active",
 	);
 	const pendingApprovals = Object.values(projects).filter(
-		(project) => project.status === "Pending"
+		(project) => project.status === "Pending",
 	);
 	return (
-		<div className="grid gap-6 grid-cols-1  lg:grid-cols-3">
-			{/* Active Projects */}
+		<div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
 			<SummaryCard
 				title="Active Projects"
-				content={`${activeProjects.length}`}
-				icon={<FolderOpen className="h-4 w-4 text-blue-600" />}
+				content={
+					<span className="tabular-nums">{activeProjects.length}</span>
+				}
+				icon={
+					<span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/20">
+						<FolderOpen className="h-5 w-5" aria-hidden />
+					</span>
+				}
+				className="border-border/60 bg-background/80 shadow-sm ring-1 ring-border/40 backdrop-blur-sm"
 			/>
 
-			{/* Organisations */}
 			<SummaryCard
 				title="Organisations"
-				content={organisations.length}
-				icon={<Building2 className="h-4 w-4 text-blue-600" />}
+				content={
+					<span className="tabular-nums">{organisations.length}</span>
+				}
+				icon={
+					<span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-secondary/15 text-secondary ring-1 ring-secondary/25">
+						<Building2 className="h-5 w-5" aria-hidden />
+					</span>
+				}
+				className="border-border/60 bg-background/80 shadow-sm ring-1 ring-border/40 backdrop-blur-sm"
 			/>
-			{/* Budget Alerts
-			<SummaryCard
-				title="Budget Alerts"
-				content={`${pendingApprovals.length}`}
-				icon={<AlertTriangle className="h-4 w-4 text-amber-600" />}
-			/> */}
-			{/* Pending Approvals */}
+
 			<SummaryCard
 				title="Pending Approvals"
-				content={pendingApprovals.length}
-				icon={<CheckSquare className="h-4 w-4 text-green-600" />}
+				content={
+					<span className="tabular-nums">{pendingApprovals.length}</span>
+				}
+				icon={
+					<span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-700 ring-1 ring-emerald-500/20 dark:text-emerald-400">
+						<CheckSquare className="h-5 w-5" aria-hidden />
+					</span>
+				}
+				className="border-border/60 bg-background/80 shadow-sm ring-1 ring-border/40 backdrop-blur-sm sm:col-span-2 lg:col-span-1"
 			/>
 		</div>
 	);

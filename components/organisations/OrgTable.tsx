@@ -2,6 +2,7 @@ import {
 	Card,
 	CardHeader,
 	CardTitle,
+	CardDescription,
 	CardContent,
 } from "@/components/base/ui/card";
 import {
@@ -15,137 +16,180 @@ import {
 import React from "react";
 import { IOrganisation } from "@/lib/types";
 import { useRouter } from "next/navigation";
-import LoadingSpinner from "@/components/base/layout/LoadingSpinner";
 import {
-	getOrganisationMembers,
 	getOrganisationMembersFromStore,
 } from "@/lib/middleware/organisationMembers";
 import { getOrganisationProjectsFromStore } from "@/lib/middleware/projects";
-import {
-	getAllProfiles,
-	getAllProfilesFromStore,
-} from "@/lib/middleware/profiles";
+import { getAllProfilesFromStore } from "@/lib/middleware/profiles";
+import { Building2, ChevronRight, FolderOpen, Users } from "lucide-react";
+
 type Props = {
 	filteredOrganisations: IOrganisation[];
 	admin: boolean;
 };
 
+function OrgMobileMeta({
+	org,
+	admin,
+}: {
+	org: IOrganisation;
+	admin: boolean;
+}) {
+	const ownerName =
+		getAllProfilesFromStore().find((p) => p.id === org.owner)?.name ??
+		"N/A";
+	const memberCount =
+		getOrganisationMembersFromStore(org.id).length ?? 0;
+	const projectCount =
+		getOrganisationProjectsFromStore(org.id).length ?? 0;
+
+	if (admin) {
+		return (
+			<div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
+				<span className="inline-flex items-center gap-1.5 tabular-nums">
+					<Users className="h-3.5 w-3.5" aria-hidden />
+					{memberCount} members
+				</span>
+				<span className="inline-flex items-center gap-1.5 tabular-nums">
+					<FolderOpen className="h-3.5 w-3.5" aria-hidden />
+					{projectCount} projects
+				</span>
+			</div>
+		);
+	}
+
+	return (
+		<p className="mt-2 text-sm text-muted-foreground">
+			Owner <span className="font-medium text-foreground">{ownerName}</span>
+			{" · "}
+			<span className="tabular-nums">{projectCount}</span> projects
+		</p>
+	);
+}
+
 export const OrgTable = ({ filteredOrganisations, admin }: Props) => {
 	const router = useRouter();
 
-	return (
-		<Card className="shadow-sm">
-			<CardHeader>
-				<CardTitle className="flex items-center gap-2">
-					All Organisations
-				</CardTitle>
-			</CardHeader>
-			<CardContent>
-				<Table>
-					<TableHeader>
-						<TableRow className="divide-x divide-gray-200 border-b-2 border-gray-200 hover:bg-card border-l border-r border-t">
-							<TableHead className="min-w-[150px] text-center">
-								Name
-							</TableHead>
-							{admin ? (
-								<TableHead className="min-w-[100px] text-center">
-									Members
-								</TableHead>
-							) : (
-								<TableHead className="min-w-[100px] text-center">
-									Owner
-								</TableHead>
-							)}
-							<TableHead className="min-w-[100px] text-center">
-								Projects
-							</TableHead>
-						</TableRow>
-					</TableHeader>
+	const goToOrg = (orgId: string) => {
+		if (admin) router.push(`/organisations/${orgId}`);
+	};
 
-					<TableBody>
-						{!filteredOrganisations && <LoadingSpinner />}
-						{filteredOrganisations.length > 0 ? (
-							filteredOrganisations.map((org) => {
-								const ownerName =
-									getAllProfilesFromStore().find(
-										(profile) => profile.id === org.owner
-									)?.name;
-								return (
-									<TableRow
-										key={org.id}
-										className=" cursor-pointer h-16"
-										onClick={() => {
-											if (admin) {
-												router.push(
-													`/organisations/${org.id}`
-												);
-											} else {
-												return;
-											}
-										}}
+	return (
+		<Card className="border-border/60 bg-background/80 shadow-sm ring-1 ring-border/40 backdrop-blur-sm">
+			<CardHeader className="space-y-1 pb-4 sm:pb-6">
+				<CardTitle className="text-lg sm:text-xl">All organisations</CardTitle>
+				<CardDescription>
+					{admin
+						? "Select a row to open organisation details."
+						: "Organisations you are a member of."}
+				</CardDescription>
+			</CardHeader>
+			<CardContent className="px-0 pb-6 sm:px-6">
+				{filteredOrganisations.length > 0 ? (
+					<>
+						{/* Mobile: cards */}
+						<ul className="space-y-3 px-4 sm:px-0 lg:hidden">
+							{filteredOrganisations.map((org) => (
+								<li key={org.id}>
+									<button
+										type="button"
+										disabled={!admin}
+										onClick={() => goToOrg(org.id)}
+										className={`flex w-full items-center justify-between gap-3 rounded-xl border border-border/60 bg-background/60 p-4 text-left shadow-sm transition-colors ${
+											admin
+												? "hover:bg-primary/5 active:bg-primary/10"
+												: "cursor-default opacity-95"
+										}`}
 									>
-										<TableCell className="text-center">
-											{org.name}
-										</TableCell>
-										{admin ? (
-											<TableCell className="text-center">
-												{getOrganisationMembersFromStore(
-													org.id
-												).length ?? 0}
-											</TableCell>
-										) : (
-											<TableCell className="text-center">
-												{ownerName ?? "N/A"}
-											</TableCell>
+										<div className="min-w-0 flex-1">
+											<div className="flex items-center gap-2">
+												<Building2 className="h-4 w-4 shrink-0 text-primary" />
+												<span className="truncate font-medium">
+													{org.name}
+												</span>
+											</div>
+											<OrgMobileMeta
+												org={org}
+												admin={admin}
+											/>
+										</div>
+										{admin && (
+											<ChevronRight className="h-5 w-5 shrink-0 text-muted-foreground" />
 										)}
-										<TableCell className="text-center">
-											{getOrganisationProjectsFromStore(
-												org.id
-											).length ?? 0}
-										</TableCell>
-										{/* <TableCell className="text-center">
-										<DropdownMenu>
-											<DropdownMenuTrigger asChild>
-												<Button
-													variant="ghost"
-													className="h-8 w-8 p-0"
-												>
-													<MoreHorizontal className="h-4 w-4" />
-												</Button>
-											</DropdownMenuTrigger>
-											<DropdownMenuContent align="end">
-												<DropdownMenuItem
-													onClick={() => {}}
-												>
-													<Eye className="mr-2 h-4 w-4" />
-													View Details
-												</DropdownMenuItem>
-												<DropdownMenuItem>
-													<Edit className="mr-2 h-4 w-4" />
-													Edit
-												</DropdownMenuItem>
-												<DropdownMenuItem className="text-red-600">
-													<Trash2 className="mr-2 h-4 w-4" />
-													Delete
-												</DropdownMenuItem>
-											</DropdownMenuContent>
-										</DropdownMenu>
-									</TableCell> */}
+									</button>
+								</li>
+							))}
+						</ul>
+
+						{/* Desktop: table */}
+						<div className="hidden overflow-x-auto lg:block">
+							<Table>
+								<TableHeader>
+									<TableRow className="border-border/50 hover:bg-transparent">
+										<TableHead className="min-w-[180px] pl-4">
+											Name
+										</TableHead>
+										{admin ? (
+											<TableHead className="text-center">
+												Members
+											</TableHead>
+										) : (
+											<TableHead className="text-center">
+												Owner
+											</TableHead>
+										)}
+										<TableHead className="pr-4 text-center">
+											Projects
+										</TableHead>
 									</TableRow>
-								);
-							})
-						) : (
-							<TableRow>
-								<TableCell
-									colSpan={4}
-									className="h-[100px] text-center"
-								>
-									No organisations found
-								</TableCell>
-							</TableRow>
-						)}
-					</TableBody>
-				</Table>
+								</TableHeader>
+								<TableBody>
+									{filteredOrganisations.map((org) => {
+										const ownerName =
+											getAllProfilesFromStore().find(
+												(p) => p.id === org.owner
+											)?.name;
+										return (
+											<TableRow
+												key={org.id}
+												className={`border-border/40 ${
+													admin
+														? "cursor-pointer hover:bg-muted/40"
+														: ""
+												}`}
+												onClick={() => goToOrg(org.id)}
+											>
+												<TableCell className="pl-4 font-medium">
+													{org.name}
+												</TableCell>
+												{admin ? (
+													<TableCell className="text-center tabular-nums">
+														{getOrganisationMembersFromStore(
+															org.id
+														).length ?? 0}
+													</TableCell>
+												) : (
+													<TableCell className="text-center">
+														{ownerName ?? "N/A"}
+													</TableCell>
+												)}
+												<TableCell className="pr-4 text-center tabular-nums">
+													{getOrganisationProjectsFromStore(
+														org.id
+													).length ?? 0}
+												</TableCell>
+											</TableRow>
+										);
+									})}
+								</TableBody>
+							</Table>
+						</div>
+					</>
+				) : (
+					<div className="mx-4 flex min-h-[10rem] items-center justify-center rounded-xl border border-dashed border-border/60 bg-muted/20 px-4 py-10 text-center text-sm text-muted-foreground sm:mx-0">
+						No organisations match your search.
+					</div>
+				)}
 			</CardContent>
 		</Card>
 	);

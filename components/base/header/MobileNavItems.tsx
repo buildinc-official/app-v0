@@ -11,7 +11,7 @@ const MobileNavItems = ({ profile }: { profile: IProfile }) => {
 	const pathname = usePathname();
 
 	return (
-		<div className="fixed inset-x-0 bottom-0 flex justify-around bg-background border-t p-2 lg:hidden z-50 border-primary/10 ">
+		<div className="fixed inset-x-0 bottom-0 z-50 flex justify-around border-t border-primary/10 bg-background p-2 lg:hidden ">
 			{navItems.map((item) => {
 				const isActive = pathname === item.href;
 				if (!item.mobile) return null;
@@ -28,16 +28,13 @@ const MobileNavItems = ({ profile }: { profile: IProfile }) => {
 						);
 					} else {
 						return (
-							<Link
-								key={item.href}
-								href={item.href}
-							>
+							<Link key={item.href} href={item.href}>
 								<item.icon
 									className={clsx(
 										"h-8 w-8 rounded-full p-2",
 										isActive
-											? "text-secondary-foreground bg-secondary"
-											: "text-muted-foreground"
+											? "bg-secondary text-secondary-foreground"
+											: "text-muted-foreground",
 									)}
 								/>
 							</Link>

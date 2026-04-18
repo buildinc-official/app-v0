@@ -1,5 +1,6 @@
 import { SummaryCard } from "@/components/base/general/SummaryCard";
-import { Building2, CheckCircle, DollarSign } from "lucide-react";
+import { RupeeIcon } from "@/lib/functions/utils";
+import { CheckCircle2, FolderOpen, IndianRupee } from "lucide-react";
 
 type Props = {
 	totalProjects: number;
@@ -13,46 +14,44 @@ const ProjectStatistics = ({
 	totalBudget,
 }: Props) => {
 	return (
-		<div className="grid gap-6 md:grid-cols-3">
+		<div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
 			<SummaryCard
-				title="Total Projects"
+				className="border-border/60 bg-background/80 shadow-sm ring-1 ring-border/40 backdrop-blur-sm"
+				title="Total projects"
 				content={totalProjects.toLocaleString()}
-				icon={<Building2 className="h-5 w-5 text-blue-600" />}
+				icon={
+					<span className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/15 text-primary ring-1 ring-primary/20">
+						<FolderOpen className="h-5 w-5" aria-hidden />
+					</span>
+				}
 			/>
 			<SummaryCard
-				title="Active Projects"
+				className="border-border/60 bg-background/80 shadow-sm ring-1 ring-border/40 backdrop-blur-sm"
+				title="Active"
 				content={activeProjects.toLocaleString()}
-				icon={<CheckCircle className="h-5 w-5 text-green-600" />}
+				icon={
+					<span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-700 dark:text-emerald-400 ring-1 ring-emerald-500/25">
+						<CheckCircle2 className="h-5 w-5" aria-hidden />
+					</span>
+				}
 			/>
 			<SummaryCard
-				title="Total Budget"
-				content={`${totalBudget.toLocaleString("en-IN")} ₹`}
-				icon={<DollarSign className="h-5 w-5 text-green-600" />}
+				className="border-border/60 bg-background/80 shadow-sm ring-1 ring-border/40 backdrop-blur-sm"
+				title="Total budget"
+				content={
+					<span className="inline-flex items-baseline gap-0.5 tabular-nums">
+						{totalBudget.toLocaleString("en-IN")}
+						<RupeeIcon />
+					</span>
+				}
+				icon={
+					<span className="flex h-10 w-10 items-center justify-center rounded-xl bg-secondary/15 text-secondary ring-1 ring-secondary/25">
+						<IndianRupee className="h-5 w-5" aria-hidden />
+					</span>
+				}
 			/>
 		</div>
 	);
 };
-
-// const SummaryCard = ({
-// 	title,
-// 	content,
-// 	icon,
-// }: {
-// 	title: string;
-// 	content: string;
-// 	icon?: React.ReactNode;
-// }) => {
-// 	return (
-// 		<Card className="shadow-sm">
-// 			<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-// 				<CardTitle className="text-sm font-medium">{title}</CardTitle>
-// 				{icon}
-// 			</CardHeader>
-// 			<CardContent>
-// 				<div className="text-2xl font-bold">{content}</div>
-// 			</CardContent>
-// 		</Card>
-// 	);
-// };
 
 export default ProjectStatistics;

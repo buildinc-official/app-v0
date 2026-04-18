@@ -1,4 +1,5 @@
 // lib/middleware/projects.ts
+import { createClient } from "@/lib/supabase/client";
 import { projectDB } from "@/lib/supabase/db/projectDB";
 import {
 	IProject,
@@ -11,14 +12,30 @@ import { projectMemberDB } from "../supabase/db/projectMemberDB";
 
 export async function addProject(project: IProjectCreationData) {
 	try {
+		const supabase = createClient();
+		const {
+			data: { user },
+			error: authError,
+		} = await supabase.auth.getUser();
+
+		if (authError || !user) {
+			throw new Error("Not authenticated");
+		}
+
 		// Convert IProject to IProjectDB by extracting only the DB fields
+		const orgId =
+			project.organisationId &&
+			String(project.organisationId).trim() !== ""
+				? project.organisationId
+				: null;
+
 		const projectData: IProjectDB = {
 			id: crypto.randomUUID(),
 			created_at: new Date(),
 			name: project.name,
-			owner: project.owner,
+			owner: user.id,
 			description: project.description,
-			orgId: project.organisationId,
+			orgId,
 			startDate: project.startDate,
 			endDate: project.endDate,
 			budget: project.budget,
@@ -27,6 +44,48 @@ export async function addProject(project: IProjectCreationData) {
 			status: project.status,
 			category: project.category,
 		};
+
+		// Same conditions as RLS projects_insert_owner: must see org as owner or member.
+		if (orgId) {
+			const { data: orgRow, error: orgLookupError } = await supabase
+				.from("organisations")
+				.select("id, owner")
+				.eq("id", orgId)
+				.maybeSingle();
+
+			if (orgLookupError) {
+				throw new Error(
+					`Could not load organisation: ${orgLookupError.message}`
+				);
+			}
+			if (!orgRow) {
+				throw new Error(
+					"This organisation is not visible to your account (missing row, or you are not the owner or a member). Check Table Editor: organisations + organisation_members for this org id."
+				);
+			}
+
+			const isOrgOwner = orgRow.owner === user.id;
+			if (!isOrgOwner) {
+				const { data: memberRow, error: memberLookupError } = await supabase
+					.from("organisation_members")
+					.select("id")
+					.eq("orgId", orgId)
+					.eq("userId", user.id)
+					.maybeSingle();
+
+				if (memberLookupError) {
+					throw new Error(
+						`Could not verify organisation membership: ${memberLookupError.message}`
+					);
+				}
+				if (!memberRow) {
+					throw new Error(
+						"You are not a member of this organisation. Ask an admin to add you in organisation_members, or pick an organisation you own."
+					);
+				}
+			}
+
+		}
 
 		const result = await projectDB.addProject(projectData);
 
@@ -43,7 +102,8 @@ export async function addProject(project: IProjectCreationData) {
 
 		return result;
 	} catch (error) {
-		console.error("Error adding project:", error);
+		const e = error as { message?: string; code?: string; details?: string };
+		console.error("Error adding project:", e?.message, e?.code, e?.details, error);
 		throw error;
 	}
 }

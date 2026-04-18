@@ -25,7 +25,8 @@ export async function addRequest(request: IRequest): Promise<IRequest> {
 		}
 		// Convert IRequest to IRequestDB by extracting only the DB fields
 		const requestData: IRequestDB = {
-			id: crypto.randomUUID(),
+			// Prefer caller id so each submission is a distinct row (matches client UUID from tasks.ts)
+			id: request.id ?? crypto.randomUUID(),
 			created_at: request.created_at,
 			projectId: request.projectId,
 			phaseId: request.phaseId,
@@ -40,7 +41,6 @@ export async function addRequest(request: IRequest): Promise<IRequest> {
 			approvedAt: request.approvedAt,
 			notes: request.notes,
 		};
-		console.log("Adding request to DB:", requestData);
 
 		const result = await requestDB.addRequest(requestData);
 

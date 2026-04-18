@@ -8,7 +8,7 @@ import {
 	SheetTrigger,
 } from "../ui/sheet";
 import Link from "next/link";
-import { LogOut, Menu, Settings, User } from "lucide-react";
+import { LogOut, Settings, User } from "lucide-react";
 import { Button } from "../ui/button";
 import { IProfile } from "@/lib/types";
 import { useState } from "react";
@@ -23,26 +23,20 @@ const MobileNavProfile = ({ profile }: { profile: IProfile }) => {
 	};
 	const [open, setOpen] = useState(false);
 	return (
-		<Sheet
-			open={open}
-			onOpenChange={setOpen}
-		>
+		<Sheet open={open} onOpenChange={setOpen}>
 			<SheetTrigger asChild>
 				<Settings className="h-8 w-8 rounded-full p-2 text-muted-foreground" />
 			</SheetTrigger>
 
-			<SheetContent
-				side="bottom"
-				className="rounded-t-2xl"
-			>
-				<SheetHeader className="text-left mb-6">
+			<SheetContent side="bottom" className="rounded-t-2xl">
+				<SheetHeader className="mb-6 text-left">
 					<SheetTitle>Account</SheetTitle>
 				</SheetHeader>
 
-				<div className="flex flex-col gap-2 mx-3 mb-3">
-					<div className="flex items-center gap-3 mb-4">
-						<div className="bg-muted border-2 border-dashed rounded-full w-10 h-10 flex items-center justify-center ">
-							<User className="w-5 h-5 text-muted-foreground" />
+				<div className="mx-3 mb-3 flex flex-col gap-2">
+					<div className="mb-4 flex items-center gap-3">
+						<div className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-dashed bg-muted ">
+							<User className="h-5 w-5 text-muted-foreground" />
 						</div>
 						<div className="flex flex-col">
 							<span className="font-semibold truncate">
@@ -54,47 +48,19 @@ const MobileNavProfile = ({ profile }: { profile: IProfile }) => {
 						</div>
 					</div>
 
-					<Link
-						href="/profile"
-						onClick={() => setOpen(false)}
-					>
+					<Link href="/settings" onClick={() => setOpen(false)}>
 						<Button
 							variant="ghost"
-							className="w-full justify-start gap-2 p-3 rounded-lg"
+							className="w-full justify-start gap-2 rounded-lg p-3"
 						>
-							<User className="w-4 h-4 text-muted-foreground mb-1" />
-							<span>Profile</span>
-						</Button>
-					</Link>
-					<Link
-						href="/settings"
-						onClick={() => setOpen(false)}
-					>
-						<Button
-							variant="ghost"
-							className="w-full justify-start gap-2 p-3 rounded-lg"
-						>
-							<Settings className="w-4 h-4 text-muted-foreground mb-1" />
+							<Settings className="mb-1 h-4 w-4 text-muted-foreground" />
 							<span>Settings</span>
-						</Button>
-					</Link>
-					<Link
-						href="/billing"
-						onClick={() => setOpen(false)}
-					>
-						<Button
-							variant="ghost"
-							className="w-full justify-start gap-2 p-3 rounded-lg"
-						>
-							<Menu className="w-4 h-4 text-muted-foreground mb-1 " />
-
-							<span>Billing & Plans</span>
 						</Button>
 					</Link>
 
 					<Button
 						variant="ghost"
-						className="w-full justify-start gap-2 p-3 rounded-lg text-destructive hover:text-destructive"
+						className="w-full justify-start gap-2 rounded-lg p-3 text-destructive hover:text-destructive"
 						onClick={logout}
 					>
 						<LogOut />

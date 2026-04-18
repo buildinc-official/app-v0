@@ -1,7 +1,11 @@
 // lib/middleware/phases.ts
 import { phaseDB } from "@/lib/supabase/db/phaseDB";
-import { IPhase, IPhaseDB } from "../types";
+import { IPhase, IPhaseDB, status } from "../types";
 import { usePhaseStore } from "@/lib/store/phaseStore";
+import { recomputePhaseAndProjectProgress } from "@/lib/functions/base";
+import { getProjectMembersByProjectId } from "./projectMembers";
+import { getPhaseTasks } from "./tasks";
+import { getTaskMaterials } from "./materials";
 
 export async function addPhase(phase: IPhase) {
 	try {
@@ -25,7 +29,7 @@ export async function addPhase(phase: IPhase) {
 		store.addPhase({
 			...result,
 			taskIds: [],
-			status: [],
+			status: ["Inactive"],
 			spent: 0,
 			estimatedDuration: 0,
 			totalTasks: 0,
@@ -101,7 +105,7 @@ export async function getPhase(id: string): Promise<IPhase> {
 		const phaseWithReferences: IPhase = {
 			...phase,
 			taskIds: [],
-			status: [],
+			status: ["Inactive"],
 			spent: 0,
 			estimatedDuration: 0,
 			totalTasks: 0,
@@ -124,7 +128,7 @@ export async function getProjectPhases(projectId: string): Promise<IPhase[]> {
 		const phasesWithReferences: IPhase[] = phases.map((phase) => ({
 			...phase,
 			taskIds: [],
-			status: [],
+			status: ["Inactive"],
 			spent: 0,
 			estimatedDuration: 0,
 			totalTasks: 0,
@@ -192,4 +196,30 @@ export function getPhaseFromStore(id: string): IPhase | undefined {
 		console.error("Error getting phase:", error);
 		throw error;
 	}
+}
+
+/** Phases + tasks + members + materials for the task board. Call when opening project detail (StoreHydrator only does this for admin bulk load). */
+export async function hydrateProjectBoardData(
+	projectId: string
+): Promise<void> {
+	await getProjectMembersByProjectId(projectId);
+	const phases = await getProjectPhases(projectId);
+	await Promise.all(
+		phases.map(async (phase) => {
+			const tasks = await getPhaseTasks(phase.id);
+			const taskIds = tasks.map((t) => t.id);
+			const derivedStatus: status[] =
+				tasks.length === 0
+					? ["Inactive"]
+					: (Array.from(
+							new Set(tasks.map((t) => t.status))
+						) as status[]);
+			usePhaseStore.getState().updatePhase(phase.id, {
+				taskIds,
+				status: derivedStatus,
+			});
+			await Promise.all(tasks.map((task) => getTaskMaterials(task.id)));
+		})
+	);
+	recomputePhaseAndProjectProgress();
 }

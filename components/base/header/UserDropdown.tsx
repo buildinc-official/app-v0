@@ -9,7 +9,7 @@ import {
 	DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import Link from "next/link";
-import { LogOutIcon, Menu, User } from "lucide-react";
+import { LogOutIcon, User } from "lucide-react";
 import { Button } from "../ui/button";
 import { IProfile } from "@/lib/types";
 import { ClearData } from "@/lib/functions/utils";
@@ -66,13 +66,6 @@ const UserDropdown = ({ profile }: { profile: IProfile }) => {
 					<DropdownMenuItem className="flex items-center gap-2 p-3 rounded-lg cursor-pointer hover:bg-accent transition-colors">
 						<User className="w-4 h-4 text-muted-foreground mb-1" />
 						<span>Settings</span>
-					</DropdownMenuItem>
-				</Link>
-
-				<Link href="/billing">
-					<DropdownMenuItem className="flex items-center gap-2 p-3 rounded-lg cursor-pointer hover:bg-accent transition-colors">
-						<Menu className="w-4 h-4 text-muted-foreground mb-1" />
-						<span>Billing & Plans</span>
 					</DropdownMenuItem>
 				</Link>
 

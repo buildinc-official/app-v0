@@ -1,5 +1,6 @@
 // lib/supabase/db/organisationMemberDB.ts
 import { createClient } from "@/lib/supabase/client";
+import { serializeRowForInsert } from "@/lib/supabase/insertSerialize";
 import { IOrganisationMemberDB } from "../../types";
 
 const supabase = createClient();
@@ -31,7 +32,7 @@ export const organisationMemberDB = {
 	async addOrganisationMember(member: IOrganisationMemberDB) {
 		const { data, error } = await supabase
 			.from("organisation_members")
-			.insert([member])
+			.insert([serializeRowForInsert(member as unknown as Record<string, unknown>)])
 			.select()
 			.single();
 
@@ -44,8 +45,6 @@ export const organisationMemberDB = {
 		id: string,
 		updates: Partial<IOrganisationMemberDB>
 	) {
-		console.log("Updating member:", id, updates);
-
 		const { data, error } = await supabase
 			.from("organisation_members")
 			.update(updates)
@@ -59,17 +58,14 @@ export const organisationMemberDB = {
 
 	// Removes a member from an organisation
 	async removeOrganisationMember(id: string) {
-		try {
-			await supabase
-				.from("organisation_members")
-				.delete()
-				.eq("id", id)
-				.throwOnError();
-		} catch (error) {
-			console.log("error", error);
-		} finally {
-			console.log("Finished removing member");
-			return;
+		const { error } = await supabase
+			.from("organisation_members")
+			.delete()
+			.eq("id", id);
+
+		if (error) {
+			console.error("removeOrganisationMember failed:", error);
+			throw error;
 		}
 	},
 

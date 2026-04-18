@@ -1,19 +1,23 @@
 import { TabsTriggerList } from "@/components/base/general/TabsTriggerList";
+import { Badge } from "@/components/base/ui/badge";
 import { Button } from "@/components/base/ui/button";
 import {
 	Dialog,
 	DialogContent,
 	DialogDescription,
-	DialogFooter,
 	DialogHeader,
 	DialogTitle,
 } from "@/components/base/ui/dialog";
 import { Tabs } from "@/components/base/ui/tabs";
-import { handleTaskCompletion } from "@/lib/functions/tasks";
+import {
+	modalButtonConfirmClass,
+	modalButtonNeutralSplitClass,
+} from "@/lib/functions/modalButtonStyles";
+import { taskStatusBadgeVariant } from "@/lib/functions/taskStatusUi";
+import { cn } from "@/lib/functions/utils";
 import { getTaskMaterialsFromStore } from "@/lib/middleware/materials";
 import { ITask } from "@/lib/types";
 import { CheckCircle } from "lucide-react";
-import { useState } from "react";
 import TaskDetails from "./TaskDetails";
 import TaskMaterials from "./TaskMaterials";
 
@@ -32,49 +36,54 @@ const TaskDetailModal = ({
 	setIsMaterialModalOpen: (open: boolean) => void;
 	setIsCompleteModalOpen: (open: boolean) => void;
 }) => {
-	const [completionNotes, setCompletionNotes] = useState("");
 	const materials = getTaskMaterialsFromStore(selectedTask?.id || "");
 	const projectName = selectedTask?.projectName ?? "";
 
 	const values =
 		materials && materials.length > 0
 			? [
-					{ value: "details", label: "Task Details" },
+					{ value: "details", label: "Details" },
 					{ value: "materials", label: "Materials" },
-			  ]
-			: [{ value: "details", label: "Task Details" }];
+				]
+			: [{ value: "details", label: "Details" }];
 
 	return (
-		<Dialog
-			open={isTaskDetailOpen}
-			onOpenChange={setIsTaskDetailOpen}
-		>
-			<DialogContent className="sm:max-w-[700px] h-[550px] grid grid-rows-[auto_auto_1fr_auto] p-0 gap-0 overflow-hidden">
-				{/* Header */}
-				<DialogHeader className="px-6 pt-4 pb-2 row-span-1">
-					<DialogTitle>{selectedTask?.name}</DialogTitle>
-					<DialogDescription>
-						Task details and actions
+		<Dialog open={isTaskDetailOpen} onOpenChange={setIsTaskDetailOpen}>
+			<DialogContent className="flex max-h-[90vh] flex-col gap-0 overflow-hidden border-border/60 p-0 sm:max-w-[700px]">
+				<DialogHeader className="shrink-0 space-y-2 border-b border-border/60 px-6 pb-4 pt-6">
+					<div className="flex flex-wrap items-start gap-2 gap-y-2">
+						<DialogTitle className="text-left text-xl leading-tight">
+							{selectedTask?.name}
+						</DialogTitle>
+						{selectedTask ? (
+							<Badge
+								variant={taskStatusBadgeVariant(selectedTask.status)}
+								className="capitalize"
+							>
+								{selectedTask.status}
+							</Badge>
+						) : null}
+					</div>
+					<DialogDescription className="hidden text-left lg:block">
+						{projectName ? `${projectName} · ` : null}
+						Actions and information for this task
 					</DialogDescription>
 				</DialogHeader>
 
-				{/* Tabs Container */}
-				<div className="row-span-1 min-h-0">
+				<div className="flex min-h-0 flex-1 flex-col">
 					{selectedTask && (
-						<Tabs
-							defaultValue="details"
-							className="w-full h-full"
-						>
-							<div className="sticky top-0 bg-background z-10 px-6 pt-2 pb-0">
-								<TabsTriggerList triggers={values} />
+						<Tabs defaultValue="details" className="flex min-h-0 flex-1 flex-col">
+							<div className="shrink-0 border-b border-border/40 bg-background px-6 py-2">
+								<TabsTriggerList
+									triggers={values}
+									className="overflow-x-auto sm:overflow-visible"
+								/>
 							</div>
 
-							<div className="px-6 py-0 overflow-y-auto max-h-[calc(550px-180px)]">
+							<div className="min-h-0 flex-1 overflow-y-auto px-6 py-4">
 								<TaskDetails
 									selectedTask={selectedTask}
 									projectName={projectName}
-									completionNotes={completionNotes}
-									setCompletionNotes={setCompletionNotes}
 								/>
 
 								{materials && materials.length > 0 && (
@@ -86,47 +95,49 @@ const TaskDetailModal = ({
 				</div>
 
 				{selectedTask?.status === "Active" && (
-					<DialogFooter className="px-6 py-4 border-t self-end">
-						<div className="flex flex-col w-full gap-4">
-							<div className="flex gap-2 w-full items-center justify-center">
+					<div className="flex shrink-0 flex-col gap-3 border-t border-border/60 px-6 py-4">
+						<div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-stretch">
+							<Button
+								type="button"
+								variant="outline"
+								onClick={() => {
+									setIsTaskDetailOpen(false);
+									setIsPaymentModalOpen(true);
+								}}
+								className={modalButtonNeutralSplitClass}
+							>
+								Request payment
+							</Button>
+							{materials && materials.length > 0 && (
 								<Button
-									variant="default"
+									type="button"
+									variant="outline"
 									onClick={() => {
 										setIsTaskDetailOpen(false);
-										setIsPaymentModalOpen(true);
+										setIsMaterialModalOpen(true);
 									}}
-									className="w-full"
+									className={modalButtonNeutralSplitClass}
 								>
-									Request Payment
+									Request material
 								</Button>
-								{materials && materials.length > 0 && (
-									<Button
-										variant="default"
-										onClick={() => {
-											setIsTaskDetailOpen(false);
-											setIsMaterialModalOpen(true);
-										}}
-										className="w-full"
-									>
-										Request Material
-									</Button>
-								)}
-							</div>
-							<div className="flex gap-2 w-full items-center justify-center">
-								<Button
-									variant="secondary"
-									onClick={() => {
-										setIsCompleteModalOpen(true);
-										setIsTaskDetailOpen(false);
-									}}
-									className="w-full"
-								>
-									<CheckCircle className="mr-2 h-4 w-4" />
-									Mark as Complete
-								</Button>
-							</div>
+							)}
 						</div>
-					</DialogFooter>
+						<Button
+							type="button"
+							variant="outline"
+							onClick={() => {
+								setIsCompleteModalOpen(true);
+								setIsTaskDetailOpen(false);
+							}}
+							className={cn(
+								modalButtonConfirmClass,
+								"w-full sm:w-full sm:min-w-0",
+							)}
+						>
+							<CheckCircle className="h-4 w-4" aria-hidden />
+							Mark as complete
+						</Button>
+					</div>
 				)}
 			</DialogContent>
 		</Dialog>
