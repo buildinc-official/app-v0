@@ -298,8 +298,31 @@ export function LandingPage() {
 			</main>
 
 			<footer className="border-t border-border bg-background px-4 py-10 sm:px-6">
-				<div className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-6 sm:flex-row">
-					<p className="text-center text-sm text-muted-foreground sm:text-right">
+				<div className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-6">
+					<nav
+						className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-muted-foreground"
+						aria-label="Legal and policies"
+					>
+						<Link
+							href="/privacy"
+							className="transition hover:text-foreground"
+						>
+							Privacy Policy
+						</Link>
+						<Link
+							href="/terms"
+							className="transition hover:text-foreground"
+						>
+							Terms of Service
+						</Link>
+						<Link
+							href="/cookies"
+							className="transition hover:text-foreground"
+						>
+							Cookie notice
+						</Link>
+					</nav>
+					<p className="text-center text-sm text-muted-foreground">
 						&copy; {new Date().getFullYear()} BuildInc. Built for
 						construction and real estate teams.
 					</p>

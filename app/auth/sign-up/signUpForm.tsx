@@ -172,6 +172,30 @@ export function SignUpForm({
 							{error && (
 								<p className="text-sm text-red-500">{error}</p>
 							)}
+							<p className="text-center text-xs leading-relaxed text-white/80">
+								By signing up, you agree to our{" "}
+								<Link
+									href="/terms"
+									className="font-medium text-white underline underline-offset-2 hover:text-white"
+								>
+									Terms of Service
+								</Link>{" "}
+								and{" "}
+								<Link
+									href="/privacy"
+									className="font-medium text-white underline underline-offset-2 hover:text-white"
+								>
+									Privacy Policy
+								</Link>
+								. See also our{" "}
+								<Link
+									href="/cookies"
+									className="font-medium text-white underline underline-offset-2 hover:text-white"
+								>
+									Cookie notice
+								</Link>
+								.
+							</p>
 							<Button
 								type="submit"
 								className="w-full bg-white/70"

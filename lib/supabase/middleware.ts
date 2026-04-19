@@ -2,6 +2,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
+/** Paths that must work without a logged-in session (marketing + legal). */
+const PUBLIC_PATHS = new Set([
+	"/privacy",
+	"/terms",
+	"/cookies",
+]);
+
 export async function updateSession(request: NextRequest) {
 	let supabaseResponse = NextResponse.next({
 		request,
@@ -49,12 +56,14 @@ export async function updateSession(request: NextRequest) {
 		);
 	}
 
-	if (
-		request.nextUrl.pathname !== "/" &&
-		!user &&
-		!request.nextUrl.pathname.startsWith("/login") &&
-		!request.nextUrl.pathname.startsWith("/auth")
-	) {
+	const pathname = request.nextUrl.pathname;
+	const isPublicPath =
+		pathname === "/" ||
+		pathname.startsWith("/login") ||
+		pathname.startsWith("/auth") ||
+		PUBLIC_PATHS.has(pathname);
+
+	if (!isPublicPath && !user) {
 		// no user, potentially respond by redirecting the user to the login page
 		const url = request.nextUrl.clone();
 		url.pathname = "/auth/login";

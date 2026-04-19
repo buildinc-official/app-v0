@@ -2,20 +2,33 @@ import type { Metadata } from "next";
 import { Comfortaa, Nunito, Quicksand } from "next/font/google";
 import "./globals.css";
 import AsyncAppLayout from "@/components/base/layout/AsyncAppLayout";
+import { getSiteUrl } from "@/lib/siteUrl";
 
-const defaultUrl = process.env.VERCEL_URL
-	? `https://${process.env.VERCEL_URL}`
-	: "http://localhost:3000";
+const siteUrl = getSiteUrl();
+const siteDescription =
+	"A real estate inventory management app built with Next.js and Supabase";
 
 export const metadata: Metadata = {
-	metadataBase: new URL(defaultUrl),
+	metadataBase: siteUrl,
 	// Avoid the default "Page | BuildInc" pipe in the tab; use an en dash instead.
 	title: {
 		default: "BuildInc",
 		template: "%s – BuildInc",
 	},
-	description:
-		"A real estate inventory management app built with Next.js and Supabase",
+	description: siteDescription,
+	openGraph: {
+		type: "website",
+		url: siteUrl,
+		siteName: "BuildInc",
+		title: "BuildInc",
+		description: siteDescription,
+		locale: "en_GB",
+	},
+	twitter: {
+		card: "summary_large_image",
+		title: "BuildInc",
+		description: siteDescription,
+	},
 };
 
 export default function RootLayout({
