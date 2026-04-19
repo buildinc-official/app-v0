@@ -104,14 +104,38 @@ export function LoginForm({
 								{isLoading ? "Logging in..." : "Login"}
 							</Button>
 						</div>
-						<div className="mt-4 text-center text-sm">
-							Don&apos;t have an account?{" "}
-							<Link
-								href="/auth/sign-up"
-								className="underline underline-offset-4"
-							>
-								Sign up
-							</Link>
+						<div className="mt-4 space-y-3 text-center text-sm">
+							<p className="text-white/80">
+								Don&apos;t have an account?{" "}
+								<Link
+									href="/auth/sign-up"
+									className="font-medium text-white underline underline-offset-4"
+								>
+									Sign up
+								</Link>
+							</p>
+							<p className="text-xs leading-relaxed text-white/70">
+								<Link
+									href="/privacy"
+									className="underline underline-offset-2 hover:text-white"
+								>
+									Privacy
+								</Link>
+								{" · "}
+								<Link
+									href="/terms"
+									className="underline underline-offset-2 hover:text-white"
+								>
+									Terms
+								</Link>
+								{" · "}
+								<Link
+									href="/cookies"
+									className="underline underline-offset-2 hover:text-white"
+								>
+									Cookies
+								</Link>
+							</p>
 						</div>
 					</form>
 				</CardContent>
