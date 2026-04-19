@@ -12,6 +12,9 @@ import LoadingSpinner from "./LoadingSpinner";
 import { StoreHydrator } from "./StoreHydrator";
 import { Toaster } from "@/components/base/ui/sonner";
 
+/** Client-side idle cap only; Supabase still refreshes the session in normal use. */
+const IDLE_SIGN_OUT_AFTER_MS = 30 * 24 * 60 * 60 * 1000;
+
 export function AppLayout({
 	children,
 	profile,
@@ -23,27 +26,26 @@ export function AppLayout({
 }) {
 	const supabase = createClient();
 	const [ready, setReady] = useState(false);
-	const EXPIRY_MS = 524 * 60 * 60 * 1000; // 1 min test; 24h prod
 
 	useEffect(() => {
 		const checkExpiry = async () => {
 			try {
-				const lastActiveAt = parseInt(
-					localStorage.getItem("lastActiveAt") || "0",
-					10,
-				);
+				const raw = localStorage.getItem("lastActiveAt");
+				const lastActiveAt = raw ? parseInt(raw, 10) : 0;
 				const now = Date.now();
-				if (now - lastActiveAt > EXPIRY_MS) {
+
+				if (!lastActiveAt || Number.isNaN(lastActiveAt)) {
+					localStorage.setItem("lastActiveAt", now.toString());
+				} else if (now - lastActiveAt > IDLE_SIGN_OUT_AFTER_MS) {
 					await supabase.auth.signOut();
 					ClearData();
-					// router.push("/"); // redirect to home or login page
+					window.location.replace("/auth/login");
 					return;
 				}
 			} catch (err) {
 				console.error("[Layout] Expiry check failed:", err);
 			} finally {
 				setReady(true);
-				// window.location.reload();
 			}
 		};
 

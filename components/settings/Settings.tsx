@@ -41,6 +41,7 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useMaterialPricingStore } from "@/lib/store/materialPricingStore";
 import AddMaterialModal from "./AddMaterialModal";
+import { SUPPORT_EMAIL, supportMailto } from "@/lib/constants/contact";
 import { AccountSettingsCard } from "./AccountSettingsCard";
 import { AppearanceSettingsCard } from "./AppearanceSettingsCard";
 
@@ -76,6 +77,15 @@ export default function Settings() {
 									</h1>
 									<p className="mt-1 max-w-2xl text-sm text-muted-foreground sm:text-base">
 										Account, appearance, and default material pricing.
+									</p>
+									<p className="mt-2 text-sm text-muted-foreground">
+										Need help?{" "}
+										<a
+											href={supportMailto}
+											className="font-medium text-primary underline underline-offset-2 hover:text-primary/90"
+										>
+											{SUPPORT_EMAIL}
+										</a>
 									</p>
 									<p className="mt-1 text-xs text-muted-foreground/90">
 										{profile.email}

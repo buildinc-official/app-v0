@@ -47,6 +47,8 @@ export function SignUpForm({
 				email,
 				password,
 				options: {
+					// Must match an entry under Supabase → Authentication → URL Configuration → Redirect URLs.
+					emailRedirectTo: `${window.location.origin}/auth/confirm`,
 					data: {
 						name: name,
 						bio: bio,

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { BuildIncLogo } from "@/components/base/brand/BuildIncLogo";
+import { SUPPORT_EMAIL, supportMailto } from "@/lib/constants/contact";
 import { Button } from "@/components/base/ui/button";
 import {
 	Users,
@@ -301,7 +302,7 @@ export function LandingPage() {
 				<div className="mx-auto flex max-w-6xl flex-col items-center justify-center gap-6">
 					<nav
 						className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-muted-foreground"
-						aria-label="Legal and policies"
+						aria-label="Legal, support, and policies"
 					>
 						<Link
 							href="/privacy"
@@ -321,7 +322,22 @@ export function LandingPage() {
 						>
 							Cookie notice
 						</Link>
+						<a
+							href={supportMailto}
+							className="transition hover:text-foreground"
+						>
+							Support
+						</a>
 					</nav>
+					<p className="text-center text-sm text-muted-foreground">
+						Questions?{" "}
+						<a
+							href={supportMailto}
+							className="font-medium text-foreground underline underline-offset-2 transition hover:text-primary"
+						>
+							{SUPPORT_EMAIL}
+						</a>
+					</p>
 					<p className="text-center text-sm text-muted-foreground">
 						&copy; {new Date().getFullYear()} BuildInc. Built for
 						construction and real estate teams.
