@@ -8,20 +8,20 @@ set search_path = public
 set row_security = off
 as $$
 begin
+  -- Never read admin from raw_user_meta_data: it is set by the client on signUp.
   insert into public.profiles (id, email, name, bio, admin)
   values (
     new.id,
     coalesce(new.email, ''),
     coalesce(new.raw_user_meta_data->>'name', ''),
     coalesce(new.raw_user_meta_data->>'bio', ''),
-    coalesce((new.raw_user_meta_data->>'admin')::boolean, false)
+    false
   )
   on conflict (id) do update
   set
     email = excluded.email,
     name = excluded.name,
-    bio = excluded.bio,
-    admin = excluded.admin;
+    bio = excluded.bio;
 
   return new;
 end;

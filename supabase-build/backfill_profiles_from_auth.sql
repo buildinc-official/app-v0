@@ -8,6 +8,6 @@ select
   coalesce(u.email, ''),
   coalesce(u.raw_user_meta_data->>'name', ''),
   coalesce(u.raw_user_meta_data->>'bio', ''),
-  coalesce((u.raw_user_meta_data->>'admin')::boolean, false)
+  false
 from auth.users u
 on conflict (id) do nothing;
