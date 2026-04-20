@@ -26,7 +26,6 @@ export function SignUpForm({
 	const [error, setError] = useState<string | null>(null);
 	const [name, setName] = useState("");
 	const [bio, setBio] = useState("");
-	const [admin, setAdmin] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const router = useRouter();
 
@@ -47,10 +46,11 @@ export function SignUpForm({
 				email,
 				password,
 				options: {
+					// Must match an entry under Supabase → Authentication → URL Configuration → Redirect URLs.
+					emailRedirectTo: `${window.location.origin}/auth/confirm`,
 					data: {
 						name: name,
 						bio: bio,
-						admin: admin,
 					},
 				},
 			});
@@ -76,32 +76,6 @@ export function SignUpForm({
 					<CardDescription className="text-white/90">
 						Create a new account
 					</CardDescription>
-					<div className="flex w-full">
-						<Button
-							type="button"
-							onClick={() => setAdmin(false)}
-							className={cn(
-								"flex-1 rounded-none rounded-l-md",
-								!admin
-									? "bg-white text-gray-700 border"
-									: "bg-white/10 text-gray-500",
-							)}
-						>
-							User
-						</Button>
-						<Button
-							type="button"
-							onClick={() => setAdmin(true)}
-							className={cn(
-								"flex-1 rounded-none rounded-r-md",
-								admin
-									? "bg-white text-gray-700 border"
-									: "bg-white/10 text-gray-500",
-							)}
-						>
-							Admin
-						</Button>
-					</div>
 				</CardHeader>
 				<CardContent>
 					<form onSubmit={handleSignUp}>

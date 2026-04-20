@@ -1,41 +1,38 @@
-import {
-	Card,
-	CardContent,
-	CardHeader,
-	CardTitle,
-} from "@/components/base/ui/card";
+import type { Metadata } from "next";
+import { RouteErrorFrame } from "@/components/base/layout/RouteErrorFrame";
+import { userFacingAuthErrorMessage } from "@/lib/authErrorMessage";
+
+export const metadata: Metadata = {
+	title: "Sign-in issue",
+	description: "We could not complete this sign-in step.",
+};
 
 export default async function Page({
 	searchParams,
 }: {
-	searchParams: Promise<{ error: string }>;
+	searchParams: Promise<{ error?: string }>;
 }) {
 	const params = await searchParams;
+	const raw = params?.error;
+	const message = userFacingAuthErrorMessage(raw);
 
 	return (
-		<div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
-			<div className="w-full max-w-sm">
-				<div className="flex flex-col gap-6">
-					<Card>
-						<CardHeader>
-							<CardTitle className="text-2xl">
-								Sorry, something went wrong.
-							</CardTitle>
-						</CardHeader>
-						<CardContent>
-							{params?.error ? (
-								<p className="text-sm text-muted-foreground">
-									Code error: {params.error}
-								</p>
-							) : (
-								<p className="text-sm text-muted-foreground">
-									An unspecified error occurred.
-								</p>
-							)}
-						</CardContent>
-					</Card>
-				</div>
-			</div>
-		</div>
+		<RouteErrorFrame
+			title="We couldn&apos;t complete that step"
+			description={message}
+			primaryHref="/auth/login"
+			primaryLabel="Go to login"
+		>
+			{raw ? (
+				<details className="rounded-md border border-white/20 bg-white/5 p-3 text-left text-xs text-white/80">
+					<summary className="cursor-pointer font-medium text-white/90">
+						Details for support
+					</summary>
+					<p className="mt-2 break-all font-mono text-[0.7rem] leading-relaxed text-white/70">
+						{raw}
+					</p>
+				</details>
+			) : null}
+		</RouteErrorFrame>
 	);
 }

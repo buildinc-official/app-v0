@@ -20,15 +20,19 @@ for select to authenticated
 using (true);
 
 drop policy if exists profiles_update_own on public.profiles;
+-- Authenticated users may not change their own admin flag (use service role / SQL as trusted operator).
 create policy profiles_update_own on public.profiles
 for update to authenticated
 using (id = auth.uid())
-with check (id = auth.uid());
+with check (
+  id = auth.uid()
+  and admin = (select p.admin from public.profiles p where p.id = auth.uid())
+);
 
 drop policy if exists profiles_insert_own on public.profiles;
 create policy profiles_insert_own on public.profiles
 for insert to authenticated
-with check (id = auth.uid());
+with check (id = auth.uid() and admin = false);
 
 -- Owner must match directly so INSERT ... RETURNING works for new orgs (before member row exists).
 drop policy if exists org_select_visible on public.organisations;
